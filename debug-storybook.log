@@ -1,0 +1,173 @@
+[12:51:42.897] [INFO] [36mInitializing Storybook[39m
+[12:51:43.254] [DEBUG] Getting package.json info for C:/Users/dancv/Documents/Projekty/SMWORKS/sm-ui/package.json...
+[12:51:43.255] [DEBUG] Getting CLI versions from NPM for storybook...
+[12:51:43.255] [DEBUG] Executing command: yarn info storybook version --json
+[12:51:44.162] [INFO] Adding Storybook version 10.3.4 to your project
+[12:51:44.167] [DEBUG] Project type detected: react
+[12:51:44.168] [DEBUG] Using cached package.json for C:\Users\dancv\Documents\Projekty\SMWORKS\sm-ui\package.json...
+[12:51:44.170] [DEBUG] Using cached package.json for C:\Users\dancv\Documents\Projekty\SMWORKS\sm-ui\package.json...
+[12:51:52.809] [PROMPT] We were not able to detect the right builder for your project. Please select one: {"choice":"vite"}
+[12:51:52.809] [INFO] Framework detected: react-vite
+[12:51:52.811] [DEBUG] Getting installed version for vitest...
+[12:51:52.811] [DEBUG] Executing command: yarn list --pattern "vitest" --json --recursive vitest
+[12:51:53.211] [DEBUG] Installed version for vitest: null
+[12:51:53.211] [DEBUG] Getting installed version for msw...
+[12:51:53.211] [DEBUG] Executing command: yarn list --pattern "msw" --json --recursive msw
+[12:51:53.543] [DEBUG] Installed version for msw: null
+[12:51:56.923] [PROMPT] New to Storybook? {"choice":true}
+[12:51:56.924] [INFO] Storybook collects completely anonymous usage telemetry. We use it to shape Storybook's roadmap and prioritize features. You can learn more, including how to opt out, at https://storybook.js.org/telemetry
+[12:51:58.054] [INFO] base-generator-task-start: Generating Storybook configuration
+[12:51:58.054] [DEBUG] Using cached package.json for C:\Users\dancv\Documents\Projekty\SMWORKS\sm-ui\package.json...
+[12:51:58.055] [DEBUG] Using cached package.json for C:\Users\dancv\Documents\Projekty\SMWORKS\sm-ui\package.json...
+[12:51:58.055] [DEBUG] Using cached package.json for C:\Users\dancv\Documents\Projekty\SMWORKS\sm-ui\package.json...
+[12:51:58.056] [DEBUG] Getting CLI versions from NPM for @storybook/react-vite...
+[12:51:58.056] [DEBUG] Executing command: yarn info @storybook/react-vite version --json
+[12:51:58.079] [DEBUG] Getting CLI versions from NPM for @chromatic-com/storybook...
+[12:51:58.079] [DEBUG] Executing command: yarn info @chromatic-com/storybook version --json
+[12:51:58.108] [DEBUG] Getting CLI versions from NPM for @storybook/addon-vitest...
+[12:51:58.108] [DEBUG] Executing command: yarn info @storybook/addon-vitest version --json
+[12:51:58.129] [DEBUG] Getting CLI versions from NPM for @storybook/addon-a11y...
+[12:51:58.129] [DEBUG] Executing command: yarn info @storybook/addon-a11y version --json
+[12:51:58.148] [DEBUG] Getting CLI versions from NPM for @storybook/addon-docs...
+[12:51:58.148] [DEBUG] Executing command: yarn info @storybook/addon-docs version --json
+[12:51:58.163] [DEBUG] Getting CLI versions from NPM for @storybook/addon-onboarding...
+[12:51:58.163] [DEBUG] Executing command: yarn info @storybook/addon-onboarding version --json
+[12:51:59.528] [INFO] base-generator-task: - Configuring main.ts
+[12:51:59.532] [INFO] base-generator-task: - Configuring preview.ts
+[12:51:59.535] [INFO] base-generator-task: - Adding Storybook command to package.json
+[12:51:59.536] [DEBUG] Getting package.json info for C:/Users/dancv/Documents/Projekty/SMWORKS/sm-ui/package.json...
+[12:51:59.536] [DEBUG] Using cached package.json for C:\Users\dancv\Documents\Projekty\SMWORKS\sm-ui\package.json...
+[12:51:59.537] [DEBUG] Using cached package.json for C:\Users\dancv\Documents\Projekty\SMWORKS\sm-ui\package.json...
+[12:51:59.538] [INFO] base-generator-task: - Copying framework templates
+[12:51:59.614] [DEBUG] Executing command: yarn config get registry
+[12:52:00.140] [INFO] base-generator-task-success: Storybook configuration generated
+[12:52:00.141] [DEBUG] Using cached package.json for C:\Users\dancv\Documents\Projekty\SMWORKS\sm-ui\package.json...
+[12:52:00.141] [DEBUG] Using cached installed version for vitest...
+[12:52:00.141] [DEBUG] Getting installed version for @vitest/coverage-v8...
+[12:52:00.141] [DEBUG] Executing command: yarn list --pattern "@vitest/coverage-v8" --json --recursive @vitest/coverage-v8
+[12:52:00.567] [DEBUG] Installed version for @vitest/coverage-v8: null
+[12:52:00.567] [DEBUG] Getting installed version for @vitest/coverage-istanbul...
+[12:52:00.567] [DEBUG] Executing command: yarn list --pattern "@vitest/coverage-istanbul" --json --recursive @vitest/coverage-istanbul
+[12:52:00.975] [DEBUG] Installed version for @vitest/coverage-istanbul: null
+[12:52:00.976] [INFO] adding-dependencies-task-start: Adding dependencies to package.json
+[12:52:00.980] [INFO] adding-dependencies-task: Adding devDependencies:
+- @storybook/react-vite@^10.3.4
+- @chromatic-com/storybook@^5.1.1
+- @storybook/addon-vitest@^10.3.4
+- @storybook/addon-a11y@^10.3.4
+- @storybook/addon-docs@^10.3.4
+- @storybook/addon-onboarding@^10.3.4
+- vitest
+- playwright
+- @vitest/browser-playwright
+- @vitest/coverage-v8
+[12:52:00.981] [DEBUG] Using cached package.json for C:\Users\dancv\Documents\Projekty\SMWORKS\sm-ui\package.json...
+[12:52:00.981] [DEBUG] Using cached version for @storybook/react-vite...
+[12:52:00.981] [DEBUG] Using cached version for @chromatic-com/storybook...
+[12:52:00.981] [DEBUG] Using cached version for @storybook/addon-vitest...
+[12:52:00.981] [DEBUG] Using cached version for @storybook/addon-a11y...
+[12:52:00.981] [DEBUG] Using cached version for @storybook/addon-docs...
+[12:52:00.981] [DEBUG] Using cached version for @storybook/addon-onboarding...
+[12:52:00.981] [DEBUG] Getting CLI versions from NPM for vitest...
+[12:52:00.981] [DEBUG] Executing command: yarn info vitest version --json
+[12:52:01.562] [DEBUG] Getting CLI versions from NPM for playwright...
+[12:52:01.562] [DEBUG] Executing command: yarn info playwright version --json
+[12:52:02.422] [DEBUG] Getting CLI versions from NPM for @vitest/browser-playwright...
+[12:52:02.422] [DEBUG] Executing command: yarn info @vitest/browser-playwright version --json
+[12:52:03.971] [DEBUG] Getting CLI versions from NPM for @vitest/coverage-v8...
+[12:52:03.971] [DEBUG] Executing command: yarn info @vitest/coverage-v8 version --json
+[12:52:04.454] [DEBUG] Using cached package.json for C:\Users\dancv\Documents\Projekty\SMWORKS\sm-ui\package.json...
+[12:52:04.455] [INFO] adding-dependencies-task-success: Dependencies added to package.json
+[12:52:04.457] [INFO] Installing dependencies...
+[12:52:04.458] [INFO] install-dependencies-spinner-start: Installing dependencies...
+[12:52:04.459] [DEBUG] Executing command: yarn install --ignore-workspace-root-check
+[12:52:04.729] [INFO] Installing dependencies...: yarn install v1.22.22
+
+[12:52:04.729] [INFO] install-dependencies-spinner: Installing dependencies...: yarn install v1.22.22
+[12:52:04.792] [INFO] Installing dependencies...: [1/4] Resolving packages...
+
+[12:52:04.792] [INFO] install-dependencies-spinner: Installing dependencies...: [1/4] Resolving packages.
+[12:52:11.571] [INFO] Installing dependencies...: [2/4] Fetching packages...
+
+[12:52:11.571] [INFO] install-dependencies-spinner: Installing dependencies...: [2/4] Fetching packages..
+[12:52:19.180] [INFO] Installing dependencies...: [3/4] Linking dependencies...
+
+[12:52:19.180] [INFO] install-dependencies-spinner: Installing dependencies...: [3/4] Linking dependencie
+[12:52:21.232] [INFO] Installing dependencies...: [4/4] Building fresh packages...
+
+[12:52:21.232] [INFO] install-dependencies-spinner: Installing dependencies...: [4/4] Building fresh pack
+[12:52:21.253] [INFO] Installing dependencies...: success Saved lockfile.
+
+[12:52:21.253] [INFO] install-dependencies-spinner: Installing dependencies...: success Saved lockfile.
+[12:52:21.262] [INFO] Installing dependencies...: Done in 16.55s.
+
+[12:52:21.262] [INFO] install-dependencies-spinner: Installing dependencies...: Done in 16.55s.
+[12:52:21.316] [INFO] Dependencies installed
+[12:52:21.316] [INFO] install-dependencies-spinner-stop: Dependencies installed
+[12:52:21.321] [INFO] configure-addons-task-start: Configuring addons...
+[12:52:21.321] [INFO] configure-addons-task: Configuring @chromatic-com/storybook...
+[12:52:21.323] [INFO] configure-addons-task: @chromatic-com/storybook configured
+
+[12:52:21.323] [INFO] configure-addons-task: Configuring @storybook/addon-vitest...
+[12:52:21.325] [DEBUG] Getting package.json info for C:/Users/dancv/Documents/Projekty/SMWORKS/sm-ui/package.json...
+[12:52:21.325] [DEBUG] Using cached package.json for C:\Users\dancv\Documents\Projekty\SMWORKS\sm-ui\package.json...
+[12:52:21.325] [DEBUG] Getting installed version for vitest...
+[12:52:21.325] [DEBUG] Executing command: yarn list --pattern "vitest" --json --recursive vitest
+[12:52:21.668] [DEBUG] Installed version for vitest: 4.1.2
+[12:52:21.668] [DEBUG] Vitest version specifier: 4.1.2
+[12:52:21.856] [DEBUG] Using cached installed version for vitest...
+[12:52:21.857] [DEBUG] Getting installed version for msw...
+[12:52:21.857] [DEBUG] Executing command: yarn list --pattern "msw" --json --recursive msw
+[12:52:22.348] [DEBUG] Installed version for msw: null
+[12:52:22.356] [INFO] Creating a Vitest config file:
+[12:52:22.356] [INFO] C:/Users/dancv/Documents/Projekty/SMWORKS/sm-ui/vitest.config.ts
+[12:52:22.363] [INFO] Setting up a11y addon for @storybook/addon-vitest
+[12:52:22.363] [INFO] Setting up a11y addon for @storybook/addon-vitest
+[12:52:22.364] [DEBUG] Executing command: npx storybook@10.3.4 automigrate addon-a11y-addon-test --loglevel silent --yes --skip-doctor --package-manager yarn1 --skip-install
+[12:52:40.268] [INFO] a11y addon setup successfully
+[12:52:40.268] [INFO] [32ma11y addon setup successfully[39m
+[12:52:40.268] [INFO] [32m@storybook/addon-vitest setup completed successfully[39m
+[12:52:40.269] [INFO] @storybook/addon-vitest is now configured and you're ready to run your tests!
+Here are a couple of tips to get you started:
+
+• You can run tests with "[36mnpx vitest[39m"
+• Vitest IDE extension shows all stories as tests in your editor!
+
+Check the documentation for more information about its features and options at:
+https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon
+[12:52:40.270] [INFO] configure-addons-task: @storybook/addon-vitest configured
+
+[12:52:40.271] [INFO] configure-addons-task: Configuring @storybook/addon-a11y...
+[12:52:40.271] [DEBUG] Executing command: npx storybook@10.3.4 automigrate addon-a11y-addon-test --loglevel silent --skip-doctor --yes --package-manager yarn1 --config-dir .storybook
+[12:52:44.648] [INFO] configure-addons-task: @storybook/addon-a11y configured
+
+[12:52:44.649] [INFO] configure-addons-task: Configuring @storybook/addon-docs...
+[12:52:44.654] [INFO] configure-addons-task: @storybook/addon-docs configured
+
+[12:52:44.655] [INFO] configure-addons-task: Configuring @storybook/addon-onboarding...
+[12:52:44.659] [INFO] configure-addons-task: @storybook/addon-onboarding configured
+
+[12:52:44.660] [INFO] configure-addons-task-success: Addons configured successfully
+[12:52:44.660] [INFO] [2m✅ @chromatic-com/storybook[22m
+[12:52:44.662] [INFO] [2m✅ @storybook/addon-vitest[22m
+[12:52:44.662] [INFO] [2m✅ @storybook/addon-a11y[22m
+[12:52:44.663] [INFO] [2m✅ @storybook/addon-docs[22m
+[12:52:44.663] [INFO] [2m✅ @storybook/addon-onboarding[22m
+[12:52:44.664] [INFO] Playwright browser binaries are necessary for @storybook/addon-vitest. The download can take some time. If you don't want to wait, you can skip the installation and run the following command manually later:
+[36myarn exec playwright -- install chromium --with-deps[39m
+[12:53:02.578] [PROMPT] Do you want to install Playwright with Chromium now? {"choice":true}
+[12:53:02.578] [INFO] Installing Playwright browser binaries (press "c" to abort)
+[12:53:02.578] [INFO] playwright-installation-spinner-start: Installing Playwright browser binaries (press "c" to abort)
+[12:53:02.579] [DEBUG] Executing command: yarn exec playwright -- install chromium --with-deps
+[12:53:02.868] [INFO] Installing Playwright browser binaries (press "c" to abort): yarn exec v1.22.22
+
+[12:53:02.868] [INFO] playwright-installation-spinner: Installing Playwright browser binaries (press "c" to abort): yarn exec v1.22.22
+[12:53:02.955] [INFO] Installing Playwright browser binaries (press "c" to abort): info Visit https://yarnpkg.com/en/docs/cli/exec for documentation about this command.
+
+[12:53:02.955] [INFO] playwright-installation-spinner: Installing Playwright browser binaries (press "c" to abort): info Visit https://yarnpk
+[12:53:02.998] [ERROR] An error occurred while installing Playwright browser binaries. Please run the following command later: yarn exec playwright -- install chromium --with-deps {"error":"ExecaError: Command failed with exit code 1: yarn.cmd exec playwright -- install chromium --with-deps\n\nwarning package.json: No license field\nerror Couldn't find the binary playwright\n\nyarn exec v1.22.22\ninfo Visit https://yarnpkg.com/en/docs/cli/exec for documentation about this command.\n    at getFinalError (file:///C:/Users/dancv/AppData/Local/npm-cache/_npx/aed33698b3a43253/node_modules/storybook/dist/_node-chunks/chunk-3LP2BDDH.js:13112:10)\n    at makeError (file:///C:/Users/dancv/AppData/Local/npm-cache/_npx/aed33698b3a43253/node_modules/storybook/dist/_node-chunks/chunk-3LP2BDDH.js:14648:15)\n    at getAsyncResult (file:///C:/Users/dancv/AppData/Local/npm-cache/_npx/aed33698b3a43253/node_modules/storybook/dist/_node-chunks/chunk-3LP2BDDH.js:17294:158)\n    at handlePromise (file:///C:/Users/dancv/AppData/Local/npm-cache/_npx/aed33698b3a43253/node_modules/storybook/dist/_node-chunks/chunk-3LP2BDDH.js:17280:162)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at async Object.executeTaskWithSpinner (file:///C:/Users/dancv/AppData/Local/npm-cache/_npx/aed33698b3a43253/node_modules/storybook/dist/_node-chunks/chunk-CSY5TWXV.js:3683:11)\n    at async AddonVitestService.installPlaywright (file:///C:/Users/dancv/AppData/Local/npm-cache/_npx/aed33698b3a43253/node_modules/storybook/dist/_node-chunks/chunk-X3N3W66Q.js:5858:17)\n    at async AddonConfigurationCommand.execute (file:///C:/Users/dancv/AppData/Local/npm-cache/_npx/aed33698b3a43253/node_modules/create-storybook/dist/_node-chunks/chunk-N3IHY4TZ.js:2015:26)\n    at async doInitiate (file:///C:/Users/dancv/AppData/Local/npm-cache/_npx/aed33698b3a43253/node_modules/create-storybook/dist/_node-chunks/chunk-N3IHY4TZ.js:2900:38)\n    at async file:///C:/Users/dancv/AppData/Local/npm-cache/_npx/aed33698b3a43253/node_modules/create-storybook/dist/_node-chunks/chunk-N3IHY4TZ.js:2928:20"}
+[12:53:02.999] [ERROR] playwright-installation-spinner-error: [31mAn error occurred while installing Playwright browser binaries. Please run the following command later: yarn exec playwright -- install chromium --with-deps[39m
+[12:53:04.085] [WARN] Storybook setup completed, but some non-blocking errors occurred. Please check the log file below for details.
+[12:53:04.087] [INFO] To run Storybook manually, run [36myarn storybook[39m. CTRL+C to stop.
+[12:53:04.088] [INFO] Want to learn more about Storybook? [36mhttps://storybook.js.org/[39m
+Having trouble or want to chat? [36mhttps://discord.gg/storybook/[39m

@@ -66,66 +66,66 @@ export type ButtonVariant = 'primary' | 'secondary' | 'outline';
 export type ButtonSize = 'sm' | 'md' | 'lg';
 export type ButtonIconPosition = 'left' | 'right';
 
-/** Props shared between the <button> and <a> render modes. */
+/** Sdílené props pro režim `<button>` i `<a>`. */
 interface ButtonBaseProps {
   /**
-   * Visual style of the button.
-   * - `primary`   — orange fill (#FC4F00)
-   * - `secondary` — transparent, no border
-   * - `outline`   — transparent with white border
+   * Vizuální varianta tlačítka.
+   * - `primary`   — oranžové vyplnění (#FC4F00)
+   * - `secondary` — průhledné, bez okraje
+   * - `outline`   — průhledné s bílým okrajem
    * @default 'primary'
    */
   variant?: ButtonVariant;
   /**
-   * Size preset.
+   * Velikostní preset.
    * @default 'md'
    */
   size?: ButtonSize;
   /**
-   * Optional icon — any React node (SVG, component…).
-   * When provided without `children` the button renders as a square.
+   * Volitelná ikona — libovolný React uzel (SVG, komponenta…).
+   * Při použití bez `children` se tlačítko vykreslí jako čtverec.
    */
   icon?: React.ReactNode;
   /**
-   * Which side the icon appears on relative to the text.
+   * Na které straně se ikona zobrazí vzhledem k textu.
    * @default 'left'
    */
   iconPosition?: ButtonIconPosition;
   /**
-   * When `true` the button is disabled and a spinner replaces the icon
-   * (or appears alone when there is no icon).
-   * Pointer events are blocked; `onClick` will not fire.
+   * Při `true` je tlačítko neaktivní a místo ikony se zobrazí spinner
+   * (nebo samotný spinner, pokud ikona chybí).
+   * Ukazatel myši je blokován; `onClick` se nevyvolá.
    */
   loading?: boolean;
   /**
-   * Stretch the button to fill its container's width.
+   * Roztáhne tlačítko na celou šířku kontejneru.
    */
   fullWidth?: boolean;
   /**
-   * Extra inline styles applied to the root element (`<button>` or `<a>`).
-   * Merged after all variant / size styles — use this for one-off overrides.
+   * Další inline styly aplikované na kořenový element (`<button>` nebo `<a>`).
+   * Sloučeny za všechny variantní / velikostní styly — pro jednorázové přepsání.
    */
   style?: React.CSSProperties;
   /**
-   * Extra CSS class applied to the root element.
+   * Dodatečná CSS třída pro kořenový element.
    */
   className?: string;
   /**
-   * Text content of the button.
-   * When omitted (and `icon` is provided) the button renders as a square.
+   * Textový obsah tlačítka.
+   * Při vynechání (pokud je zadána `icon`) se tlačítko vykreslí jako čtverec.
    */
   children?: React.ReactNode;
 }
 
-/** Render as a native `<button>` (default). Inherits all standard button attributes — including `onClick`, `type`, `form`, `name`, `value`, `aria-*`, etc. */
+/** Vykreslení jako nativní `<button>` (výchozí). Dědí všechny standardní atributy — včetně `onClick`, `type`, `form`, `name`, `value`, `aria-*` apod. */
 export interface ButtonAsButtonProps
   extends ButtonBaseProps,
   Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, keyof ButtonBaseProps> {
-  /** When omitted the component renders as `<button>`. */
+  /** Při vynechání se komponenta vykreslí jako `<button>`. */
   href?: undefined;
 }
 
-/** Render as an `<a>` anchor when `href` is provided. Useful for navigation-style buttons. */
+/** Vykreslení jako `<a>` odkaz, pokud je zadáno `href`. Vhodné pro navigační tlačítka. */
 export interface ButtonAsAnchorProps
   extends ButtonBaseProps,
   Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, keyof ButtonBaseProps> {
@@ -180,7 +180,7 @@ export const Button = React.forwardRef<
       padding: isSquare ? paddingSquare : paddingText,
       borderRadius: '8px',
       cursor: isDisabled ? 'not-allowed' : 'pointer',
-      opacity: isDisabled && !loading ? 0.5 : 1,
+      opacity: isDisabled ? 0.5 : 1,
       outline: 'none',
       textDecoration: 'none',
       fontFamily: "'Zalando Sans Expanded', sans-serif",

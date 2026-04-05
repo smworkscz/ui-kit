@@ -1,0 +1,18 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "Storybook",
+      "runtimeExecutable": "yarn",
+      "runtimeArgs": ["storybook"],
+      "port": 6006,
+      "autoPort": false
+    },
+    {
+      "name": "Library Dev (tsup watch)",
+      "runtimeExecutable": "yarn",
+      "runtimeArgs": ["dev"],
+      "port": 0
+    }
+  ]
+}

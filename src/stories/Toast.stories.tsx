@@ -7,14 +7,10 @@ import { Button } from '../components/Button';
 import { Student } from '@phosphor-icons/react';
 
 const meta = {
-  title: 'Components/Toast',
+  title: 'Feedback/Toast',
   component: Toast,
   parameters: {
     layout: 'padded',
-    backgrounds: {
-      default: 'light',
-      values: [{ name: 'light', value: '#ffffff' }, { name: 'dark', value: '#1a1a1a' }],
-    },
   },
   tags: ['autodocs'],
 } satisfies Meta<typeof Toast>;
@@ -22,21 +18,9 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-// --- Statické toasty pro dokumentaci parametrů ---
-export const Info: Story = {
-  args: { variant: 'info', title: 'Aktualizace', content: 'Byla nalezena nová verze aplikace.', onClose: fn() }
+export const Default: Story = {
+  args: { variant: 'info', title: 'Aktualizace', content: 'Byla nalezena nová verze aplikace.', onClose: fn() },
 };
-export const Success: Story = {
-  args: { variant: 'success', title: 'Uloženo', content: 'Vaše změny jsou bezpečně uloženy.', onClose: fn() }
-};
-export const Error: Story = {
-  args: { variant: 'error', title: 'Chyba serveru', content: 'Záznam se nepodařilo smazat.', onClose: fn() }
-};
-export const CustomIcon: Story = {
-  args: { variant: 'info', title: 'Nový student', content: 'Uživatel byl úspěšně vytvořen.', icon: <Student weight="bold" size={24} />, onClose: fn() }
-};
-
-// --- Interaktivní ukázka ToasterProvider a useToast ---
 
 const ToastDemoComponent = () => {
   const { toast } = useToast();
@@ -64,11 +48,11 @@ export const InteractiveDemo = () => {
 
   return (
     <div>
-      <div style={{ marginBottom: 24, padding: 12, border: '1px solid #ccc', borderRadius: 8, display: 'inline-flex', alignItems: 'center', gap: 12 }}>
+      <div style={{ marginBottom: 24, padding: 12, border: '1px solid #444', borderRadius: 8, display: 'inline-flex', alignItems: 'center', gap: 12 }}>
         <strong>Nastavení Toasteru:</strong>
         <label>
           Pozice:
-          <select value={position} onChange={(e) => setPosition(e.target.value as ToastPosition)} style={{ padding: '4px 8px', marginLeft: 8 }}>
+          <select value={position} onChange={(e) => setPosition(e.target.value as ToastPosition)} style={{ padding: '4px 8px', marginLeft: 8, backgroundColor: '#1a1a1a', color: '#eaeaea', border: '1px solid #444', borderRadius: 4 }}>
             <option value="top-left">top-left</option>
             <option value="top-center">top-center</option>
             <option value="top-right">top-right</option>
@@ -79,14 +63,12 @@ export const InteractiveDemo = () => {
         </label>
       </div>
 
-      {/* Reálný ToasterProvider obaluje zbytek */}
       <ToasterProvider position={position} maxToasts={5} offset={24} gap={12}>
         <div style={{ width: '100%', height: 350, fontFamily: 'sans-serif' }}>
           <h3 style={{ margin: '0 0 16px 0' }}>Vyzkoušejte si volání useToast()</h3>
           <p style={{ marginBottom: 24, fontSize: 14 }}>
             Klikáním na tlačítka vyvoláváte nová upozornění přes hook. Toaster
-            se postará o skládání karet přes sebe. Díky interaktivnímu výběru nahoře si navíc
-            můžete za běhu změnit proměnnou <code>position</code> (např. z bottom-right na top-center).
+            se postará o skládání karet přes sebe.
           </p>
           <ToastDemoComponent />
         </div>

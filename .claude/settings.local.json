@@ -1,7 +1,26 @@
 {
   "permissions": {
     "allow": [
-      "Bash(yarn build:*)"
+      "Bash(yarn build:*)",
+      "Bash(grep -E \"\\\\.\\(tsx?|css|scss\\)$\")",
+      "Bash(find /c/Users/dancv/Documents/Projekty/SMWORKS/sm-ui -maxdepth 2 \\\\\\(-name *.css -o -name *.scss \\\\\\) -type f)",
+      "Bash(npx tsc:*)",
+      "Bash(find /c/Users/dancv/Documents/Projekty/SMWORKS/sm-ui/node_modules/storybook/dist/manager* -name \"*.d.ts\")",
+      "Bash(find /c/Users/dancv/Documents/Projekty/SMWORKS/sm-ui/node_modules -path *internal/types* -name *.d.ts)",
+      "Bash(grep -r \"layoutCustomisations\\\\|showPanel\\\\|showToolbar\" /c/Users/dancv/Documents/Projekty/SMWORKS/sm-ui/node_modules/storybook/dist --include=*.js)",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(for f:*)",
+      "Bash(do sed:*)",
+      "Bash(done)",
+      "Bash(netstat -ano)",
+      "Bash(findstr :6006)",
+      "Bash(taskkill /PID 968 /F)",
+      "Bash(cmd //c \"taskkill /PID 968 /F\")",
+      "Bash(yarn storybook:*)",
+      "Bash(cmd //c \"for /f \"\"tokens=5\"\" %a in \\(''netstat -ano ^| findstr :6006 ^| findstr LISTENING''\\) do taskkill /PID %a /F\")",
+      "Bash(findstr LISTENING)",
+      "Bash(cmd //c \"taskkill /PID 14784 /F\")",
+      "Bash(cmd //c \"taskkill /PID 14784 /T /F\")"
     ]
   }
 }

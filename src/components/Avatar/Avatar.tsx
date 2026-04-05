@@ -6,32 +6,32 @@ export type AvatarSize = 'sm' | 'md' | 'lg' | number;
 
 export interface AvatarProps {
   /**
-   * Initials displayed inside the avatar (e.g. `"DC"`, `"JN"`).
-   * Automatically rendered in uppercase.
+   * Iniciály zobrazené uvnitř avataru (např. `"DC"`, `"JN"`).
+   * Automaticky převedeny na velká písmena.
    */
   initials: string;
   /**
-   * Size of the avatar.
+   * Velikost avataru.
    * - `'sm'` — 40 px
-   * - `'md'` — 70 px  *(default)*
+   * - `'md'` — 70 px  *(výchozí)*
    * - `'lg'` — 96 px
-   * - `number` — exact pixel value
+   * - `number` — přesná hodnota v pixelech
    * @default 'md'
    */
   size?: AvatarSize;
   /**
-   * Border-radius of the avatar container.
+   * Zaoblení rohů kontejneru avataru.
    * @default '8px'
    */
   borderRadius?: React.CSSProperties['borderRadius'];
   /**
-   * Accessible label read by screen readers.
-   * Falls back to `"Avatar {initials}"` when not provided.
+   * Přístupný popisek čtený čtečkami obrazovky.
+   * Pokud není zadán, použije se `"Avatar {initials}"`.
    */
   'aria-label'?: string;
-  /** Extra inline styles applied to the root element. */
+  /** Další inline styly pro kořenový element. */
   style?: React.CSSProperties;
-  /** Extra CSS class applied to the root element. */
+  /** Dodatečná CSS třída pro kořenový element. */
   className?: string;
 }
 
@@ -45,8 +45,8 @@ const resolveSize = (size: AvatarSize): number => {
 // ─── Component ───────────────────────────────────────────────────────────────
 
 /**
- * Circular/square avatar that displays user initials over a branded
- * orange gradient background.
+ * Kruhový / čtvercový avatar zobrazující iniciály uživatele
+ * na oranžovém gradientním pozadí.
  *
  * @example
  * ```tsx

@@ -28,61 +28,61 @@ const tokens = {
 
 export interface TagProps {
   /**
-   * Text label displayed inside the tag.
+   * Textový popisek zobrazený uvnitř tagu.
    */
   label: string;
   /**
-   * Callback fired when the remove (✕) button is clicked.
-   * When not provided the remove button is hidden.
+   * Callback volaný při kliknutí na tlačítko odebrání (✕).
+   * Pokud není zadán, tlačítko se nezobrazí.
    */
   onRemove?: () => void;
-  /** Extra inline styles for the root element. */
+  /** Další inline styly pro kořenový element. */
   style?: React.CSSProperties;
-  /** Extra CSS class for the root element. */
+  /** Dodatečná CSS třída pro kořenový element. */
   className?: string;
 }
 
 export interface BadgeProps {
   /**
-   * Text displayed inside the badge.
-   * Rendered uppercase per the SM-UI design system.
+   * Text zobrazený uvnitř badge.
+   * Automaticky převeden na velká písmena dle SM-UI design systému.
    */
   label: string;
-  /** Extra inline styles for the root element. */
+  /** Další inline styly pro kořenový element. */
   style?: React.CSSProperties;
-  /** Extra CSS class for the root element. */
+  /** Dodatečná CSS třída pro kořenový element. */
   className?: string;
 }
 
 export interface TagItemProps {
   /**
-   * Primary label / name shown in the list row.
+   * Hlavní popisek / název zobrazený v řádku seznamu.
    */
   label: string;
   /**
-   * Callback fired when the **filter** icon button is clicked.
-   * When not provided the button is hidden.
+   * Callback volaný při kliknutí na tlačítko **filtrování**.
+   * Pokud není zadán, tlačítko se nezobrazí.
    */
   onFilter?: () => void;
   /**
-   * Callback fired when the **edit** (pencil) icon button is clicked.
-   * When not provided the button is hidden.
+   * Callback volaný při kliknutí na tlačítko **úpravy** (tužka).
+   * Pokud není zadán, tlačítko se nezobrazí.
    */
   onEdit?: () => void;
   /**
-   * Callback fired when the **delete** (trash) icon button is clicked.
-   * When not provided the button is hidden.
+   * Callback volaný při kliknutí na tlačítko **smazání** (koš).
+   * Pokud není zadán, tlačítko se nezobrazí.
    */
   onDelete?: () => void;
   /**
-   * Whether to show the actions column at all.
-   * Set to `false` to render a read-only row.
+   * Zda zobrazit sloupec s akcemi.
+   * Nastavte na `false` pro řádek pouze ke čtení.
    * @default true
    */
   showActions?: boolean;
-  /** Extra inline styles for the root element. */
+  /** Další inline styly pro kořenový element. */
   style?: React.CSSProperties;
-  /** Extra CSS class for the root element. */
+  /** Dodatečná CSS třída pro kořenový element. */
   className?: string;
 }
 
@@ -123,8 +123,8 @@ const ActionBtn: React.FC<ActionBtnProps> = ({ onClick, title, color, children }
 // ─── Tag ─────────────────────────────────────────────────────────────────────
 
 /**
- * Small removable pill label used to categorise or mark items.
- * The remove button (✕) is shown only when `onRemove` is provided.
+ * Malý odebíratelný štítek pro kategorizaci nebo označení položek.
+ * Tlačítko odebrání (✕) se zobrazí pouze pokud je zadáno `onRemove`.
  *
  * @example
  * ```tsx
@@ -163,7 +163,7 @@ export const Tag: React.FC<TagProps> = ({ label, onRemove, style, className }) =
         <button
           type="button"
           onClick={onRemove}
-          aria-label={`Remove ${label}`}
+          aria-label={`Odebrat ${label}`}
           style={{
             display: 'flex',
             alignItems: 'center',
@@ -187,12 +187,12 @@ export const Tag: React.FC<TagProps> = ({ label, onRemove, style, className }) =
 // ─── Badge ────────────────────────────────────────────────────────────────────
 
 /**
- * Small status badge rendered as an orange pill.
- * Text is automatically uppercased.
+ * Malý stavový badge vykreslený jako oranžová pilulka.
+ * Text je automaticky převeden na velká písmena.
  *
  * @example
  * ```tsx
- * <Badge label="New" />
+ * <Badge label="Novinka" />
  * <Badge label="Beta" />
  * ```
  */
@@ -223,15 +223,15 @@ export const Badge: React.FC<BadgeProps> = ({ label, style, className }) => (
 // ─── TagItem ──────────────────────────────────────────────────────────────────
 
 /**
- * List row used to display a named tag with optional action buttons
- * (filter, edit, delete).
+ * Řádek seznamu zobrazující pojmenovaný tag s volitelnými akčními tlačítky
+ * (filtrování, úprava, smazání).
  *
- * Buttons are hidden individually when their callback props are omitted.
- * Set `showActions={false}` to hide the whole actions column at once.
+ * Tlačítka se jednotlivě skryjí, pokud nejsou zadány příslušné callbacky.
+ * Nastavte `showActions={false}` pro skrytí celého sloupce akcí.
  *
  * @example
  * ```tsx
- * <TagItem label="Homepage" onEdit={editTag} onDelete={deleteTag} />
+ * <TagItem label="Domovská stránka" onEdit={editTag} onDelete={deleteTag} />
  * <TagItem label="Blog" showActions={false} />
  * ```
  */
@@ -279,21 +279,21 @@ export const TagItem: React.FC<TagItemProps> = ({
       {showActions && hasAnyAction && (
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginLeft: '12px', flexShrink: 0 }}>
           {onFilter && (
-            <ActionBtn onClick={onFilter} title="Filter" color={t.actionColor}>
+            <ActionBtn onClick={onFilter} title="Filtrovat" color={t.actionColor}>
               <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
                 <path d="M1.75 3.5h10.5M3.5 7h7M5.25 10.5h3.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </ActionBtn>
           )}
           {onEdit && (
-            <ActionBtn onClick={onEdit} title="Edit" color={t.actionColor}>
+            <ActionBtn onClick={onEdit} title="Upravit" color={t.actionColor}>
               <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
                 <path d="M9.625 1.75l2.625 2.625M1.75 12.25l.875-3.5L9.625 1.75l2.625 2.625-7 6.875-3.5.875z" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </ActionBtn>
           )}
           {onDelete && (
-            <ActionBtn onClick={onDelete} title="Delete" color={t.actionColor}>
+            <ActionBtn onClick={onDelete} title="Smazat" color={t.actionColor}>
               <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
                 <path d="M1.75 3.5h10.5M5.25 3.5V2.333a.583.583 0 01.583-.583h2.334a.583.583 0 01.583.583V3.5M11.667 3.5l-.584 7.583a1.167 1.167 0 01-1.166 1.084H4.083a1.167 1.167 0 01-1.166-1.084L2.333 3.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>

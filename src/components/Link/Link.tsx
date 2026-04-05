@@ -23,49 +23,49 @@ export type LinkVariant = 'default' | 'danger';
 export interface LinkProps
   extends Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, 'color'> {
   /**
-   * Color variant.
-   * - `'default'` — white (dark mode) / dark (light mode)
-   * - `'danger'`  — red `#EF3838` in both modes
+   * Barevná varianta.
+   * - `'default'` — bílá (tmavý režim) / tmavá (světlý režim)
+   * - `'danger'`  — červená `#EF3838` v obou režimech
    * @default 'default'
    */
   variant?: LinkVariant;
   /**
-   * Icon element rendered next to the label.
-   * Typically a 14×14 SVG or icon component.
+   * Ikona vykreslená vedle textu odkazu.
+   * Typicky 14×14 SVG nebo komponenta ikony.
    */
   icon?: React.ReactNode;
   /**
-   * Side on which the icon is placed relative to the text.
+   * Na které straně se ikona zobrazí vzhledem k textu.
    * @default 'left'
    */
   iconPosition?: 'left' | 'right';
   /**
-   * Whether to render the icon.
-   * Useful to conditionally hide the icon without removing the prop.
+   * Zda zobrazit ikonu.
+   * Umožňuje podmíněně skrýt ikonu bez odebrání prop.
    * @default true
    */
   showIcon?: boolean;
-  /** Extra inline styles applied to the `<a>` element. */
+  /** Další inline styly pro `<a>` element. */
   style?: React.CSSProperties;
-  /** Extra CSS class applied to the `<a>` element. */
+  /** Dodatečná CSS třída pro `<a>` element. */
   className?: string;
 }
 
 // ─── Component ───────────────────────────────────────────────────────────────
 
 /**
- * Inline link / action trigger following the SM-UI design system.
- * Renders as a native `<a>` element and inherits all anchor attributes
+ * Inline odkaz / akční trigger dle SM-UI design systému.
+ * Vykresluje se jako nativní `<a>` element a dědí všechny anchor atributy
  * (`href`, `target`, `rel`, `onClick`, `aria-*`, …).
  *
- * In `danger` variant it uses red (#EF3838) to indicate destructive actions.
- * Hover state adds a subtle dark background pill.
+ * Ve variantě `danger` používá červenou (#EF3838) pro destruktivní akce.
+ * Při hoveru se přidá jemné tmavé pozadí.
  *
  * @example
  * ```tsx
- * <Link href="/settings">Settings</Link>
- * <Link variant="danger" onClick={onDelete} icon={<TrashIcon />}>Delete</Link>
- * <Link icon={<ArrowIcon />} iconPosition="right" href="/next">Next step</Link>
+ * <Link href="/nastaveni">Nastavení</Link>
+ * <Link variant="danger" onClick={onDelete} icon={<TrashIcon />}>Smazat</Link>
+ * <Link icon={<ArrowIcon />} iconPosition="right" href="/dalsi">Další krok</Link>
  * ```
  */
 export const Link: React.FC<LinkProps> = ({

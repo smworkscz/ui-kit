@@ -34,25 +34,25 @@ export type ToastPosition =
 
 type ToastLifecycle = 'entering' | 'visible' | 'leaving';
 
-/** Options passed to `toast()` when triggering a notification. */
+/** Nastavení předávaná do `toast()` při vyvolání notifikace. */
 export interface ToastOptions {
   /**
-   * Severity level — controls border colour and default icon.
+   * Úroveň závažnosti — ovládá barvu okraje a výchozí ikonu.
    * @default 'info'
    */
   variant?: ToastVariant;
-  /** Bold heading line. */
+  /** Tučný nadpis notifikace. */
   title: string;
-  /** Optional description rendered below the title. */
+  /** Volitelný popis vykreslený pod nadpisem. */
   content?: string;
   /**
-   * Custom icon that replaces the built-in variant icon.
-   * Any React node — SVG, image, component…
+   * Vlastní ikona nahrazující vestavěnou variantní ikonu.
+   * Libovolný React uzel — SVG, obrázek, komponenta…
    */
   icon?: React.ReactNode;
   /**
-   * Auto-dismiss timeout in ms.
-   * Set to `0` for a persistent toast that must be closed manually.
+   * Časový limit automatického zavření v ms.
+   * Nastavte na `0` pro trvalou notifikaci, kterou je nutné zavřít ručně.
    * @default 4000
    */
   duration?: number;
@@ -67,26 +67,26 @@ interface ToastItem extends Required<Pick<ToastOptions, 'variant' | 'title' | 'd
   height: number;
 }
 
-/** Value returned by `useToast()`. */
+/** Hodnota vrácená hookem `useToast()`. */
 export interface ToastContextValue {
   /**
-   * Trigger a new toast notification.
-   * Returns the generated `id` so you can dismiss it manually if needed.
+   * Vyvolá novou notifikaci.
+   * Vrací vygenerované `id` pro případné ruční zavření.
    *
    * @example
    * ```tsx
    * const { toast } = useToast();
-   * toast({ variant: 'success', title: 'Saved', content: 'Changes were saved.' });
+   * toast({ variant: 'success', title: 'Uloženo', content: 'Změny byly uloženy.' });
    * ```
    */
   toast: (options: ToastOptions) => string;
   /**
-   * Manually dismiss a toast by its `id`.
-   * The toast slides out before being removed from the DOM.
+   * Ručně zavře notifikaci podle jejího `id`.
+   * Toast se nejprve animovaně vysune a poté se odebere z DOM.
    *
    * @example
    * ```tsx
-   * const id = toast({ variant: 'info', title: 'Loading…', duration: 0 });
+   * const id = toast({ variant: 'info', title: 'Načítání…', duration: 0 });
    * await work();
    * dismiss(id);
    * ```
@@ -94,32 +94,32 @@ export interface ToastContextValue {
   dismiss: (id: string) => void;
 }
 
-/** Props for `<ToasterProvider>`. */
+/** Props pro `<ToasterProvider>`. */
 export interface ToasterProviderProps {
   children: React.ReactNode;
   /**
-   * Where toasts appear on the screen.
+   * Pozice notifikací na obrazovce.
    * @default 'bottom-right'
    */
   position?: ToastPosition;
   /**
-   * Width of each individual toast in px.
+   * Šířka jednotlivé notifikace v px.
    * @default 380
    */
   toastWidth?: number;
   /**
-   * Vertical gap between toasts in the **expanded** (hovered) view, in px.
+   * Vertikální mezera mezi notifikacemi v **rozbalené** (hovered) podobě, v px.
    * @default 8
    */
   gap?: number;
   /**
-   * Distance from the screen edge in px.
+   * Vzdálenost od okraje obrazovky v px.
    * @default 16
    */
   offset?: number;
   /**
-   * Maximum number of toasts kept in the DOM at once.
-   * Oldest ones are removed when the limit is exceeded.
+   * Maximální počet notifikací v DOM najednou.
+   * Nejstarší se odebírají při překročení limitu.
    * @default 5
    */
   maxToasts?: number;
@@ -137,8 +137,8 @@ const uid = () => `sm-toast-${++_counter}-${Date.now()}`;
 // ─── Provider ────────────────────────────────────────────────────────────────
 
 /**
- * Provides the toast context and renders the toast overlay.
- * Place this **once** near the root of your application.
+ * Poskytuje toast kontext a vykresluje overlay s notifikacemi.
+ * Umístěte **jednou** blízko kořene vaší aplikace.
  *
  * @example
  * ```tsx
@@ -444,18 +444,18 @@ const StackContainerWrapper: React.FC<StackContainerWrapperProps> = ({
 // ─── Hook ─────────────────────────────────────────────────────────────────────
 
 /**
- * Returns `{ toast, dismiss }` to trigger and dismiss notifications.
- * Must be used inside a `<ToasterProvider>` tree.
+ * Vrací `{ toast, dismiss }` pro vyvolání a zavření notifikací.
+ * Musí být volán uvnitř stromu `<ToasterProvider>`.
  *
- * @throws When called outside a `<ToasterProvider>`.
+ * @throws Při volání mimo `<ToasterProvider>`.
  *
  * @example
  * ```tsx
- * function SaveButton() {
+ * function UlozitTlacitko() {
  *   const { toast } = useToast();
  *   return (
- *     <Button onClick={() => toast({ variant: 'success', title: 'Saved!' })}>
- *       Save
+ *     <Button onClick={() => toast({ variant: 'success', title: 'Uloženo!' })}>
+ *       Uložit
  *     </Button>
  *   );
  * }
@@ -465,8 +465,8 @@ export const useToast = (): ToastContextValue => {
   const ctx = useContext(ToastContext);
   if (!ctx) {
     throw new Error(
-      '[sm-ui] useToast() must be called inside a <ToasterProvider>. ' +
-        'Wrap your app root with <ToasterProvider>.',
+      '[sm-ui] useToast() musí být volán uvnitř <ToasterProvider>. ' +
+        'Obalte kořen vaší aplikace pomocí <ToasterProvider>.',
     );
   }
   return ctx;

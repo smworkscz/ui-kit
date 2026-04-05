@@ -1,5 +1,63 @@
-import React, { useId, useState } from 'react';
+import React, { useEffect, useId, useRef, useState } from 'react';
 import { useTheme } from '../../hooks/useTheme';
+
+// ─── Spinner ─────────────────────────────────────────────────────────────────
+
+const Spinner: React.FC<{ size?: number; color?: string }> = ({ size = 16, color }) => {
+  const [angle, setAngle] = useState(0);
+  const rafRef = useRef<number | undefined>(undefined);
+  const startRef = useRef<number | undefined>(undefined);
+
+  useEffect(() => {
+    const animate = (ts: number) => {
+      if (startRef.current === undefined) startRef.current = ts;
+      setAngle(((ts - startRef.current) / 800 * 360) % 360);
+      rafRef.current = requestAnimationFrame(animate);
+    };
+    rafRef.current = requestAnimationFrame(animate);
+    return () => {
+      if (rafRef.current !== undefined) cancelAnimationFrame(rafRef.current);
+    };
+  }, []);
+
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 16 16"
+      fill="none"
+      style={{ transform: `rotate(${angle}deg)`, flexShrink: 0, display: 'block' }}
+    >
+      <circle cx="8" cy="8" r="6" stroke={color ?? 'currentColor'} strokeWidth="2" strokeOpacity="0.25" />
+      <path d="M8 2a6 6 0 0 1 6 6" stroke={color ?? 'currentColor'} strokeWidth="2" strokeLinecap="round" />
+    </svg>
+  );
+};
+
+// ─── Clear icon ──────────────────────────────────────────────────────────────
+
+const ClearIcon: React.FC<{ color: string; size?: number }> = ({ color, size = 14 }) => (
+  <svg width={size} height={size} viewBox="0 0 14 14" fill="none" aria-hidden="true" style={{ flexShrink: 0 }}>
+    <path d="M3.5 3.5l7 7M10.5 3.5l-7 7" stroke={color} strokeWidth="1.5" strokeLinecap="round" />
+  </svg>
+);
+
+// ─── Password icons ─────────────────────────────────────────────────────────
+
+const EyeIcon: React.FC<{ color: string; size?: number }> = ({ color, size = 16 }) => (
+  <svg width={size} height={size} viewBox="0 0 16 16" fill="none" aria-hidden="true" style={{ flexShrink: 0 }}>
+    <path d="M1.5 8s2.5-4.5 6.5-4.5S14.5 8 14.5 8s-2.5 4.5-6.5 4.5S1.5 8 1.5 8z" stroke={color} strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
+    <circle cx="8" cy="8" r="2" stroke={color} strokeWidth="1.3" />
+  </svg>
+);
+
+const EyeSlashIcon: React.FC<{ color: string; size?: number }> = ({ color, size = 16 }) => (
+  <svg width={size} height={size} viewBox="0 0 16 16" fill="none" aria-hidden="true" style={{ flexShrink: 0 }}>
+    <path d="M1.5 8s2.5-4.5 6.5-4.5S14.5 8 14.5 8s-2.5 4.5-6.5 4.5S1.5 8 1.5 8z" stroke={color} strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
+    <circle cx="8" cy="8" r="2" stroke={color} strokeWidth="1.3" />
+    <path d="M2.5 13.5l11-11" stroke={color} strokeWidth="1.3" strokeLinecap="round" />
+  </svg>
+);
 
 // ─── Design tokens ───────────────────────────────────────────────────────────
 
@@ -13,6 +71,7 @@ const tokens = {
     text: '#ffffff',
     placeholder: '#ACACAC',
     label: '#ffffff',
+    helperText: '#ACACAC',
   },
   light: {
     background: 'rgba(255,255,255,0.85)',
@@ -23,129 +82,268 @@ const tokens = {
     text: '#1a1a1a',
     placeholder: '#888888',
     label: '#1a1a1a',
+    helperText: '#888888',
   },
+} as const;
+
+// ─── Size config ─────────────────────────────────────────────────────────────
+
+const sizeConfig = {
+  sm: { padding: '6px 10px', fontSize: '14px', iconSize: 14, gap: '8px' },
+  md: { padding: '8px 12px', fontSize: '16px', iconSize: 16, gap: '10px' },
+  lg: { padding: '10px 14px', fontSize: '18px', iconSize: 18, gap: '12px' },
 } as const;
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
+export type InputSize = 'sm' | 'md' | 'lg';
+
 export interface InputProps
   extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'> {
   /**
-   * Icon rendered on the **left** side inside the input field.
-   * Typically a 16×16 SVG or icon component.
+   * Popisek zobrazený nad vstupním polem.
+   * Stylizován velkými písmeny dle SM-UI design systému.
+   * Pokud je `required`, zobrazí se hvězdička.
    */
-  iconLeft?: React.ReactNode;
+  label?: string;
   /**
-   * Icon rendered on the **right** side inside the input field.
-   * Commonly used for clear/search triggers.
+   * Ikona vykreslená uvnitř vstupního pole.
+   * Typicky SVG nebo komponenta ikony.
    */
-  iconRight?: React.ReactNode;
+  icon?: React.ReactNode;
   /**
-   * When `true` the field is styled as invalid (red border).
-   * Pass a string to also render an error message below the field.
+   * Na které straně se ikona zobrazí.
+   * @default 'left'
+   */
+  iconPosition?: 'left' | 'right';
+  /**
+   * Při `true` se pole zobrazí jako nevalidní (červený okraj).
+   * Při zadání řetězce se pod polem zobrazí chybová zpráva.
    */
   error?: boolean | string;
   /**
-   * Extra inline styles for the **wrapper** `<div>` (not the native input).
-   * Use `inputStyle` to style the native `<input>` element itself.
+   * Nápovědný text zobrazený pod vstupním polem.
+   * Nezobrazí se pokud je aktivní chybová zpráva.
+   */
+  helperText?: string;
+  /**
+   * Při `true` se zobrazí spinner a pole přejde do režimu pouze pro čtení.
+   * Vhodné pro asynchronní validaci nebo načítání dat.
+   */
+  loading?: boolean;
+  /**
+   * Zobrazí tlačítko pro vymazání obsahu pole (✕).
+   * Funguje pouze pokud pole obsahuje hodnotu.
+   * @default false
+   */
+  clearable?: boolean;
+  /**
+   * Zobrazí tlačítko pro přepínání viditelnosti hesla (oko).
+   * Při `type="password"` se aktivuje automaticky.
+   * Nastavte na `false` pro vypnutí.
+   */
+  passwordToggle?: boolean;
+  /**
+   * Velikostní preset.
+   * - `'sm'` — kompaktní (padding 6px, font 14px)
+   * - `'md'` — výchozí (padding 8px, font 16px)
+   * - `'lg'` — velký (padding 10px, font 18px)
+   * @default 'md'
+   */
+  size?: InputSize;
+  /**
+   * Roztáhne pole na celou šířku kontejneru.
+   * @default false
+   */
+  fullWidth?: boolean;
+  /**
+   * Další inline styly pro **obalový** `<div>` (ne pro nativní input).
+   * Pro stylování nativního `<input>` použijte `inputStyle`.
    */
   style?: React.CSSProperties;
   /**
-   * Extra CSS class applied to the **wrapper** `<div>`.
+   * Dodatečná CSS třída pro **obalový** `<div>`.
    */
   className?: string;
   /**
-   * Extra inline styles applied directly to the native `<input>` element.
+   * Další inline styly aplikované přímo na nativní `<input>` element.
    */
   inputStyle?: React.CSSProperties;
 }
 
 export interface InputGroupProps {
   /**
-   * Label text rendered above the input.
-   * Rendered uppercase per the SM-UI design system.
+   * Text popisku vykreslený nad vstupním polem.
+   * Zobrazuje se velkými písmeny dle SM-UI design systému.
    */
   label: string;
   /**
-   * `htmlFor` value that links the `<label>` to a child `<input>`.
-   * Auto-generated when not provided.
+   * Hodnota `htmlFor` propojující `<label>` s potomkem `<input>`.
+   * Automaticky generováno, pokud není zadáno.
    */
   htmlFor?: string;
   /**
-   * The input element(s) to render inside the group.
-   * When omitted a default `<Input />` is rendered.
+   * Vstupní element(y) vykreslené uvnitř skupiny.
+   * Při vynechání se vykreslí výchozí `<Input />`.
    */
   children?: React.ReactNode;
-  /** Extra inline styles for the wrapper `<div>`. */
+  /** Další inline styly pro obalový `<div>`. */
   style?: React.CSSProperties;
-  /** Extra CSS class applied to the wrapper `<div>`. */
+  /** Dodatečná CSS třída pro obalový `<div>`. */
   className?: string;
 }
 
 // ─── Input ───────────────────────────────────────────────────────────────────
 
 /**
- * Controlled / uncontrolled text input following the SM-UI design system.
+ * Řízené / neřízené textové pole dle SM-UI design systému.
  *
- * Supports optional icons on either side, error state with optional message,
- * and both `dark` / `light` themes (auto-detected via `useTheme`).
+ * Podporuje popisek, ikonu, chybový stav, nápovědný text,
+ * vymazání hodnoty, velikostní presety a tmavý / světlý režim.
  *
- * All native `<input>` attributes (`value`, `onChange`, `onBlur`, `placeholder`,
- * `type`, `autoComplete`, `maxLength`, `readOnly`, `disabled`, …) are forwarded.
+ * Všechny nativní atributy `<input>` (`value`, `onChange`, `onBlur`, `placeholder`,
+ * `type`, `autoComplete`, `maxLength`, `readOnly`, `disabled`, …) jsou přesměrovány.
  *
  * @example
  * ```tsx
- * // Bare input
- * <Input placeholder="Search…" />
- *
- * // With icons
- * <Input iconLeft={<SearchIcon />} iconRight={<ClearIcon />} />
- *
- * // Error state
- * <Input error="This field is required" value="" />
- *
- * // Inside a labelled group
- * <InputGroup label="E-mail">
- *   <Input type="email" placeholder="name@example.com" />
- * </InputGroup>
+ * <Input label="E-mail" placeholder="jmeno@priklad.cz" required />
+ * <Input icon={<SearchIcon />} placeholder="Hledat…" clearable />
+ * <Input error="Toto pole je povinné" value="" />
+ * <Input label="Heslo" type="password" helperText="Min. 8 znaků" />
  * ```
  */
 export const Input = React.forwardRef<HTMLInputElement, InputProps>(
   (
     {
-      iconLeft,
-      iconRight,
+      label,
+      icon,
+      iconPosition = 'left',
       error,
+      helperText,
+      loading = false,
+      clearable = false,
+      passwordToggle,
+      size = 'md',
+      fullWidth = false,
       style,
       className,
       inputStyle,
       disabled,
+      required,
+      value,
+      onChange,
       onFocus,
       onBlur,
+      type,
       ...rest
     },
     ref
   ) => {
     const theme = useTheme();
     const t = tokens[theme];
+    const autoId = useId();
+    const inputId = rest.id ?? autoId;
     const [focused, setFocused] = useState(false);
+    const [passwordVisible, setPasswordVisible] = useState(false);
 
+    const isPassword = type === 'password';
+    const showPasswordToggle = passwordToggle ?? isPassword;
+    const resolvedType = isPassword && passwordVisible ? 'text' : type;
+
+    const isDisabled = disabled || loading;
     const hasError = Boolean(error);
     const errorMessage = typeof error === 'string' ? error : undefined;
+    const hasValue = value !== undefined && value !== null && value !== '';
+    const showClear = clearable && hasValue && !isDisabled && !showPasswordToggle;
+    const sc = sizeConfig[size];
+
+    const handleClear = () => {
+      if (!onChange) return;
+      const syntheticEvent = {
+        target: { value: '' },
+        currentTarget: { value: '' },
+      } as React.ChangeEvent<HTMLInputElement>;
+      onChange(syntheticEvent);
+    };
+
+    // ── Icon slot ────────────────────────────────────────────────────────
+
+    const iconEl = icon ? (
+      <span style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        flexShrink: 0,
+        color: t.placeholder,
+      }}>
+        {icon}
+      </span>
+    ) : null;
+
+    // ── Right-side slot (loading > password toggle > clear > icon-right)
+
+    const passwordToggleEl = showPasswordToggle && !isDisabled ? (
+      <span
+        role="button"
+        tabIndex={-1}
+        aria-label={passwordVisible ? 'Skrýt heslo' : 'Zobrazit heslo'}
+        onClick={() => setPasswordVisible((v) => !v)}
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          flexShrink: 0,
+          cursor: 'pointer',
+          color: t.placeholder,
+          padding: '2px',
+        }}
+      >
+        {passwordVisible
+          ? <EyeSlashIcon color={t.placeholder} size={sc.iconSize} />
+          : <EyeIcon color={t.placeholder} size={sc.iconSize} />
+        }
+      </span>
+    ) : null;
+
+    const rightSlot = loading ? (
+      <span style={{ display: 'flex', alignItems: 'center', flexShrink: 0, color: t.placeholder }}>
+        <Spinner size={sc.iconSize} color={t.placeholder} />
+      </span>
+    ) : passwordToggleEl ? passwordToggleEl
+    : showClear ? (
+      <span
+        role="button"
+        tabIndex={-1}
+        aria-label="Vymazat pole"
+        onClick={handleClear}
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          flexShrink: 0,
+          cursor: 'pointer',
+          color: t.placeholder,
+          padding: '2px',
+        }}
+      >
+        <ClearIcon color={t.placeholder} size={sc.iconSize - 2} />
+      </span>
+    ) : (iconPosition === 'right' && iconEl) ? iconEl : null;
+
+    const leftSlot = iconPosition === 'left' ? iconEl : null;
+
+    // ── Styles ───────────────────────────────────────────────────────────
 
     const wrapperStyle: React.CSSProperties = {
       display: 'flex',
       alignItems: 'center',
-      gap: '10px',
-      backgroundColor: disabled ? t.backgroundDisabled : t.background,
+      gap: sc.gap,
+      backgroundColor: isDisabled ? t.backgroundDisabled : t.background,
       border: `1px solid ${hasError ? t.borderError : focused ? t.borderFocus : t.border}`,
       borderRadius: '8px',
-      padding: '8px 12px',
+      padding: sc.padding,
       boxSizing: 'border-box',
       transition: 'border-color 0.15s ease',
-      opacity: disabled ? 0.6 : 1,
-      cursor: disabled ? 'not-allowed' : 'text',
-      ...style,
+      opacity: isDisabled ? 0.6 : 1,
+      cursor: isDisabled ? 'not-allowed' : 'text',
     };
 
     const nativeStyle: React.CSSProperties = {
@@ -157,43 +355,75 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
       fontFamily: "'Zalando Sans', sans-serif",
       fontStyle: 'normal',
       fontWeight: 400,
-      fontSize: '16px',
+      fontSize: sc.fontSize,
       lineHeight: 'normal',
       color: t.text,
-      cursor: disabled ? 'not-allowed' : 'text',
+      cursor: isDisabled ? 'not-allowed' : 'text',
       ...inputStyle,
     };
 
-    const iconStyle: React.CSSProperties = {
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      flexShrink: 0,
-      color: t.placeholder,
+    const labelStyle: React.CSSProperties = {
+      fontFamily: "'Zalando Sans Expanded', sans-serif",
+      fontStyle: 'normal',
+      fontWeight: 400,
+      fontSize: '10px',
+      lineHeight: 'normal',
+      textTransform: 'uppercase',
+      color: t.label,
+      userSelect: 'none',
+    };
+
+    const bottomTextStyle: React.CSSProperties = {
+      fontFamily: "'Zalando Sans', sans-serif",
+      fontSize: '12px',
+      lineHeight: 'normal',
     };
 
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-        <div style={wrapperStyle} className={className}>
-          {iconLeft && <span style={iconStyle}>{iconLeft}</span>}
+      <div
+        style={{
+          display: fullWidth ? 'flex' : 'inline-flex',
+          flexDirection: 'column',
+          gap: '6px',
+          width: fullWidth ? '100%' : undefined,
+          ...style,
+        }}
+        className={className}
+      >
+        {label && (
+          <label htmlFor={inputId} style={labelStyle}>
+            {label}
+            {required && <span style={{ color: t.borderError, marginLeft: '3px' }}>*</span>}
+          </label>
+        )}
+
+        <div style={wrapperStyle}>
+          {leftSlot}
           <input
             ref={ref}
+            id={inputId}
+            type={resolvedType}
             disabled={disabled}
+            required={required}
+            readOnly={loading || rest.readOnly}
+            value={value}
+            onChange={onChange}
             style={nativeStyle}
             onFocus={(e) => { setFocused(true); onFocus?.(e); }}
             onBlur={(e) => { setFocused(false); onBlur?.(e); }}
             {...rest}
           />
-          {iconRight && <span style={iconStyle}>{iconRight}</span>}
+          {rightSlot}
         </div>
+
         {errorMessage && (
-          <span style={{
-            fontFamily: "'Zalando Sans', sans-serif",
-            fontSize: '12px',
-            color: t.borderError,
-            lineHeight: 'normal',
-          }}>
+          <span style={{ ...bottomTextStyle, color: t.borderError }}>
             {errorMessage}
+          </span>
+        )}
+        {!errorMessage && helperText && (
+          <span style={{ ...bottomTextStyle, color: t.helperText }}>
+            {helperText}
           </span>
         )}
       </div>
@@ -206,18 +436,17 @@ Input.displayName = 'Input';
 // ─── InputGroup ──────────────────────────────────────────────────────────────
 
 /**
- * Wraps an `<Input>` (or any other form control) with a labelled group.
- * The label is styled uppercase per the SM-UI design system.
+ * Obalí `<Input>` (nebo jiný formulářový prvek) skupinou s popiskem.
+ * Popisek je stylizován velkými písmeny dle SM-UI design systému.
+ *
+ * Pro jednoduché případy lze použít přímo `<Input label="..." />`.
+ * `InputGroup` je vhodný pro kompozici více prvků pod jedním popiskem.
  *
  * @example
  * ```tsx
- * <InputGroup label="Username">
- *   <Input placeholder="Enter username" />
- * </InputGroup>
- *
- * // With an icon input inside
- * <InputGroup label="Search">
- *   <Input iconLeft={<SearchIcon />} placeholder="Type to search…" />
+ * <InputGroup label="Adresa">
+ *   <Input placeholder="Ulice" />
+ *   <Input placeholder="Město" />
  * </InputGroup>
  * ```
  */

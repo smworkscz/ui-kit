@@ -3,14 +3,10 @@ import { fn } from 'storybook/test';
 import { Tag, Badge, TagItem } from '../components/Tag';
 
 const meta = {
-  title: 'Components/Tag',
+  title: 'Zobrazení dat/Tag',
   component: Tag,
   parameters: {
     layout: 'centered',
-    backgrounds: {
-      default: 'light',
-      values: [{ name: 'light', value: '#ffffff' }, { name: 'dark', value: '#1a1a1a' }],
-    },
   },
   tags: ['autodocs'],
 } satisfies Meta<typeof Tag>;
@@ -18,20 +14,16 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const SimpleTag: Story = { args: { label: 'React' } };
+export const Default: Story = { args: { label: 'React', onRemove: fn() } };
 
-export const RemovableTag: Story = {
-  args: { label: 'TypeScript', onRemove: fn() }
-};
-
-export const BadgesLayer = () => (
+export const BadgesDemo = () => (
   <div style={{ display: 'flex', gap: 10 }}>
     <Badge label="Novinka" />
     <Badge label="10+" />
   </div>
 );
 
-export const TagListItem = () => (
+export const TagItemDemo = () => (
   <div style={{ width: 350 }}>
     <TagItem label="Homepage" onFilter={fn()} onEdit={fn()} onDelete={fn()} />
     <div style={{ height: 8 }} />

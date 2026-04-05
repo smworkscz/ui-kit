@@ -24,40 +24,40 @@ export type ToastVariant = 'info' | 'success' | 'error';
 
 export interface ToastProps {
   /**
-   * Visual variant that drives the border colour and background tint.
-   * - `'info'`    — white/neutral border, dark background
-   * - `'success'` — green border (#00A205), dark green-tinted background
-   * - `'error'`   — red border (#DE0000), dark red-tinted background
+   * Vizuální varianta určující barvu okraje a tón pozadí.
+   * - `'info'`    — bílý / neutrální okraj, tmavé pozadí
+   * - `'success'` — zelený okraj (#00A205), tmavé nazelenalé pozadí
+   * - `'error'`   — červený okraj (#DE0000), tmavé načervenalé pozadí
    * @default 'info'
    */
   variant?: ToastVariant;
   /**
-   * Bold title line of the toast notification.
+   * Tučný nadpis notifikace.
    */
   title: string;
   /**
-   * Optional secondary description rendered below the title in a smaller font.
+   * Volitelný sekundární popis vykreslený pod nadpisem menším písmem.
    */
   content?: string;
   /**
-   * Custom icon rendered on the left side.
-   * When omitted a built-in SVG icon matching the `variant` is used.
+   * Vlastní ikona vykreslená na levé straně.
+   * Pokud chybí, použije se vestavěná SVG ikona odpovídající variantě.
    */
   icon?: React.ReactNode;
   /**
-   * Callback fired when the close (✕) button is clicked.
-   * When not provided the close button is hidden.
+   * Callback volaný při kliknutí na tlačítko zavření (✕).
+   * Pokud není zadán, tlačítko zavření se nezobrazí.
    */
   onClose?: () => void;
   /**
-   * ARIA role for accessibility.
-   * Use `'alert'` for urgent messages, `'status'` for non-urgent ones.
+   * ARIA role pro přístupnost.
+   * Použijte `'alert'` pro naléhavé zprávy, `'status'` pro běžné.
    * @default 'alert'
    */
   role?: 'alert' | 'status' | 'log';
-  /** Extra inline styles for the root element. */
+  /** Další inline styly pro kořenový element. */
   style?: React.CSSProperties;
-  /** Extra CSS class for the root element. */
+  /** Dodatečná CSS třída pro kořenový element. */
   className?: string;
 }
 
@@ -99,20 +99,17 @@ const CloseIcon: React.FC = () => (
 // ─── Component ───────────────────────────────────────────────────────────────
 
 /**
- * Toast notification with three severity levels.
- * Rendered with a backdrop-blur glass effect, always in dark mode.
+ * Notifikace se třemi úrovněmi závažnosti.
+ * Vykresluje se s efektem rozmazaného skla, vždy v tmavém režimu.
  *
- * The close button appears only when `onClose` is provided.
- * A custom icon can replace the default variant icon via the `icon` prop.
+ * Tlačítko zavření se zobrazí pouze pokud je zadáno `onClose`.
+ * Vlastní ikona může nahradit výchozí variantní ikonu přes prop `icon`.
  *
  * @example
  * ```tsx
- * <Toast variant="success" title="Saved" content="Your changes have been saved." onClose={dismiss} />
- * <Toast variant="error"   title="Error" content="Something went wrong." onClose={dismiss} />
- * <Toast variant="info"    title="Heads up" onClose={dismiss} />
- *
- * // Custom icon
- * <Toast variant="info" title="Update available" icon={<UpdateIcon />} />
+ * <Toast variant="success" title="Uloženo" content="Změny byly uloženy." onClose={dismiss} />
+ * <Toast variant="error"   title="Chyba" content="Něco se pokazilo." onClose={dismiss} />
+ * <Toast variant="info"    title="Upozornění" onClose={dismiss} />
  * ```
  */
 export const Toast: React.FC<ToastProps> = ({
@@ -182,7 +179,7 @@ export const Toast: React.FC<ToastProps> = ({
         <button
           type="button"
           onClick={onClose}
-          aria-label="Close notification"
+          aria-label="Zavřít notifikaci"
           style={{
             display: 'flex',
             alignItems: 'center',

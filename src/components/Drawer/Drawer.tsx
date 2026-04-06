@@ -1,13 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
+import { XIcon } from '@phosphor-icons/react';
 import { useTheme } from '../../hooks/useTheme';
 
 // ─── Design tokens ──────────────────────────────────────────────────────────
 
 const tokens = {
   dark: {
-    overlay: 'rgba(0,0,0,0.6)',
-    panelBg: 'rgba(24,24,24,0.97)',
+    overlay: 'rgba(0,0,0,0.4)',
+    panelBg: 'rgba(24,24,24,0.65)',
     panelBorder: 'rgba(255,255,255,0.1)',
     titleText: '#ffffff',
     bodyText: '#eaeaea',
@@ -17,8 +18,8 @@ const tokens = {
     shadow: '0 0 60px rgba(0,0,0,0.5)',
   },
   light: {
-    overlay: 'rgba(0,0,0,0.35)',
-    panelBg: 'rgba(255,255,255,0.98)',
+    overlay: 'rgba(0,0,0,0.18)',
+    panelBg: 'rgba(255,255,255,0.65)',
     panelBorder: 'rgba(0,0,0,0.08)',
     titleText: '#1a1a1a',
     bodyText: '#333333',
@@ -32,14 +33,6 @@ const tokens = {
 // ─── Animation duration ─────────────────────────────────────────────────────
 
 const ANIM_DURATION = 220; // ms — lehce delší pro slide
-
-// ─── Close icon ─────────────────────────────────────────────────────────────
-
-const CloseIcon: React.FC<{ color: string }> = ({ color }) => (
-  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-    <path d="M4 4l8 8M12 4l-8 8" stroke={color} strokeWidth="1.5" strokeLinecap="round" />
-  </svg>
-);
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -174,6 +167,8 @@ export const Drawer: React.FC<DrawerProps> = ({
           position: 'absolute',
           inset: 0,
           backgroundColor: t.overlay,
+          backdropFilter: 'blur(8px)',
+          WebkitBackdropFilter: 'blur(8px)',
           opacity: getOverlayOpacity(),
           transition: `opacity ${ANIM_DURATION}ms ease`,
           ...(animState === 'closing' ? { pointerEvents: 'none' as const } : {}),
@@ -202,8 +197,8 @@ export const Drawer: React.FC<DrawerProps> = ({
           borderLeft: position === 'right' ? `1px solid ${t.panelBorder}` : 'none',
           borderRight: position === 'left' ? `1px solid ${t.panelBorder}` : 'none',
           boxShadow: t.shadow,
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
+          backdropFilter: 'blur(32px) saturate(1.4)',
+          WebkitBackdropFilter: 'blur(32px) saturate(1.4)',
           transform: `translateX(${getTranslateX(animState)})`,
           transition: `transform ${ANIM_DURATION}ms cubic-bezier(0.16, 1, 0.3, 1)`,
           boxSizing: 'border-box',
@@ -264,7 +259,7 @@ export const Drawer: React.FC<DrawerProps> = ({
                   e.currentTarget.style.backgroundColor = 'transparent';
                 }}
               >
-                <CloseIcon color={t.closeColor} />
+                <XIcon size={16} color={t.closeColor} />
               </button>
             )}
           </div>

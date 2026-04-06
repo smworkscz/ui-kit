@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback, useId } from 'react';
 import { createPortal } from 'react-dom';
+import { CaretDown as CaretDownIcon, X as XIcon, Check as CheckIcon } from '@phosphor-icons/react';
 import { useTheme } from '../../hooks/useTheme';
 
 // ─── Spinner ─────────────────────────────────────────────────────────────────
@@ -81,37 +82,6 @@ const tokens = {
 // ─── Animation duration ──────────────────────────────────────────────────────
 
 const ANIM_DURATION = 180; // ms
-
-// ─── Icons ───────────────────────────────────────────────────────────────────
-
-const ChevronIcon: React.FC<{ open: boolean; color: string }> = ({ open, color }) => (
-  <svg
-    width="16"
-    height="16"
-    viewBox="0 0 16 16"
-    fill="none"
-    aria-hidden="true"
-    style={{
-      transition: 'transform 0.2s ease',
-      transform: open ? 'rotate(180deg)' : 'rotate(0deg)',
-      flexShrink: 0,
-    }}
-  >
-    <path d="M4 6l4 4 4-4" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>
-);
-
-const ClearIcon: React.FC<{ color: string }> = ({ color }) => (
-  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true" style={{ flexShrink: 0 }}>
-    <path d="M3.5 3.5l7 7M10.5 3.5l-7 7" stroke={color} strokeWidth="1.5" strokeLinecap="round" />
-  </svg>
-);
-
-const CheckIcon: React.FC<{ color: string }> = ({ color }) => (
-  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true" style={{ flexShrink: 0 }}>
-    <path d="M2.5 7.5L5.5 10.5L11.5 3.5" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>
-);
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -613,7 +583,7 @@ export const Select: React.FC<SelectProps> = ({
                   <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {opt.label ?? opt.value}
                   </span>
-                  {selected && <CheckIcon color={t.optionSelectedText} />}
+                  {selected && <CheckIcon size={16} color={t.optionSelectedText} />}
                 </div>
               );
             })}
@@ -684,7 +654,7 @@ export const Select: React.FC<SelectProps> = ({
                         toggleOption(v);
                       }}
                     >
-                      <ClearIcon color={t.tagText} />
+                      <XIcon size={14} color={t.tagText} />
                     </span>
                   )}
                 </span>
@@ -714,12 +684,12 @@ export const Select: React.FC<SelectProps> = ({
               style={{ cursor: 'pointer', display: 'flex', padding: '2px' }}
               onClick={handleClear}
             >
-              <ClearIcon color={t.placeholder} />
+              <XIcon size={14} color={t.placeholder} />
             </span>
           )}
           {loading
             ? <Spinner size={16} color={t.placeholder} />
-            : <ChevronIcon open={open} color={t.placeholder} />
+            : <CaretDownIcon size={16} color={t.placeholder} style={{ transition: 'transform 0.2s ease', transform: open ? 'rotate(180deg)' : 'rotate(0deg)', flexShrink: 0 }} />
           }
         </div>
       </div>

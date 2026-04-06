@@ -1,20 +1,21 @@
 import React from 'react';
+import { Info as InfoIcon, CheckCircle as CheckCircleIcon, XCircle as XCircleIcon, X as XIcon } from '@phosphor-icons/react';
 
 // ─── Design tokens ───────────────────────────────────────────────────────────
 // Toast is always dark-themed by design (overlays / notification tray).
 
 const variantTokens = {
   info: {
-    border: 'rgba(255,255,255,0.7)',
-    background: 'rgba(3,3,3,0.75)',
+    border: 'rgba(255,255,255,0.5)',
+    background: 'rgba(3,3,3,0.55)',
   },
   success: {
-    border: '#00A205',
-    background: 'rgba(3,21,4,0.75)',
+    border: 'rgba(0,162,5,0.7)',
+    background: 'rgba(3,21,4,0.55)',
   },
   error: {
-    border: '#DE0000',
-    background: 'rgba(21,3,3,0.75)',
+    border: 'rgba(222,0,0,0.7)',
+    background: 'rgba(21,3,3,0.55)',
   },
 } as const;
 
@@ -61,40 +62,11 @@ export interface ToastProps {
   className?: string;
 }
 
-// ─── Built-in icons ───────────────────────────────────────────────────────────
-
-const InfoIcon: React.FC = () => (
-  <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true">
-    <circle cx="14" cy="14" r="11.5" stroke="currentColor" strokeWidth="1.5"/>
-    <path d="M14 12.5v7M14 9.5v1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-  </svg>
-);
-
-const SuccessIcon: React.FC = () => (
-  <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true">
-    <circle cx="14" cy="14" r="11.5" stroke="#00A205" strokeWidth="1.5"/>
-    <path d="M9 14.5l3.5 3.5 6.5-7" stroke="#00A205" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-  </svg>
-);
-
-const ErrorIcon: React.FC = () => (
-  <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true">
-    <circle cx="14" cy="14" r="11.5" stroke="#DE0000" strokeWidth="1.5"/>
-    <path d="M10 10l8 8M18 10l-8 8" stroke="#DE0000" strokeWidth="1.5" strokeLinecap="round"/>
-  </svg>
-);
-
 const defaultIcons: Record<ToastVariant, React.ReactNode> = {
-  info: <InfoIcon />,
-  success: <SuccessIcon />,
-  error: <ErrorIcon />,
+  info: <InfoIcon size={28} color="currentColor" />,
+  success: <CheckCircleIcon size={28} color="#00A205" />,
+  error: <XCircleIcon size={28} color="#DE0000" />,
 };
-
-const CloseIcon: React.FC = () => (
-  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
-    <path d="M1 1l10 10M11 1L1 11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-  </svg>
-);
 
 // ─── Component ───────────────────────────────────────────────────────────────
 
@@ -138,8 +110,7 @@ export const Toast: React.FC<ToastProps> = ({
         backgroundColor: background,
         border: `2px solid ${border}`,
         borderRadius: '8px',
-        backdropFilter: 'blur(10px)',
-        WebkitBackdropFilter: 'blur(10px)',
+        /* backdrop-filter moved to Toaster wrapper for stacking context compatibility */
         boxSizing: 'border-box',
         ...style,
       }}
@@ -193,7 +164,7 @@ export const Toast: React.FC<ToastProps> = ({
             flexShrink: 0,
           }}
         >
-          <CloseIcon />
+          <XIcon size={16} color="currentColor" />
         </button>
       )}
     </div>

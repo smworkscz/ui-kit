@@ -1,4 +1,5 @@
 import React from 'react';
+import { CaretUpDownIcon } from '@phosphor-icons/react';
 import { useTheme } from '../../hooks/useTheme';
 import { Skeleton } from '../Skeleton/Skeleton';
 
@@ -28,26 +29,6 @@ const tokens = {
     sortInactive: 'rgba(0,0,0,0.2)',
   },
 } as const;
-
-// ─── Sort icon ───────────────────────────────────────────────────────────────
-
-const SortIcon: React.FC<{ direction?: 'asc' | 'desc'; active: boolean; activeColor: string; inactiveColor: string }> = ({
-  direction,
-  active,
-  activeColor,
-  inactiveColor,
-}) => (
-  <svg width="12" height="14" viewBox="0 0 12 14" fill="none" style={{ flexShrink: 0, marginLeft: '4px' }}>
-    <path
-      d="M6 1.5L9.5 5.5H2.5L6 1.5Z"
-      fill={active && direction === 'asc' ? activeColor : inactiveColor}
-    />
-    <path
-      d="M6 12.5L2.5 8.5H9.5L6 12.5Z"
-      fill={active && direction === 'desc' ? activeColor : inactiveColor}
-    />
-  </svg>
-);
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -187,11 +168,10 @@ export const Table: React.FC<TableProps> = ({
               <span style={{ display: 'inline-flex', alignItems: 'center' }}>
                 {col.header}
                 {col.sortable && (
-                  <SortIcon
-                    direction={sortDirection}
-                    active={sortKey === col.key}
-                    activeColor={t.sortActive}
-                    inactiveColor={t.sortInactive}
+                  <CaretUpDownIcon
+                    size={14}
+                    color={sortKey === col.key ? t.sortActive : t.sortInactive}
+                    style={{ flexShrink: 0, marginLeft: '4px' }}
                   />
                 )}
               </span>

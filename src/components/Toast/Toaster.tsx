@@ -123,6 +123,13 @@ export interface ToasterProviderProps {
    * @default 5
    */
   maxToasts?: number;
+  /**
+   * Globální výchozí doba trvání notifikace v ms.
+   * Přepíše se hodnotou `duration` v `toast()`, pokud je zadána.
+   * Nastavte na `0` pro trvalé notifikace.
+   * @default 4000
+   */
+  duration?: number;
 }
 
 // ─── Context ─────────────────────────────────────────────────────────────────
@@ -155,6 +162,7 @@ export const ToasterProvider: React.FC<ToasterProviderProps> = ({
   gap = 8,
   offset = 16,
   maxToasts = 5,
+  duration: globalDuration = 4000,
 }) => {
   const [toasts, setToasts] = useState<ToastItem[]>([]);
 
@@ -170,13 +178,14 @@ export const ToasterProvider: React.FC<ToasterProviderProps> = ({
   const toast = useCallback(
     (options: ToastOptions): string => {
       const id = uid();
+      const effectiveDuration = options.duration ?? globalDuration;
       const item: ToastItem = {
         id,
         variant: options.variant ?? 'info',
         title: options.title,
         content: options.content,
         icon: options.icon,
-        duration: options.duration ?? 4000,
+        duration: effectiveDuration,
         lifecycle: 'entering',
         height: 0,
       };
@@ -198,13 +207,13 @@ export const ToasterProvider: React.FC<ToasterProviderProps> = ({
       });
 
       // Auto-dismiss
-      if ((options.duration ?? 4000) > 0) {
-        setTimeout(() => dismiss(id), options.duration ?? 4000);
+      if (effectiveDuration > 0) {
+        setTimeout(() => dismiss(id), effectiveDuration);
       }
 
       return id;
     },
-    [maxToasts, dismiss],
+    [maxToasts, dismiss, globalDuration],
   );
 
   const handleHeightMeasured = useCallback((id: string, height: number) => {
@@ -313,7 +322,9 @@ const CardWithOverride: React.FC<CardWithOverrideProps> = ({
           `opacity ${TRANSITION_DURATION}ms ease`,
         ].join(', '),
         pointerEvents: depthIndex === 0 ? 'auto' : expanded ? 'auto' : 'none',
-        willChange: 'transform, opacity',
+        backdropFilter: 'blur(32px) saturate(1.4)',
+        WebkitBackdropFilter: 'blur(32px) saturate(1.4)',
+        borderRadius: '8px',
       }}
     >
       <Toast

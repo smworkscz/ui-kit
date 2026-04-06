@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { CheckIcon } from '@phosphor-icons/react';
 import { useTheme } from '../../hooks/useTheme';
 
 // ─── Design tokens ──────────────────────────────────────────────────────────
@@ -39,14 +40,6 @@ const tokens = {
     hoverBg: 'rgba(232,97,45,0.08)',
   },
 } as const;
-
-// ─── Check icon ─────────────────────────────────────────────────────────────
-
-const CheckIcon: React.FC<{ color: string }> = ({ color }) => (
-  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-    <path d="M2.5 7.5L5.5 10.5L11.5 3.5" stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>
-);
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -213,7 +206,7 @@ export const Stepper: React.FC<StepperProps> = ({
                 }}
               >
                 {isCompleted ? (
-                  <CheckIcon color={t.completedText} />
+                  <CheckIcon size={14} color={t.completedText} weight="bold" />
                 ) : (
                   <span
                     style={{

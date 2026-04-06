@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Info as InfoIcon, CheckCircle as CheckCircleIcon, Warning as WarningIcon, XCircle as XCircleIcon, X as XIcon } from '@phosphor-icons/react';
 import { useTheme } from '../../hooks/useTheme';
 
 // ─── Design tokens ───────────────────────────────────────────────────────────
@@ -97,41 +98,6 @@ export interface AlertProps {
   style?: React.CSSProperties;
 }
 
-// ─── Built-in icons ──────────────────────────────────────────────────────────
-
-const InfoIcon: React.FC<{ color: string }> = ({ color }) => (
-  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-    <circle cx="10" cy="10" r="8.5" stroke={color} strokeWidth="1.5" />
-    <path d="M10 9v5M10 7v1" stroke={color} strokeWidth="1.5" strokeLinecap="round" />
-  </svg>
-);
-
-const SuccessIcon: React.FC<{ color: string }> = ({ color }) => (
-  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-    <circle cx="10" cy="10" r="8.5" stroke={color} strokeWidth="1.5" />
-    <path d="M6.5 10.5l2.5 2.5 4.5-5" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>
-);
-
-const WarningIcon: React.FC<{ color: string }> = ({ color }) => (
-  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-    <path d="M10 3L1.5 17h17L10 3z" stroke={color} strokeWidth="1.5" strokeLinejoin="round" />
-    <path d="M10 8v4M10 14v1" stroke={color} strokeWidth="1.5" strokeLinecap="round" />
-  </svg>
-);
-
-const ErrorIcon: React.FC<{ color: string }> = ({ color }) => (
-  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-    <circle cx="10" cy="10" r="8.5" stroke={color} strokeWidth="1.5" />
-    <path d="M7 7l6 6M13 7l-6 6" stroke={color} strokeWidth="1.5" strokeLinecap="round" />
-  </svg>
-);
-
-const CloseIcon: React.FC = () => (
-  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
-    <path d="M1 1l10 10M11 1L1 11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-  </svg>
-);
 
 // ─── Component ───────────────────────────────────────────────────────────────
 
@@ -173,10 +139,10 @@ export const Alert: React.FC<AlertProps> = ({
   const iconColor = isLight ? vt.iconColorLight : vt.iconColor;
 
   const defaultIcons: Record<AlertVariant, React.ReactNode> = {
-    info: <InfoIcon color={iconColor} />,
-    success: <SuccessIcon color={iconColor} />,
-    warning: <WarningIcon color={iconColor} />,
-    error: <ErrorIcon color={iconColor} />,
+    info: <InfoIcon size={24} color={iconColor} />,
+    success: <CheckCircleIcon size={24} color={iconColor} />,
+    warning: <WarningIcon size={24} color={iconColor} />,
+    error: <XCircleIcon size={24} color={iconColor} />,
   };
 
   const resolvedIcon = icon ?? defaultIcons[variant];
@@ -250,7 +216,7 @@ export const Alert: React.FC<AlertProps> = ({
             marginTop: '1px',
           }}
         >
-          <CloseIcon />
+          <XIcon size={16} color="currentColor" />
         </button>
       )}
     </div>

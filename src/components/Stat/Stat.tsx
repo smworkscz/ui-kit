@@ -1,4 +1,5 @@
 import React from 'react';
+import { TrendUpIcon, TrendDownIcon } from '@phosphor-icons/react';
 import { useTheme } from '../../hooks/useTheme';
 
 // ─── Design tokens ───────────────────────────────────────────────────────────
@@ -25,22 +26,6 @@ const tokens = {
     iconColor: 'rgba(0,0,0,0.08)',
   },
 } as const;
-
-// ─── Trend icons ─────────────────────────────────────────────────────────────
-
-const TrendUpIcon: React.FC<{ color: string }> = ({ color }) => (
-  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-    <path d="M2.5 10L7 5.5L9 7.5L12.5 4" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-    <path d="M9.5 4H12.5V7" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>
-);
-
-const TrendDownIcon: React.FC<{ color: string }> = ({ color }) => (
-  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-    <path d="M2.5 4L7 8.5L9 6.5L12.5 10" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-    <path d="M9.5 10H12.5V7" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>
-);
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -174,8 +159,8 @@ export const Stat: React.FC<StatProps> = ({
               color: trendColor,
             }}
           >
-            {trend === 'up' && <TrendUpIcon color={trendColor} />}
-            {trend === 'down' && <TrendDownIcon color={trendColor} />}
+            {trend === 'up' && <TrendUpIcon size={14} color={trendColor} />}
+            {trend === 'down' && <TrendDownIcon size={14} color={trendColor} />}
             <span>{formatChange(change)}</span>
             {changeLabel && (
               <span style={{ color: t.label, marginLeft: '2px' }}>

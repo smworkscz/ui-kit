@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { CaretDownIcon } from '@phosphor-icons/react';
 import { useTheme } from '../../hooks/useTheme';
 
 // ─── Design tokens ───────────────────────────────────────────────────────────
@@ -25,25 +26,6 @@ const tokens = {
     hoverBg: 'rgba(0,0,0,0.02)',
   },
 } as const;
-
-// ─── Chevron icon ────────────────────────────────────────────────────────────
-
-const ChevronIcon: React.FC<{ open: boolean; color: string }> = ({ open, color }) => (
-  <svg
-    width="16"
-    height="16"
-    viewBox="0 0 16 16"
-    fill="none"
-    aria-hidden="true"
-    style={{
-      transition: 'transform 0.25s ease',
-      transform: open ? 'rotate(180deg)' : 'rotate(0deg)',
-      flexShrink: 0,
-    }}
-  >
-    <path d="M4 6l4 4 4-4" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>
-);
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -161,7 +143,7 @@ export const AccordionItem: React.FC<
         }}
       >
         <span>{title}</span>
-        <ChevronIcon open={isOpen} color={disabled ? t.chevronDisabled : t.chevron} />
+        <CaretDownIcon size={16} color={disabled ? t.chevronDisabled : t.chevron} style={{ transition: 'transform 0.25s ease', transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)', flexShrink: 0 }} />
       </button>
 
       <div
@@ -174,7 +156,7 @@ export const AccordionItem: React.FC<
       >
         <div
           style={{
-            padding: '0 16px 16px',
+            padding: '10px 16px 16px',
             fontFamily: "'Zalando Sans', sans-serif",
             fontSize: '14px',
             lineHeight: '1.5',

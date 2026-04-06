@@ -1,4 +1,5 @@
 import React, { useEffect, useId, useRef, useState } from 'react';
+import { X as XIcon, Eye as EyeIcon, EyeSlash as EyeSlashIcon } from '@phosphor-icons/react';
 import { useTheme } from '../../hooks/useTheme';
 
 // ─── Spinner ─────────────────────────────────────────────────────────────────
@@ -33,31 +34,6 @@ const Spinner: React.FC<{ size?: number; color?: string }> = ({ size = 16, color
     </svg>
   );
 };
-
-// ─── Clear icon ──────────────────────────────────────────────────────────────
-
-const ClearIcon: React.FC<{ color: string; size?: number }> = ({ color, size = 14 }) => (
-  <svg width={size} height={size} viewBox="0 0 14 14" fill="none" aria-hidden="true" style={{ flexShrink: 0 }}>
-    <path d="M3.5 3.5l7 7M10.5 3.5l-7 7" stroke={color} strokeWidth="1.5" strokeLinecap="round" />
-  </svg>
-);
-
-// ─── Password icons ─────────────────────────────────────────────────────────
-
-const EyeIcon: React.FC<{ color: string; size?: number }> = ({ color, size = 16 }) => (
-  <svg width={size} height={size} viewBox="0 0 16 16" fill="none" aria-hidden="true" style={{ flexShrink: 0 }}>
-    <path d="M1.5 8s2.5-4.5 6.5-4.5S14.5 8 14.5 8s-2.5 4.5-6.5 4.5S1.5 8 1.5 8z" stroke={color} strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
-    <circle cx="8" cy="8" r="2" stroke={color} strokeWidth="1.3" />
-  </svg>
-);
-
-const EyeSlashIcon: React.FC<{ color: string; size?: number }> = ({ color, size = 16 }) => (
-  <svg width={size} height={size} viewBox="0 0 16 16" fill="none" aria-hidden="true" style={{ flexShrink: 0 }}>
-    <path d="M1.5 8s2.5-4.5 6.5-4.5S14.5 8 14.5 8s-2.5 4.5-6.5 4.5S1.5 8 1.5 8z" stroke={color} strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
-    <circle cx="8" cy="8" r="2" stroke={color} strokeWidth="1.3" />
-    <path d="M2.5 13.5l11-11" stroke={color} strokeWidth="1.3" strokeLinecap="round" />
-  </svg>
-);
 
 // ─── Design tokens ───────────────────────────────────────────────────────────
 
@@ -324,7 +300,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
           padding: '2px',
         }}
       >
-        <ClearIcon color={t.placeholder} size={sc.iconSize - 2} />
+        <XIcon size={sc.iconSize - 2} color={t.placeholder} />
       </span>
     ) : (iconPosition === 'right' && iconEl) ? iconEl : null;
 

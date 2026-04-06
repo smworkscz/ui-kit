@@ -1,4 +1,5 @@
 import React from 'react';
+import { Funnel as FunnelIcon, PencilSimple as PencilSimpleIcon, Trash as TrashIcon } from '@phosphor-icons/react';
 import { useTheme } from '../../hooks/useTheme';
 
 // ─── Design tokens ───────────────────────────────────────────────────────────
@@ -280,23 +281,17 @@ export const TagItem: React.FC<TagItemProps> = ({
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginLeft: '12px', flexShrink: 0 }}>
           {onFilter && (
             <ActionBtn onClick={onFilter} title="Filtrovat" color={t.actionColor}>
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                <path d="M1.75 3.5h10.5M3.5 7h7M5.25 10.5h3.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
+              <FunnelIcon size={14} color="currentColor" />
             </ActionBtn>
           )}
           {onEdit && (
             <ActionBtn onClick={onEdit} title="Upravit" color={t.actionColor}>
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                <path d="M9.625 1.75l2.625 2.625M1.75 12.25l.875-3.5L9.625 1.75l2.625 2.625-7 6.875-3.5.875z" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
+              <PencilSimpleIcon size={14} color="currentColor" />
             </ActionBtn>
           )}
           {onDelete && (
             <ActionBtn onClick={onDelete} title="Smazat" color={t.actionColor}>
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                <path d="M1.75 3.5h10.5M5.25 3.5V2.333a.583.583 0 01.583-.583h2.334a.583.583 0 01.583.583V3.5M11.667 3.5l-.584 7.583a1.167 1.167 0 01-1.166 1.084H4.083a1.167 1.167 0 01-1.166-1.084L2.333 3.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
+              <TrashIcon size={14} color="currentColor" />
             </ActionBtn>
           )}
         </div>

@@ -20,7 +20,11 @@
       "Bash(cmd //c \"for /f \"\"tokens=5\"\" %a in \\(''netstat -ano ^| findstr :6006 ^| findstr LISTENING''\\) do taskkill /PID %a /F\")",
       "Bash(findstr LISTENING)",
       "Bash(cmd //c \"taskkill /PID 14784 /F\")",
-      "Bash(cmd //c \"taskkill /PID 14784 /T /F\")"
+      "Bash(cmd //c \"taskkill /PID 14784 /T /F\")",
+      "Bash(find . -type f \\\\\\(-name tsconfig.json -o -name vite.config.ts -o -name webpack.config.js -o -name .eslintrc* \\\\\\))",
+      "Bash(ls -d \"C:/Users/dancv/Documents/Projekty/SMWORKS/sm-ui/src/components\"/*/)",
+      "Bash(xargs -I {} basename {})",
+      "Bash(timeout 3 npx vite --config preview/vite.config.ts)"
     ]
   }
 }

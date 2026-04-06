@@ -1,13 +1,14 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { createPortal } from 'react-dom';
+import { XIcon } from '@phosphor-icons/react';
 import { useTheme } from '../../hooks/useTheme';
 
 // ─── Design tokens ──────────────────────────────────────────────────────────
 
 const tokens = {
   dark: {
-    overlay: 'rgba(0,0,0,0.6)',
-    cardBg: 'rgba(24,24,24,0.97)',
+    overlay: 'rgba(0,0,0,0.4)',
+    cardBg: 'rgba(24,24,24,0.65)',
     cardBorder: 'rgba(255,255,255,0.1)',
     titleText: '#ffffff',
     bodyText: '#eaeaea',
@@ -17,8 +18,8 @@ const tokens = {
     shadow: '0 24px 60px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.04) inset',
   },
   light: {
-    overlay: 'rgba(0,0,0,0.35)',
-    cardBg: 'rgba(255,255,255,0.98)',
+    overlay: 'rgba(0,0,0,0.18)',
+    cardBg: 'rgba(255,255,255,0.65)',
     cardBorder: 'rgba(0,0,0,0.08)',
     titleText: '#1a1a1a',
     bodyText: '#333333',
@@ -32,14 +33,6 @@ const tokens = {
 // ─── Animation duration ─────────────────────────────────────────────────────
 
 const ANIM_DURATION = 180; // ms
-
-// ─── Close icon ─────────────────────────────────────────────────────────────
-
-const CloseIcon: React.FC<{ color: string }> = ({ color }) => (
-  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-    <path d="M4 4l8 8M12 4l-8 8" stroke={color} strokeWidth="1.5" strokeLinecap="round" />
-  </svg>
-);
 
 // ─── Size config ────────────────────────────────────────────────────────────
 
@@ -243,6 +236,8 @@ export const Modal: React.FC<ModalProps> = ({
           position: 'absolute',
           inset: 0,
           backgroundColor: t.overlay,
+          backdropFilter: 'blur(8px)',
+          WebkitBackdropFilter: 'blur(8px)',
         }}
         onClick={closeOnOverlay ? onClose : undefined}
         aria-hidden="true"
@@ -267,8 +262,8 @@ export const Modal: React.FC<ModalProps> = ({
           border: isFullscreen ? 'none' : `1px solid ${t.cardBorder}`,
           borderRadius: isFullscreen ? 0 : '16px',
           boxShadow: t.shadow,
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
+          backdropFilter: 'blur(32px) saturate(1.4)',
+          WebkitBackdropFilter: 'blur(32px) saturate(1.4)',
           outline: 'none',
           overflow: 'hidden',
           boxSizing: 'border-box',
@@ -329,7 +324,7 @@ export const Modal: React.FC<ModalProps> = ({
                   e.currentTarget.style.backgroundColor = 'transparent';
                 }}
               >
-                <CloseIcon color={t.closeColor} />
+                <XIcon size={16} color={t.closeColor} />
               </button>
             )}
           </div>

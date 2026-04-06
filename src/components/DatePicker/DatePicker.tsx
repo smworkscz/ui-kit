@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback, useId } from 'react';
 import { createPortal } from 'react-dom';
+import { CalendarBlank as CalendarBlankIcon, X as XIcon, CaretLeft as CaretLeftIcon, CaretRight as CaretRightIcon } from '@phosphor-icons/react';
 import { useTheme } from '../../hooks/useTheme';
 
 // ─── Spinner ─────────────────────────────────────────────────────────────────
@@ -34,34 +35,6 @@ const Spinner: React.FC<{ size?: number; color?: string }> = ({ size = 16, color
     </svg>
   );
 };
-
-// ─── Icons ──────────────────────────────────────────────────────────────────
-
-const ClearIcon: React.FC<{ color: string; size?: number }> = ({ color, size = 14 }) => (
-  <svg width={size} height={size} viewBox="0 0 14 14" fill="none" aria-hidden="true" style={{ flexShrink: 0 }}>
-    <path d="M3.5 3.5l7 7M10.5 3.5l-7 7" stroke={color} strokeWidth="1.5" strokeLinecap="round" />
-  </svg>
-);
-
-const CalendarIcon: React.FC<{ color: string; size?: number }> = ({ color, size = 16 }) => (
-  <svg width={size} height={size} viewBox="0 0 16 16" fill="none" aria-hidden="true" style={{ flexShrink: 0 }}>
-    <rect x="2" y="3" width="12" height="11" rx="2" stroke={color} strokeWidth="1.3" />
-    <path d="M2 7h12" stroke={color} strokeWidth="1.3" />
-    <path d="M5 1.5v3M11 1.5v3" stroke={color} strokeWidth="1.3" strokeLinecap="round" />
-  </svg>
-);
-
-const ChevronLeftIcon: React.FC<{ color: string }> = ({ color }) => (
-  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true" style={{ flexShrink: 0 }}>
-    <path d="M10 4l-4 4 4 4" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>
-);
-
-const ChevronRightIcon: React.FC<{ color: string }> = ({ color }) => (
-  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true" style={{ flexShrink: 0 }}>
-    <path d="M6 4l4 4-4 4" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>
-);
 
 // ─── Design tokens ──────────────────────────────────────────────────────────
 
@@ -681,7 +654,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
               borderRadius: '4px', display: 'flex', alignItems: 'center',
             }}
           >
-            <ChevronLeftIcon color={t.text} />
+            <CaretLeftIcon size={16} color={t.text} />
           </button>
           <span style={{ fontFamily: "'Zalando Sans', sans-serif", fontSize: '13px', color: t.text }}>
             {startYear} – {startYear + 11}
@@ -694,7 +667,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
               borderRadius: '4px', display: 'flex', alignItems: 'center',
             }}
           >
-            <ChevronRightIcon color={t.text} />
+            <CaretRightIcon size={16} color={t.text} />
           </button>
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px', padding: '8px 12px' }}>
@@ -794,7 +767,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
                     borderRadius: '4px', display: 'flex', alignItems: 'center',
                   }}
                 >
-                  <ChevronLeftIcon color={t.text} />
+                  <CaretLeftIcon size={16} color={t.text} />
                 </button>
 
                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
@@ -830,7 +803,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
                     borderRadius: '4px', display: 'flex', alignItems: 'center',
                   }}
                 >
-                  <ChevronRightIcon color={t.text} />
+                  <CaretRightIcon size={16} color={t.text} />
                 </button>
               </div>
 
@@ -1084,12 +1057,12 @@ export const DatePicker: React.FC<DatePickerProps> = ({
               style={{ cursor: 'pointer', display: 'flex', padding: '2px' }}
               onClick={handleClear}
             >
-              <ClearIcon color={t.placeholder} size={sc.iconSize - 2} />
+              <XIcon size={sc.iconSize - 2} color={t.placeholder} />
             </span>
           )}
           {loading
             ? <Spinner size={sc.iconSize} color={t.placeholder} />
-            : <CalendarIcon color={t.placeholder} size={sc.iconSize} />
+            : <CalendarBlankIcon size={sc.iconSize} color={t.placeholder} />
           }
         </div>
       </div>

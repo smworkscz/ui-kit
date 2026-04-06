@@ -1,4 +1,5 @@
 import React, { useCallback, useId, useRef, useState } from 'react';
+import { FileText as FileTextIcon, UploadSimple as UploadSimpleIcon, Folder as FolderIcon, X as XIcon } from '@phosphor-icons/react';
 import { useTheme } from '../../hooks/useTheme';
 
 // ─── Design tokens ───────────────────────────────────────────────────────────
@@ -47,7 +48,16 @@ export interface UploadedFile {
   id: string;
 }
 
+export type FileUploadVariant = 'dropzone' | 'button';
+
 export interface FileUploadProps {
+  /**
+   * Vizuální varianta.
+   * - `'dropzone'` — velká zóna s drag & drop (výchozí)
+   * - `'button'`   — kompaktní vstup ve stylu tlačítka/inputu
+   * @default 'dropzone'
+   */
+  variant?: FileUploadVariant;
   /** Callback volaný při přidání souborů. Vrací pole nativních `File` objektů. */
   onFiles?: (files: File[]) => void;
   /**
@@ -85,40 +95,6 @@ function formatFileSize(bytes: number): string {
 
 let fileIdCounter = 0;
 
-// ─── Icons ───────────────────────────────────────────────────────────────────
-
-const FileIcon: React.FC<{ color: string }> = ({ color }) => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-    <path
-      d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z"
-      stroke={color}
-      strokeWidth="1.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-    <path d="M14 2v6h6" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>
-);
-
-const UploadIcon: React.FC<{ color: string }> = ({ color }) => (
-  <svg width="32" height="32" viewBox="0 0 32 32" fill="none" aria-hidden="true">
-    <path
-      d="M28 20v5.333A2.667 2.667 0 0125.333 28H6.667A2.667 2.667 0 014 25.333V20"
-      stroke={color}
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-    <path d="M22.667 10.667L16 4l-6.667 6.667" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-    <path d="M16 4v16" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>
-);
-
-const RemoveIcon: React.FC<{ color: string; size?: number }> = ({ color, size = 14 }) => (
-  <svg width={size} height={size} viewBox="0 0 14 14" fill="none" aria-hidden="true">
-    <path d="M3.5 3.5l7 7M10.5 3.5l-7 7" stroke={color} strokeWidth="1.5" strokeLinecap="round" />
-  </svg>
-);
 
 // ─── FileUpload ──────────────────────────────────────────────────────────────
 
@@ -140,6 +116,7 @@ const RemoveIcon: React.FC<{ color: string; size?: number }> = ({ color, size = 
  * ```
  */
 export const FileUpload: React.FC<FileUploadProps> = ({
+  variant = 'dropzone',
   onFiles,
   accept,
   multiple = false,
@@ -254,44 +231,111 @@ export const FileUpload: React.FC<FileUploadProps> = ({
     >
       {label && <span style={labelStyle}>{label}</span>}
 
-      <div
-        style={zoneStyle}
-        onClick={() => !disabled && inputRef.current?.click()}
-        onDragOver={(e) => {
-          e.preventDefault();
-          if (!disabled) setDragging(true);
+      {/* Skrytý input */}
+      <input
+        ref={inputRef}
+        id={id}
+        type="file"
+        accept={accept}
+        multiple={multiple}
+        disabled={disabled}
+        onChange={(e) => {
+          if (e.target.files && e.target.files.length > 0) {
+            processFiles(e.target.files);
+          }
+          e.target.value = '';
         }}
-        onDragLeave={() => setDragging(false)}
-        onDrop={handleDrop}
-      >
-        <input
-          ref={inputRef}
-          id={id}
-          type="file"
-          accept={accept}
-          multiple={multiple}
-          disabled={disabled}
-          onChange={(e) => {
-            if (e.target.files && e.target.files.length > 0) {
-              processFiles(e.target.files);
-            }
-            e.target.value = '';
+        style={{ display: 'none' }}
+      />
+
+      {variant === 'dropzone' ? (
+        /* ── Dropzone varianta ──────────────────────────────────────────── */
+        <div
+          style={zoneStyle}
+          onClick={() => !disabled && inputRef.current?.click()}
+          onDragOver={(e) => {
+            e.preventDefault();
+            if (!disabled) setDragging(true);
           }}
-          style={{ display: 'none' }}
-        />
-        <UploadIcon color={t.textSecondary} />
-        <span
+          onDragLeave={() => setDragging(false)}
+          onDrop={handleDrop}
+        >
+          <UploadSimpleIcon size={32} color={t.textSecondary} />
+          <span
+            style={{
+              fontFamily: "'Zalando Sans', sans-serif",
+              fontSize: '14px',
+              color: t.textSecondary,
+              textAlign: 'center',
+              userSelect: 'none',
+            }}
+          >
+            Přetáhněte soubory nebo klikněte
+          </span>
+        </div>
+      ) : (
+        /* ── Button varianta (input-style) ──────────────────────────────── */
+        <div
+          onClick={() => !disabled && inputRef.current?.click()}
           style={{
-            fontFamily: "'Zalando Sans', sans-serif",
-            fontSize: '14px',
-            color: t.textSecondary,
-            textAlign: 'center',
-            userSelect: 'none',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '10px',
+            padding: '8px 12px',
+            borderRadius: '8px',
+            border: `1px solid ${hasError ? t.borderError : t.border}`,
+            backgroundColor: disabled ? t.backgroundDisabled : t.background,
+            opacity: disabled ? 0.5 : 1,
+            cursor: disabled ? 'not-allowed' : 'pointer',
+            transition: 'border-color 0.15s ease',
+            boxSizing: 'border-box',
+          }}
+          onMouseEnter={(e) => {
+            if (!disabled) {
+              (e.currentTarget as HTMLElement).style.borderColor = hasError ? t.borderError : theme === 'dark' ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.4)';
+            }
+          }}
+          onMouseLeave={(e) => {
+            (e.currentTarget as HTMLElement).style.borderColor = hasError ? t.borderError : t.border;
           }}
         >
-          Přetáhněte soubory nebo klikněte
-        </span>
-      </div>
+          {/* Ikona souboru nebo upload */}
+          <span style={{ display: 'flex', alignItems: 'center', flexShrink: 0, color: t.textSecondary }}>
+            {files.length > 0 ? <FileTextIcon size={18} color={t.textSecondary} /> : <UploadSimpleIcon size={18} color={t.textSecondary} />}
+          </span>
+
+          {/* Text */}
+          <span
+            style={{
+              flex: 1,
+              fontFamily: "'Zalando Sans', sans-serif",
+              fontSize: '14px',
+              color: files.length > 0 ? t.text : t.textSecondary,
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            {files.length === 0
+              ? 'Vyberte soubor...'
+              : files.length === 1
+                ? files[0].file.name
+                : `${files.length} souborů`}
+          </span>
+
+          {/* Velikost souboru */}
+          {files.length === 1 && (
+            <span style={{ fontFamily: "'Zalando Sans', sans-serif", fontSize: '12px', color: t.textSecondary, flexShrink: 0 }}>
+              {formatFileSize(files[0].file.size)}
+            </span>
+          )}
+
+          {/* Browse ikona */}
+          <span style={{ display: 'flex', alignItems: 'center', flexShrink: 0, color: t.textSecondary }}>
+            <FolderIcon size={16} color={t.textSecondary} />
+          </span>
+        </div>
+      )}
 
       {/* File list */}
       {files.length > 0 && (
@@ -308,7 +352,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
                 backgroundColor: t.fileBg,
               }}
             >
-              <FileIcon color={t.textSecondary} />
+              <FileTextIcon size={24} color={t.textSecondary} />
               <span
                 style={{
                   flex: 1,
@@ -351,7 +395,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
                   flexShrink: 0,
                 }}
               >
-                <RemoveIcon color={t.removeColor} />
+                <XIcon size={14} color={t.removeColor} />
               </span>
             </div>
           ))}

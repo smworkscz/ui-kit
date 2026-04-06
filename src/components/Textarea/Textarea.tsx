@@ -1,4 +1,4 @@
-import React, { useId, useState } from 'react';
+import React, { useId, useState, useRef, useEffect, useCallback } from 'react';
 import { useTheme } from '../../hooks/useTheme';
 
 // ─── Design tokens ───────────────────────────────────────────────────────────
@@ -86,9 +86,27 @@ export interface TextareaProps
   maxLength?: number;
   /**
    * Režim změny velikosti textového pole.
+   * Ignorováno, pokud je `autoHeight` zapnuto.
    * @default 'vertical'
    */
   resize?: TextareaResize;
+  /**
+   * Automatická výška — pole se přizpůsobí obsahu.
+   * Při zapnutí je `resize` automaticky nastaven na `'none'`.
+   * @default false
+   */
+  autoHeight?: boolean;
+  /**
+   * Minimální počet řádků (použito společně s `autoHeight`).
+   * Pokud `autoHeight` není zapnuto, funguje jako `rows`.
+   * @default 1
+   */
+  minRows?: number;
+  /**
+   * Maximální počet řádků (použito společně s `autoHeight`).
+   * Po dosažení se zobrazí scrollbar.
+   */
+  maxRows?: number;
   /** Dodatečná CSS třída pro obalový element. */
   className?: string;
   /**
@@ -125,6 +143,9 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
       rows = 4,
       maxLength,
       resize = 'vertical',
+      autoHeight = false,
+      minRows,
+      maxRows,
       className,
       style,
       value,
@@ -141,6 +162,53 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
     const autoId = useId();
     const textareaId = rest.id ?? autoId;
     const [focused, setFocused] = useState(false);
+    const internalRef = useRef<HTMLTextAreaElement | null>(null);
+
+    // ── Auto-height logic ───────────────────────────────────────────────
+
+    const adjustHeight = useCallback(() => {
+      const el = internalRef.current;
+      if (!el || !autoHeight) return;
+
+      // Reset height to measure scrollHeight correctly
+      el.style.height = 'auto';
+
+      // Calculate line height from computed styles
+      const computed = getComputedStyle(el);
+      const lineHeight = parseFloat(computed.lineHeight) || parseFloat(computed.fontSize) * 1.5;
+      const paddingTop = parseFloat(computed.paddingTop) || 0;
+      const paddingBottom = parseFloat(computed.paddingBottom) || 0;
+      const padding = paddingTop + paddingBottom;
+
+      // Calculate min/max heights based on rows
+      const effectiveMinRows = minRows ?? 1;
+      const minHeight = lineHeight * effectiveMinRows + padding;
+      const maxHeight = maxRows ? lineHeight * maxRows + padding : Infinity;
+
+      // Apply
+      const newHeight = Math.min(Math.max(el.scrollHeight, minHeight), maxHeight);
+      el.style.height = `${newHeight}px`;
+      el.style.overflowY = el.scrollHeight > maxHeight ? 'auto' : 'hidden';
+    }, [autoHeight, minRows, maxRows]);
+
+    useEffect(() => {
+      adjustHeight();
+    }, [value, adjustHeight]);
+
+    // Combine refs
+    const setRefs = useCallback(
+      (el: HTMLTextAreaElement | null) => {
+        internalRef.current = el;
+        if (typeof ref === 'function') ref(el);
+        else if (ref) (ref as React.MutableRefObject<HTMLTextAreaElement | null>).current = el;
+      },
+      [ref],
+    );
+
+    // Effective resize — disable when autoHeight
+    const effectiveResize = autoHeight ? 'none' : resize;
+    // Effective rows — use minRows for initial when autoHeight
+    const effectiveRows = autoHeight ? (minRows ?? 1) : rows;
 
     const isDisabled = disabled || loading;
     const hasError = Boolean(error);
@@ -172,8 +240,9 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
       lineHeight: '1.5',
       color: t.text,
       cursor: isDisabled ? 'not-allowed' : 'text',
-      resize,
+      resize: effectiveResize,
       boxSizing: 'border-box',
+      overflow: autoHeight ? 'hidden' : undefined,
     };
 
     const labelStyle: React.CSSProperties = {
@@ -213,9 +282,9 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
 
         <div style={wrapperStyle}>
           <textarea
-            ref={ref}
+            ref={setRefs}
             id={textareaId}
-            rows={rows}
+            rows={effectiveRows}
             maxLength={maxLength}
             disabled={disabled}
             required={required}

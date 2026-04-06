@@ -1,0 +1,47 @@
+# SMWORKS UI KIT — Project Rules
+
+## Before writing any component or preview code
+
+**Always read `preview/DESIGN_SYSTEM.md` first** to ensure all colors, fonts, glass effects, border-radius, shadows, animations, and token patterns match the design system.
+
+## Key patterns
+
+- All components use inline `const tokens = { dark: {...}, light: {...} } as const` — never external CSS files
+- Theme detection via `useTheme()` hook from `src/hooks/useTheme.ts`
+- Overlay components (Modal, Drawer, DropdownMenu, Spotlight) use `createPortal` to `document.body`
+- Animation state machine: `idle → opening → open → closing` with `180ms` and `cubic-bezier(0.16, 1, 0.3, 1)`
+- Glass effect: `backdrop-filter: blur(20px)` + semi-transparent `rgba()` backgrounds
+- Icons: `@phosphor-icons/react`, default size `16px`
+- Fonts: `'Zalando Sans'` for body, `'Zalando Sans Expanded'` for headings/labels
+- Primary color: `#FC4F00`, hover: `#FF6D2A`
+
+## Project structure
+
+- `src/components/` — library components (published to npm)
+- `src/hooks/` — library hooks
+- `preview/` — Vite preview app (NOT published, lives outside `dist/`)
+- `preview/DESIGN_SYSTEM.md` — design token reference (read this before every task)
+
+## Preview app
+
+- Run with `yarn preview` (Vite on port 3000)
+- Imports directly from `../../src` — HMR picks up component changes live
+- Wrapped in `ToasterProvider`
+- Theme: 3-way (light/dark/system) via `data-theme` attribute on `<body>`
+- Uses clean URL routing (`/button`, `/input`, etc.) via `history.pushState`
+
+## When creating a new component
+
+Every new component in `src/components/` **must** also get a documentation page. Follow these steps:
+
+1. Create the component in `src/components/ComponentName/`
+2. Export it from `src/index.ts`
+3. Create `preview/src/pages/ComponentNamePage.tsx` with:
+   - `Playground` with interactive controls (use `Select`, `Switch`, `Input` from the library)
+   - `VariantShowcase` sections showing different states
+   - `PropsTable` listing all props with types, defaults, and Czech descriptions
+   - Use shared components from `preview/src/pages/shared.tsx` (`PageLayout`, `H1`, `H2`, `Paragraph`, etc.)
+4. Export the page from `preview/src/pages/index.ts`
+5. Add the page to the `pages` Record in `preview/src/App.tsx`
+6. Add the component to the sidebar menu in `preview/src/Sidebar.tsx`
+7. Add the component to spotlight data in `preview/src/spotlightData.tsx`

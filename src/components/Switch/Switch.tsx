@@ -5,16 +5,16 @@ import { useTheme } from '../../hooks/useTheme';
 
 const tokens = {
   dark: {
-    trackOff: 'rgba(255,255,255,0.15)',
-    trackOffBorder: 'rgba(255,255,255,0.3)',
+    trackOff: 'rgba(255,255,255,0.2)',
+    trackOffBorder: 'rgba(255,255,255,0.35)',
     trackOn: '#FC4F00',
     trackOnBorder: '#FC4F00',
     thumb: '#ffffff',
     text: '#ffffff',
   },
   light: {
-    trackOff: 'rgba(0,0,0,0.08)',
-    trackOffBorder: 'rgba(0,0,0,0.2)',
+    trackOff: 'rgba(0,0,0,0.12)',
+    trackOffBorder: 'rgba(0,0,0,0.22)',
     trackOn: '#FC4F00',
     trackOnBorder: '#FC4F00',
     thumb: '#ffffff',
@@ -25,9 +25,9 @@ const tokens = {
 // ─── Size config ─────────────────────────────────────────────────────────────
 
 const sizeConfig = {
-  sm: { trackW: 32, trackH: 18, thumb: 14, offset: 2, fontSize: '14px', gap: '8px' },
-  md: { trackW: 40, trackH: 22, thumb: 18, offset: 2, fontSize: '16px', gap: '10px' },
-  lg: { trackW: 48, trackH: 26, thumb: 22, offset: 2, fontSize: '18px', gap: '12px' },
+  sm: { trackW: 32, trackH: 20, thumb: 14, offset: 2, fontSize: '14px', gap: '8px' },
+  md: { trackW: 40, trackH: 24, thumb: 18, offset: 2, fontSize: '16px', gap: '10px' },
+  lg: { trackW: 48, trackH: 28, thumb: 22, offset: 2, fontSize: '18px', gap: '12px' },
 } as const;
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -87,12 +87,11 @@ export const Switch: React.FC<SwitchProps> = ({
   };
 
   const borderW = 1.5;
-  // Inner dimensions after border
+  // Padding from inner edge of border to thumb
+  const pad = 2;
+  // Total travel distance for the thumb
   const innerW = sc.trackW - borderW * 2;
-  const innerH = sc.trackH - borderW * 2;
-  // Center the thumb vertically & horizontally within the inner space
-  const thumbPad = (innerH - sc.thumb) / 2;
-  const thumbTravel = innerW - sc.thumb - thumbPad * 2;
+  const thumbTravel = innerW - sc.thumb - pad;
   const thumbTranslate = checked ? thumbTravel : 0;
 
   const trackStyle: React.CSSProperties = {
@@ -115,9 +114,9 @@ export const Switch: React.FC<SwitchProps> = ({
     borderRadius: '50%',
     backgroundColor: t.thumb,
     position: 'absolute',
-    top: thumbPad,
-    left: thumbPad,
-    transform: `translateX(${thumbTranslate}px)`,
+    top: '50%',
+    left: pad,
+    transform: `translateY(-50%) translateX(${thumbTranslate}px)`,
     transition: 'transform 0.2s ease',
     boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
   };

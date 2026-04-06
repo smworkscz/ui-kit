@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
+import { DotsSixVertical as DotsSixVerticalIcon, CaretRight as CaretRightIcon, ArrowBendDownRight as ArrowBendDownRightIcon } from '@phosphor-icons/react';
 import { useTheme } from '../../hooks/useTheme';
 
 // ─── Design tokens ───────────────────────────────────────────────────────────
@@ -41,42 +42,6 @@ const tokens = {
 const ANIM_NAME = 'smDragListPulse';
 const KEYFRAMES_CSS = `@keyframes ${ANIM_NAME}{0%,100%{opacity:1}50%{opacity:0.5}}`;
 
-// ─── Ikony ──────────────────────────────────────────────────────────────────
-
-const GripIcon: React.FC<{ color: string }> = ({ color }) => (
-  <svg width="10" height="14" viewBox="0 0 10 14" fill="none" aria-hidden="true" style={{ flexShrink: 0 }}>
-    <circle cx="3" cy="2.5" r="1.2" fill={color} />
-    <circle cx="7" cy="2.5" r="1.2" fill={color} />
-    <circle cx="3" cy="7" r="1.2" fill={color} />
-    <circle cx="7" cy="7" r="1.2" fill={color} />
-    <circle cx="3" cy="11.5" r="1.2" fill={color} />
-    <circle cx="7" cy="11.5" r="1.2" fill={color} />
-  </svg>
-);
-
-const ChevronIcon: React.FC<{ open: boolean; color: string }> = ({ open, color }) => (
-  <svg
-    width="16"
-    height="16"
-    viewBox="0 0 16 16"
-    fill="none"
-    aria-hidden="true"
-    style={{
-      transition: 'transform 0.2s ease',
-      transform: open ? 'rotate(90deg)' : 'rotate(0deg)',
-      flexShrink: 0,
-    }}
-  >
-    <path d="M6 4l4 4-4 4" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>
-);
-
-const NestArrowIcon: React.FC<{ color: string }> = ({ color }) => (
-  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true" style={{ flexShrink: 0 }}>
-    <path d="M4 4v5a3 3 0 003 3h4" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-    <path d="M9 10l2 2-2 2" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>
-);
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -102,17 +67,57 @@ interface DragState {
   position: DropPosition;
 }
 
+/** Props předané do `renderItem` funkce pro ovládání drag handlu. */
+export interface DragHandleProps {
+  /** Spread na element, který má sloužit jako drag handle. */
+  handleProps: {
+    onMouseDown: (e: React.MouseEvent) => void;
+    style: React.CSSProperties;
+    'aria-label': string;
+  };
+  /** Zda je položka právě přetahována. */
+  isDragging: boolean;
+  /** Hloubka vnoření (0 = root). */
+  depth: number;
+  /** Zda je položka rozbalena (stromový režim). */
+  isExpanded: boolean;
+  /** Přepne rozbalení/sbalení potomků. */
+  toggleExpand: () => void;
+  /** Zda má položka potomky. */
+  hasChildren: boolean;
+}
+
 export interface DragListProps {
   /** Seznam položek k zobrazení. */
   items: DragListItem[];
   /** Callback volaný při změně pořadí položek. */
   onReorder: (items: DragListItem[]) => void;
-  /** Vlastní vykreslovací funkce pro položku. */
-  renderItem?: (item: DragListItem, depth: number) => React.ReactNode;
+  /**
+   * Vlastní vykreslovací funkce pro položku.
+   * Přijímá `item`, `dragHandleProps` a další metadata.
+   * Pokud není zadána, použije se výchozí vykreslení s gripem a textem.
+   *
+   * @example
+   * ```tsx
+   * renderItem={(item, { handleProps, isDragging }) => (
+   *   <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+   *     <span {...handleProps}>⠿</span>
+   *     <span>{item.label}</span>
+   *   </div>
+   * )}
+   * ```
+   */
+  renderItem?: (item: DragListItem, props: DragHandleProps) => React.ReactNode;
   /** Povolí vnořování položek (stromový režim). @default false */
   allowNesting?: boolean;
   /** Maximální hloubka vnoření. @default 3 */
   maxDepth?: number;
+  /**
+   * Zda je celá karta přetahovatelná, nebo jen grip handle.
+   * Při `'handle'` je karta přetahovatelná jen za grip/handle element.
+   * @default 'full'
+   */
+  dragMode?: 'full' | 'handle';
   /** Dodatečná CSS třída. */
   className?: string;
   /** Další inline styly. */
@@ -266,7 +271,8 @@ interface DragListRowProps {
   onDrop: (e: React.DragEvent) => void;
   onDragEnd: () => void;
   onToggleExpand: (id: string) => void;
-  renderItem?: (item: DragListItem, depth: number) => React.ReactNode;
+  renderItem?: (item: DragListItem, props: DragHandleProps) => React.ReactNode;
+  dragMode: 'full' | 'handle';
   tokens: (typeof tokens)['dark'] | (typeof tokens)['light'];
 }
 
@@ -284,16 +290,19 @@ const DragListRow: React.FC<DragListRowProps> = ({
   onDragEnd,
   onToggleExpand,
   renderItem,
+  dragMode,
   tokens: t,
 }) => {
   const [gripHover, setGripHover] = useState(false);
   const [rowHover, setRowHover] = useState(false);
   const [chevronHover, setChevronHover] = useState(false);
+  const handleActiveRef = useRef(false);
   const cardRef = useRef<HTMLDivElement>(null);
   const hasChildren = item.children && item.children.length > 0;
   const isExpanded = item.expanded ?? false;
   const isDragged = draggedId === item.id;
   const isDragging = draggedId !== null;
+  const isHandleMode = dragMode === 'handle';
   const isDropTarget = dropState?.targetId === item.id;
 
   const showIndicatorBefore = isDropTarget && dropState?.position === 'before';
@@ -335,6 +344,11 @@ const DragListRow: React.FC<DragListRowProps> = ({
         ref={cardRef}
         draggable
         onDragStart={(e) => {
+          if (isHandleMode && !handleActiveRef.current) {
+            e.preventDefault();
+            return;
+          }
+          handleActiveRef.current = false;
           e.dataTransfer.effectAllowed = 'move';
           e.dataTransfer.setData('text/plain', item.id);
           if (cardRef.current) {
@@ -378,12 +392,13 @@ const DragListRow: React.FC<DragListRowProps> = ({
           fontFamily: "'Zalando Sans', sans-serif",
           fontSize: '14px',
           color: isDragged ? 'transparent' : t.text,
-          cursor: isDragging ? 'grabbing' : 'grab',
+          cursor: isDragging ? 'grabbing' : isHandleMode ? 'default' : 'grab',
           opacity: isDragged ? 0.35 : 1,
           backgroundColor: cardBg,
-          border: `1px solid ${cardBorder}`,
-          borderRadius: '10px',
+          borderWidth: '1px',
+          borderColor: cardBorder,
           borderStyle: isDragged ? 'dashed' : 'solid',
+          borderRadius: '10px',
           transition: 'background-color 0.2s ease, border-color 0.2s ease, opacity 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease',
           userSelect: 'none',
           gap: '10px',
@@ -397,21 +412,24 @@ const DragListRow: React.FC<DragListRowProps> = ({
           transform: showNestHighlight ? 'scale(1.01)' : 'scale(1)',
         }}
       >
-        {/* Grip handle */}
-        <span
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            cursor: isDragging ? 'grabbing' : 'grab',
-            padding: '4px 2px',
-            borderRadius: '4px',
-            visibility: isDragged ? 'hidden' : 'visible',
-          }}
-          onMouseEnter={() => setGripHover(true)}
-          onMouseLeave={() => setGripHover(false)}
-        >
-          <GripIcon color={gripHover ? t.gripHover : t.gripColor} />
-        </span>
+        {/* Grip handle (výchozí — skrytý při custom renderItem) */}
+        {!renderItem && (
+          <span
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              cursor: isDragging ? 'grabbing' : 'grab',
+              padding: '4px 2px',
+              borderRadius: '4px',
+              visibility: isDragged ? 'hidden' : 'visible',
+            }}
+            onMouseEnter={() => setGripHover(true)}
+            onMouseLeave={() => setGripHover(false)}
+            onMouseDown={() => { handleActiveRef.current = true; }}
+          >
+            <DotsSixVerticalIcon size={14} color={gripHover ? t.gripHover : t.gripColor} />
+          </span>
+        )}
 
         {/* Nest indikátor — šipka "vnoření" místo before/after */}
         {showNestHighlight && (
@@ -422,7 +440,7 @@ const DragListRow: React.FC<DragListRowProps> = ({
             right: '14px',
             opacity: 0.6,
           }}>
-            <NestArrowIcon color={t.dropIndicator} />
+            <ArrowBendDownRightIcon size={16} color={t.dropIndicator} />
           </span>
         )}
 
@@ -451,16 +469,25 @@ const DragListRow: React.FC<DragListRowProps> = ({
               visibility: isDragged ? 'hidden' : 'visible',
             }}
           >
-            <ChevronIcon open={isExpanded} color={chevronHover ? t.chevronHover : t.chevron} />
+            <CaretRightIcon size={16} color={chevronHover ? t.chevronHover : t.chevron} style={{ transition: 'transform 0.2s ease', transform: isExpanded ? 'rotate(90deg)' : 'rotate(0deg)', flexShrink: 0 }} />
           </button>
-        ) : allowNesting ? (
-          <span style={{ width: '22px', flexShrink: 0 }} />
         ) : null}
 
         {/* Obsah */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flex: 1, minWidth: 0, visibility: isDragged ? 'hidden' : 'visible' }}>
           {renderItem ? (
-            renderItem(item, depth)
+            renderItem(item, {
+              handleProps: {
+                onMouseDown: () => { handleActiveRef.current = true; },
+                style: { cursor: isDragging ? 'grabbing' : 'grab', userSelect: 'none' as const },
+                'aria-label': 'Přetáhnout položku',
+              },
+              isDragging: isDragged,
+              depth,
+              isExpanded,
+              toggleExpand: () => onToggleExpand(item.id),
+              hasChildren: !!hasChildren,
+            })
           ) : (
             <>
               {item.icon && (
@@ -525,6 +552,7 @@ const DragListRow: React.FC<DragListRowProps> = ({
               onDragEnd={onDragEnd}
               onToggleExpand={onToggleExpand}
               renderItem={renderItem}
+              dragMode={dragMode}
               tokens={t}
             />
           ))}
@@ -564,6 +592,7 @@ export const DragList: React.FC<DragListProps> = ({
   renderItem,
   allowNesting = false,
   maxDepth = 3,
+  dragMode = 'full',
   className,
   style,
 }) => {

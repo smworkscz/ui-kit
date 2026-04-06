@@ -31,6 +31,8 @@ export * from './components/Pagination';
 export * from './components/Stepper';
 export * from './components/DropdownMenu';
 export * from './components/Link';
+export * from './components/Spotlight';
+export * from './components/SegmentedControl';
 
 // ── Feedback ─────────────────────────────────────────────────────────────────
 export * from './components/Toast';
@@ -43,3 +45,6 @@ export * from './components/Divider';
 export * from './components/Stack';
 export * from './components/Container';
 export * from './components/DragList';
+
+// ── Hooks ───────────────────────────────────────────────────────────────────
+export * from './hooks';

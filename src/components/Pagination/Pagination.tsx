@@ -1,4 +1,5 @@
 import React from 'react';
+import { CaretLeftIcon, CaretRightIcon } from '@phosphor-icons/react';
 import { useTheme } from '../../hooks/useTheme';
 
 // ─── Design tokens ──────────────────────────────────────────────────────────
@@ -29,20 +30,6 @@ const sizeConfig = {
   md: { size: 36, fontSize: '14px', iconSize: 16 },
   lg: { size: 44, fontSize: '16px', iconSize: 18 },
 } as const;
-
-// ─── Arrow icons ────────────────────────────────────────────────────────────
-
-const ChevronLeft: React.FC<{ size: number; color: string }> = ({ size, color }) => (
-  <svg width={size} height={size} viewBox="0 0 16 16" fill="none" aria-hidden="true">
-    <path d="M10 4l-4 4 4 4" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>
-);
-
-const ChevronRight: React.FC<{ size: number; color: string }> = ({ size, color }) => (
-  <svg width={size} height={size} viewBox="0 0 16 16" fill="none" aria-hidden="true">
-    <path d="M6 4l4 4-4 4" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>
-);
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -193,7 +180,7 @@ export const Pagination: React.FC<PaginationProps> = ({
           e.currentTarget.style.backgroundColor = 'transparent';
         }}
       >
-        <ChevronLeft size={sc.iconSize} color={page <= 1 ? t.disabledText : t.text} />
+        <CaretLeftIcon size={sc.iconSize} color={page <= 1 ? t.disabledText : t.text} />
       </button>
 
       {/* Stránky */}
@@ -259,7 +246,7 @@ export const Pagination: React.FC<PaginationProps> = ({
           e.currentTarget.style.backgroundColor = 'transparent';
         }}
       >
-        <ChevronRight size={sc.iconSize} color={page >= totalPages ? t.disabledText : t.text} />
+        <CaretRightIcon size={sc.iconSize} color={page >= totalPages ? t.disabledText : t.text} />
       </button>
     </nav>
   );

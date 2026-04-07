@@ -114,16 +114,16 @@ export const InstallationPage: React.FC = () => {
   const [pm, setPm] = useState('yarn');
 
   const installCmd = pm === 'yarn'
-    ? 'yarn add sm-ui react react-dom @phosphor-icons/react'
+    ? 'yarn add @smworks-cz/ui-kit react react-dom @phosphor-icons/react'
     : pm === 'npm'
-      ? 'npm install sm-ui react react-dom @phosphor-icons/react'
-      : 'pnpm add sm-ui react react-dom @phosphor-icons/react';
+      ? 'npm install @smworks-cz/ui-kit react react-dom @phosphor-icons/react'
+      : 'pnpm add @smworks-cz/ui-kit react react-dom @phosphor-icons/react';
 
   const installPkgOnly = pm === 'yarn'
-    ? 'yarn add sm-ui'
+    ? 'yarn add @smworks-cz/ui-kit'
     : pm === 'npm'
-      ? 'npm install sm-ui'
-      : 'pnpm add sm-ui';
+      ? 'npm install @smworks-cz/ui-kit'
+      : 'pnpm add @smworks-cz/ui-kit';
 
   return (
     <PageLayout>
@@ -185,11 +185,11 @@ export const InstallationPage: React.FC = () => {
       <Paragraph>
         Nejjednodušší způsob je importovat CSS soubor s font-face deklaracemi:
       </Paragraph>
-      <CopyCodeBlock>{`import 'sm-ui/dist/fonts/fonts.css';`}</CopyCodeBlock>
+      <CopyCodeBlock>{`import '@smworks-cz/ui-kit/dist/fonts/fonts.css';`}</CopyCodeBlock>
 
       <InfoBox>
         Pokud váš bundler nepodporuje CSS importy, můžete fonty načíst
-        manuálně z <Code>node_modules/sm-ui/dist/fonts/</Code>.
+        manuálně z <Code>node_modules/@smworks-cz/ui-kit/dist/fonts/</Code>.
       </InfoBox>
 
       <H2>TypeScript</H2>
@@ -209,7 +209,7 @@ export const InstallationPage: React.FC = () => {
       <Paragraph>
         Balíček poskytuje dual-format výstup pro maximální kompatibilitu:
       </Paragraph>
-      <CopyCodeBlock>{`sm-ui/dist/
+      <CopyCodeBlock>{`@smworks-cz/ui-kit/dist/
 ├── index.js      # CommonJS (require)
 ├── index.mjs     # ES Modules (import)
 └── index.d.ts    # TypeScript definice`}</CopyCodeBlock>

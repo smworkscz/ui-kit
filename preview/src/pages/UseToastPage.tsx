@@ -55,7 +55,7 @@ export const UseToastPage: React.FC = () => (
     <Paragraph>
       Nejprve obalte kořen aplikace v <Code>ToasterProvider</Code>:
     </Paragraph>
-    <CodeBlock>{`import { ToasterProvider } from 'sm-ui';
+    <CodeBlock>{`import { ToasterProvider } from '@smworks-cz/ui-kit';
 
 function App() {
   return (
@@ -66,7 +66,7 @@ function App() {
 }`}</CodeBlock>
 
     <H2>Použití</H2>
-    <CodeBlock>{`import { useToast, Button } from 'sm-ui';
+    <CodeBlock>{`import { useToast, Button } from '@smworks-cz/ui-kit';
 
 function SaveButton() {
   const { toast } = useToast();

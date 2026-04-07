@@ -1,8 +1,17 @@
 {
-  "name": "sm-ui",
+  "name": "@smworks-cz/ui-kit",
   "version": "0.1.0",
-  "description": "Component library for SMWORKS",
+  "description": "SMWORKS UI KIT — component library for SMWORKS apps",
   "author": "Daniel Cvejn <cvejn@smworks.cz>",
+  "license": "MIT",
+  "private": false,
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/smworkscz/ui-kit"
+  },
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",

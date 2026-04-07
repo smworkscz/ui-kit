@@ -14,13 +14,13 @@ export const UsagePage: React.FC = () => (
       Díky tree-shakingu se do výsledného bundle zahrnou pouze
       použité komponenty.
     </Paragraph>
-    <CodeBlock>{`import { Button, Input, Modal } from 'sm-ui';`}</CodeBlock>
+    <CodeBlock>{`import { Button, Input, Modal } from '@smworks-cz/ui-kit';`}</CodeBlock>
 
     <H2>Základní příklad</H2>
     <Paragraph>
       Jednoduchý formulář s tlačítkem a textovým vstupem:
     </Paragraph>
-    <CodeBlock>{`import { Button, Input } from 'sm-ui';
+    <CodeBlock>{`import { Button, Input } from '@smworks-cz/ui-kit';
 
 function LoginForm() {
   const [email, setEmail] = useState('');
@@ -82,7 +82,7 @@ function LoginForm() {
       Pro zobrazení toast notifikací obalte aplikaci
       v <Code>ToasterProvider</Code> a použijte hook <Code>useToast</Code>:
     </Paragraph>
-    <CodeBlock>{`import { ToasterProvider, useToast, Button } from 'sm-ui';
+    <CodeBlock>{`import { ToasterProvider, useToast, Button } from '@smworks-cz/ui-kit';
 
 // V kořeni aplikace
 function App() {
@@ -113,7 +113,7 @@ function MyComponent() {
       Modály a drawery jsou řízené komponenty — předáváte <Code>open</Code> stav
       a <Code>onClose</Code> callback:
     </Paragraph>
-    <CodeBlock>{`import { Modal, Button } from 'sm-ui';
+    <CodeBlock>{`import { Modal, Button } from '@smworks-cz/ui-kit';
 
 function MyDialog() {
   const [open, setOpen] = useState(false);

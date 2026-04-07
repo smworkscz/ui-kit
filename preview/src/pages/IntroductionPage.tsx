@@ -39,7 +39,7 @@ export const IntroductionPage: React.FC = () => {
       </ul>
 
       <H2>Struktura knihovny</H2>
-      <CodeBlock>{`sm-ui/
+      <CodeBlock>{`@smworks-cz/ui-kit/
 ├── src/
 │   ├── components/    # Všechny komponenty
 │   ├── hooks/         # useTheme, useToast

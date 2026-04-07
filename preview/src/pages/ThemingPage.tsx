@@ -69,7 +69,7 @@ function useThemePreference() {
         Hook <Code>useTheme()</Code> vrací aktuální téma jako string
         a automaticky se aktualizuje při změně:
       </Paragraph>
-      <CodeBlock>{`import { useTheme } from 'sm-ui';
+      <CodeBlock>{`import { useTheme } from '@smworks-cz/ui-kit';
 
 function MyComponent() {
   const theme = useTheme(); // 'light' | 'dark'
@@ -95,7 +95,7 @@ function MyComponent() {
         Pokud vytváříte vlastní komponenty, doporučujeme stejný vzor
         jako knihovna — inline design tokeny:
       </Paragraph>
-      <CodeBlock>{`import { useTheme } from 'sm-ui';
+      <CodeBlock>{`import { useTheme } from '@smworks-cz/ui-kit';
 
 const tokens = {
   dark: {

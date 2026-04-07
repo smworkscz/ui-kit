@@ -34,7 +34,7 @@ export const UseThemePage: React.FC = () => {
       </div>
 
       <H2>Použití</H2>
-      <CodeBlock>{`import { useTheme } from 'sm-ui';
+      <CodeBlock>{`import { useTheme } from '@smworks-cz/ui-kit';
 
 function MyComponent() {
   const theme = useTheme(); // 'light' | 'dark'
@@ -71,7 +71,7 @@ function MyComponent() {
       <Paragraph>
         Doporučený vzor pro vlastní komponenty — definujte tokeny pro obě témata:
       </Paragraph>
-      <CodeBlock>{`import { useTheme } from 'sm-ui';
+      <CodeBlock>{`import { useTheme } from '@smworks-cz/ui-kit';
 
 const tokens = {
   dark: {

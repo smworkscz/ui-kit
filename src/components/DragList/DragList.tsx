@@ -790,6 +790,7 @@ export const DragList: React.FC<DragListProps> = ({
             onDragEnd={handleDragEnd}
             onToggleExpand={handleToggleExpand}
             renderItem={renderItem}
+            dragMode={dragMode}
             tokens={t}
           />
         ))

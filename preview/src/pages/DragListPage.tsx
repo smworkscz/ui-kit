@@ -163,8 +163,8 @@ export const DragListPage: React.FC = () => (
     </Paragraph>
     <CustomRenderDemo />
 
-    <CodeBlock>{`import { DragList } from 'sm-ui';
-import type { DragListItem } from 'sm-ui';
+    <CodeBlock>{`import { DragList } from '@smworks-cz/ui-kit';
+import type { DragListItem } from '@smworks-cz/ui-kit';
 import { DotsSixVertical } from '@phosphor-icons/react';
 
 function TaskList() {

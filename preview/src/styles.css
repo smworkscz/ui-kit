@@ -25,7 +25,64 @@ h1, h2, h3, h4, h5, h6 {
   font-family: 'Zalando Sans Expanded', sans-serif;
 }
 
-/* Hide scrollbars but keep scroll functional */
+/* ── Hide sidebar scrollbar ─────────────────────────────────────────────── */
 nav::-webkit-scrollbar {
   display: none;
+}
+
+/* ── Custom scrollbar — dark mode ───────────────────────────────────────── */
+body[data-theme='dark'] ::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+body[data-theme='dark'] ::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+body[data-theme='dark'] ::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 3px;
+}
+
+body[data-theme='dark'] ::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+body[data-theme='dark'] ::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* ── Custom scrollbar — light mode ──────────────────────────────────────── */
+body[data-theme='light'] ::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+body[data-theme='light'] ::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+body[data-theme='light'] ::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 3px;
+}
+
+body[data-theme='light'] ::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.22);
+}
+
+body[data-theme='light'] ::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* ── Firefox scrollbar ──────────────────────────────────────────────────── */
+body[data-theme='dark'] main {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.12) transparent;
+}
+
+body[data-theme='light'] main {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.1) transparent;
 }

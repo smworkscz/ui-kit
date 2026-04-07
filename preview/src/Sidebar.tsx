@@ -43,63 +43,81 @@ const menu: MenuCategory[] = [
         title: 'Formuláře',
         items: [
           { id: 'button', label: 'Button' },
-          { id: 'input', label: 'Input' },
-          { id: 'select', label: 'Select' },
-          { id: 'datepicker', label: 'DatePicker' },
           { id: 'checkbox', label: 'Checkbox' },
+          { id: 'colorpicker', label: 'ColorPicker' },
+          { id: 'combobox', label: 'Combobox' },
+          { id: 'datepicker', label: 'DatePicker' },
+          { id: 'fileupload', label: 'FileUpload' },
+          { id: 'input', label: 'Input' },
+          { id: 'numberinput', label: 'NumberInput' },
+          { id: 'otpinput', label: 'OTPInput' },
           { id: 'radio', label: 'Radio' },
+          { id: 'rating', label: 'Rating' },
+          { id: 'segmentedcontrol', label: 'SegmentedControl' },
+          { id: 'select', label: 'Select' },
+          { id: 'slider', label: 'Slider' },
           { id: 'switch', label: 'Switch' },
           { id: 'textarea', label: 'Textarea' },
-          { id: 'slider', label: 'Slider' },
-          { id: 'fileupload', label: 'FileUpload' },
-          { id: 'segmentedcontrol', label: 'SegmentedControl' },
         ],
       },
       {
         title: 'Zobrazení dat',
         items: [
-          { id: 'table', label: 'Table' },
-          { id: 'card', label: 'Card' },
           { id: 'accordion', label: 'Accordion' },
-          { id: 'tabs', label: 'Tabs' },
-          { id: 'tooltip', label: 'Tooltip' },
+          { id: 'avatar', label: 'Avatar' },
+          { id: 'calendar', label: 'Calendar' },
+          { id: 'card', label: 'Card' },
+          { id: 'datagrid', label: 'DataGrid' },
+          { id: 'datalist', label: 'DataList' },
+          { id: 'emptystate', label: 'EmptyState' },
           { id: 'popover', label: 'Popover' },
           { id: 'skeleton', label: 'Skeleton' },
-          { id: 'emptystate', label: 'EmptyState' },
           { id: 'stat', label: 'Stat' },
-          { id: 'avatar', label: 'Avatar' },
+          { id: 'statusbadge', label: 'StatusBadge' },
+          { id: 'table', label: 'Table' },
+          { id: 'tabs', label: 'Tabs' },
           { id: 'tag', label: 'Tag / Badge' },
+          { id: 'timeline', label: 'Timeline' },
+          { id: 'tooltip', label: 'Tooltip' },
+          { id: 'tree', label: 'Tree' },
         ],
       },
       {
         title: 'Navigace & Layout',
         items: [
-          { id: 'modal', label: 'Modal' },
-          { id: 'drawer', label: 'Drawer' },
+          { id: 'appsidebar', label: 'AppSidebar' },
           { id: 'breadcrumb', label: 'Breadcrumb' },
-          { id: 'pagination', label: 'Pagination' },
-          { id: 'stepper', label: 'Stepper' },
+          { id: 'commandmenu', label: 'CommandMenu' },
+          { id: 'drawer', label: 'Drawer' },
           { id: 'dropdownmenu', label: 'DropdownMenu' },
           { id: 'link', label: 'Link' },
+          { id: 'modal', label: 'Modal' },
+          { id: 'navbar', label: 'Navbar' },
+          { id: 'pagination', label: 'Pagination' },
+          { id: 'sheet', label: 'Sheet' },
           { id: 'spotlight', label: 'Spotlight' },
+          { id: 'stepper', label: 'Stepper' },
         ],
       },
       {
         title: 'Feedback',
         items: [
-          { id: 'toast', label: 'Toast' },
           { id: 'alert', label: 'Alert' },
+          { id: 'confirmdialog', label: 'ConfirmDialog' },
+          { id: 'copybutton', label: 'CopyButton' },
+          { id: 'notification', label: 'Notification' },
           { id: 'progress', label: 'Progress' },
           { id: 'spinner', label: 'Spinner' },
+          { id: 'toast', label: 'Toast' },
         ],
       },
       {
         title: 'Utility',
         items: [
-          { id: 'divider', label: 'Divider' },
-          { id: 'stack', label: 'Stack' },
           { id: 'container', label: 'Container' },
+          { id: 'divider', label: 'Divider' },
           { id: 'draglist', label: 'DragList' },
+          { id: 'stack', label: 'Stack' },
         ],
       },
     ],
@@ -112,6 +130,17 @@ const menu: MenuCategory[] = [
         items: [
           { id: 'useTheme', label: 'useTheme' },
           { id: 'useToast', label: 'useToast' },
+        ],
+      },
+    ],
+  },
+  {
+    heading: 'Zdroje',
+    groups: [
+      {
+        title: '',
+        items: [
+          { id: '__llm_docs', label: 'LLM dokumentace' },
         ],
       },
     ],
@@ -169,9 +198,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeId, onSelect }) => {
         scrollbarWidth: 'none',
         msOverflowStyle: 'none' as any,
         padding: '20px 12px 32px',
-        height: 'calc(100vh - 45px)',
-        position: 'sticky',
-        top: 45,
+        minHeight: 0,
       }}
     >
       {menu.map((category, catIdx) => (
@@ -227,6 +254,20 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeId, onSelect }) => {
               {/* Items */}
               {group.items.map((item) => {
                 const isActive = item.id === activeId;
+
+                // Special handling for external links
+                if (item.id === '__llm_docs') {
+                  return (
+                    <SidebarItem
+                      key={item.id}
+                      item={item}
+                      isActive={false}
+                      tokens={t}
+                      onClick={() => window.open('/llm/all.md', '_blank')}
+                    />
+                  );
+                }
+
                 return (
                   <SidebarItem
                     key={item.id}

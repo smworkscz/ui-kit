@@ -12,14 +12,17 @@ import { spotlightItems } from './spotlightData';
 import { Sidebar } from './Sidebar';
 import {
   IntroductionPage, InstallationPage, UsagePage, ThemingPage, DesignTokensPage,
-  ButtonPage, InputPage, SelectPage, DatePickerPage, CheckboxPage, RadioPage,
-  SwitchPage, TextareaPage, SliderPage, FileUploadPage,
-  TablePage, CardPage, AccordionPage, TabsPage, TooltipPage, PopoverPage,
+  ButtonPage, InputPage, NumberInputPage, SelectPage, ComboboxPage, DatePickerPage,
+  CheckboxPage, RadioPage, SwitchPage, TextareaPage, SliderPage, FileUploadPage,
+  SegmentedControlPage, ColorPickerPage, RatingPage, OTPInputPage,
+  TablePage, DataGridPage, CardPage, AccordionPage, TabsPage, TooltipPage, PopoverPage,
   SkeletonPage, EmptyStatePage, StatPage, AvatarPage, TagPage,
-  ModalPage, DrawerPage, BreadcrumbPage, PaginationPage, StepperPage,
-  DropdownMenuPage, LinkPage, SpotlightPage,
-  ToastPage, AlertPage, ProgressPage, SpinnerPage,
-  DividerPage, StackPage, ContainerPage, DragListPage, SegmentedControlPage,
+  CalendarPage, TimelinePage, DataListPage, TreePage, StatusBadgePage,
+  ModalPage, DrawerPage, SheetPage, BreadcrumbPage, PaginationPage, StepperPage,
+  DropdownMenuPage, LinkPage, SpotlightPage, CommandMenuPage, AppSidebarPage, NavbarPage,
+  ToastPage, AlertPage, NotificationPage, ProgressPage, SpinnerPage,
+  ConfirmDialogPage, CopyButtonPage,
+  DividerPage, StackPage, ContainerPage, DragListPage,
   UseThemePage, UseToastPage,
 } from './pages';
 
@@ -121,7 +124,9 @@ const pages: Record<string, React.FC> = {
   // Formuláře
   button: ButtonPage,
   input: InputPage,
+  numberinput: NumberInputPage,
   select: SelectPage,
+  combobox: ComboboxPage,
   datepicker: DatePickerPage,
   checkbox: CheckboxPage,
   radio: RadioPage,
@@ -129,8 +134,13 @@ const pages: Record<string, React.FC> = {
   textarea: TextareaPage,
   slider: SliderPage,
   fileupload: FileUploadPage,
+  segmentedcontrol: SegmentedControlPage,
+  colorpicker: ColorPickerPage,
+  rating: RatingPage,
+  otpinput: OTPInputPage,
   // Zobrazení dat
   table: TablePage,
+  datagrid: DataGridPage,
   card: CardPage,
   accordion: AccordionPage,
   tabs: TabsPage,
@@ -141,21 +151,32 @@ const pages: Record<string, React.FC> = {
   stat: StatPage,
   avatar: AvatarPage,
   tag: TagPage,
-  segmentedcontrol: SegmentedControlPage,
+  calendar: CalendarPage,
+  timeline: TimelinePage,
+  datalist: DataListPage,
+  tree: TreePage,
+  statusbadge: StatusBadgePage,
   // Navigace
   modal: ModalPage,
   drawer: DrawerPage,
+  sheet: SheetPage,
   breadcrumb: BreadcrumbPage,
   pagination: PaginationPage,
   stepper: StepperPage,
   dropdownmenu: DropdownMenuPage,
   link: LinkPage,
   spotlight: SpotlightPage,
+  commandmenu: CommandMenuPage,
+  appsidebar: AppSidebarPage,
+  navbar: NavbarPage,
   // Feedback
   toast: ToastPage,
   alert: AlertPage,
+  notification: NotificationPage,
   progress: ProgressPage,
   spinner: SpinnerPage,
+  confirmdialog: ConfirmDialogPage,
+  copybutton: CopyButtonPage,
   // Utility
   divider: DividerPage,
   stack: StackPage,
@@ -295,12 +316,11 @@ export function App() {
   const currentThemeIcon = THEME_ICONS[themePreference];
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', overflow: 'hidden' }}>
       {/* ── Top bar ─────────────────────────────────────────────────────── */}
       <header
         style={{
-          position: 'sticky',
-          top: 0,
+          flexShrink: 0,
           zIndex: 100,
           display: 'flex',
           alignItems: 'center',
@@ -338,10 +358,10 @@ export function App() {
       </header>
 
       {/* ── Body: Sidebar + Content ─────────────────────────────────────── */}
-      <div style={{ display: 'flex', flex: 1 }}>
+      <div style={{ display: 'flex', flex: 1, minHeight: 0 }}>
         <Sidebar activeId={activeId} onSelect={navigateTo} />
 
-        <main style={{ flex: 1, overflowY: 'auto' }}>
+        <main style={{ flex: 1, overflowY: 'auto', minHeight: 0 }}>
           <PageContent activeId={activeId} />
         </main>
       </div>

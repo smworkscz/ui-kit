@@ -38,6 +38,23 @@ import {
   DotsSixVertical,
   MagnifyingGlass,
   PaintBrush,
+  Hash,
+  Palette,
+  Star,
+  Password,
+  CalendarDots,
+  ClockCounterClockwise,
+  Rows,
+  TreeStructure,
+  GridFour,
+  CircleHalf,
+  Command,
+  ArrowSquareOut,
+  Layout,
+  BellRinging,
+  Copy,
+  CheckCircle,
+  Shield,
 } from '@phosphor-icons/react';
 
 const ICON_SIZE = 16;
@@ -360,6 +377,158 @@ export const spotlightItems: SpotlightItem[] = [
     onSelect: () => {},
   },
 
+  // ── Nové formuláře ──────────────────────────────────────────────────────
+  {
+    id: 'numberinput',
+    label: 'NumberInput',
+    description: 'Numerický vstup s tlačítky +/−',
+    category: 'Formuláře',
+    icon: <Hash size={ICON_SIZE} />,
+    onSelect: () => {},
+  },
+  {
+    id: 'combobox',
+    label: 'Combobox',
+    description: 'Vstup s automatickým doplňováním',
+    category: 'Formuláře',
+    icon: <ListBullets size={ICON_SIZE} />,
+    onSelect: () => {},
+  },
+  {
+    id: 'colorpicker',
+    label: 'ColorPicker',
+    description: 'Výběr barvy s paletou',
+    category: 'Formuláře',
+    icon: <Palette size={ICON_SIZE} />,
+    onSelect: () => {},
+  },
+  {
+    id: 'rating',
+    label: 'Rating',
+    description: 'Hodnocení hvězdičkami',
+    category: 'Formuláře',
+    icon: <Star size={ICON_SIZE} />,
+    onSelect: () => {},
+  },
+  {
+    id: 'otpinput',
+    label: 'OTPInput',
+    description: 'Jednorázový kód s oddělenými políčky',
+    category: 'Formuláře',
+    icon: <Password size={ICON_SIZE} />,
+    onSelect: () => {},
+  },
+
+  // ── Nové zobrazení dat ─────────────────────────────────────────────────
+  {
+    id: 'calendar',
+    label: 'Calendar',
+    description: 'Měsíční kalendář s událostmi',
+    category: 'Zobrazení dat',
+    icon: <CalendarDots size={ICON_SIZE} />,
+    onSelect: () => {},
+  },
+  {
+    id: 'timeline',
+    label: 'Timeline',
+    description: 'Časová osa událostí',
+    category: 'Zobrazení dat',
+    icon: <ClockCounterClockwise size={ICON_SIZE} />,
+    onSelect: () => {},
+  },
+  {
+    id: 'datalist',
+    label: 'DataList',
+    description: 'Seznam klíč-hodnota',
+    category: 'Zobrazení dat',
+    icon: <Rows size={ICON_SIZE} />,
+    onSelect: () => {},
+  },
+  {
+    id: 'tree',
+    label: 'Tree',
+    description: 'Stromová struktura s rozbalováním',
+    category: 'Zobrazení dat',
+    icon: <TreeStructure size={ICON_SIZE} />,
+    onSelect: () => {},
+  },
+  {
+    id: 'datagrid',
+    label: 'DataGrid',
+    description: 'Pokročilá tabulka s výběrem řádků',
+    category: 'Zobrazení dat',
+    icon: <GridFour size={ICON_SIZE} />,
+    onSelect: () => {},
+  },
+  {
+    id: 'statusbadge',
+    label: 'StatusBadge',
+    description: 'Stavový indikátor s tečkou',
+    category: 'Zobrazení dat',
+    icon: <CircleHalf size={ICON_SIZE} />,
+    onSelect: () => {},
+  },
+
+  // ── Nová navigace ──────────────────────────────────────────────────────
+  {
+    id: 'commandmenu',
+    label: 'CommandMenu',
+    description: 'Příkazová paleta se skupinami',
+    category: 'Navigace',
+    icon: <Command size={ICON_SIZE} />,
+    onSelect: () => {},
+  },
+  {
+    id: 'sheet',
+    label: 'Sheet',
+    description: 'Vysouvací panel z libovolné strany',
+    category: 'Navigace',
+    icon: <ArrowSquareOut size={ICON_SIZE} />,
+    onSelect: () => {},
+  },
+  {
+    id: 'appsidebar',
+    label: 'AppSidebar',
+    description: 'Skládací postranní panel aplikace',
+    category: 'Navigace',
+    icon: <Layout size={ICON_SIZE} />,
+    onSelect: () => {},
+  },
+  {
+    id: 'navbar',
+    label: 'Navbar',
+    description: 'Horní navigační lišta',
+    category: 'Navigace',
+    icon: <Layout size={ICON_SIZE} />,
+    onSelect: () => {},
+  },
+
+  // ── Nový feedback ──────────────────────────────────────────────────────
+  {
+    id: 'notification',
+    label: 'Notification',
+    description: 'Trvalé notifikační bannery v layoutu',
+    category: 'Feedback',
+    icon: <BellRinging size={ICON_SIZE} />,
+    onSelect: () => {},
+  },
+  {
+    id: 'confirmdialog',
+    label: 'ConfirmDialog',
+    description: 'Potvrzovací dialog',
+    category: 'Feedback',
+    icon: <CheckCircle size={ICON_SIZE} />,
+    onSelect: () => {},
+  },
+  {
+    id: 'copybutton',
+    label: 'CopyButton',
+    description: 'Tlačítko pro kopírování do schránky',
+    category: 'Feedback',
+    icon: <Copy size={ICON_SIZE} />,
+    onSelect: () => {},
+  },
+
   // ── Hooks ──────────────────────────────────────────────────────────────
   {
     id: 'useTheme',
@@ -378,3 +547,12 @@ export const spotlightItems: SpotlightItem[] = [
     onSelect: () => {},
   },
 ];
+
+// Sort items A-Z within each category, preserving category order
+const categoryOrder = ['Formuláře', 'Zobrazení dat', 'Navigace', 'Feedback', 'Utility', 'Hooks'];
+spotlightItems.sort((a, b) => {
+  const catA = categoryOrder.indexOf(a.category);
+  const catB = categoryOrder.indexOf(b.category);
+  if (catA !== catB) return catA - catB;
+  return a.label.localeCompare(b.label);
+});

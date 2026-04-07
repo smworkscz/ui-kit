@@ -23,6 +23,7 @@ const propDefs: PropDef[] = [
   { name: 'fullWidth', type: 'boolean', defaultValue: 'false', description: 'Roztáhne tlačítko na celou šířku kontejneru.' },
   { name: 'disabled', type: 'boolean', defaultValue: 'false', description: 'Zakáže interakci s tlačítkem.' },
   { name: 'href', type: 'string', description: 'Pokud je zadáno, vykreslí se jako <a> místo <button>.' },
+  { name: 'target', type: 'string', description: 'Cíl odkazu (např. "_blank"). Pouze s href. Auto rel="noopener noreferrer" pro _blank.' },
   { name: 'children', type: 'ReactNode', description: 'Textový obsah tlačítka.' },
   { name: 'style', type: 'CSSProperties', description: 'Inline styly.' },
   { name: 'className', type: 'string', description: 'CSS třída.' },

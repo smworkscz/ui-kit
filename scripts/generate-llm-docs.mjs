@@ -235,7 +235,7 @@ const components = [
     category: 'Forms',
     description: 'Segmented toggle for choosing between a few options. Animated sliding indicator.',
     props: [
-      { name: 'data', type: "(string | { value, label?, disabled? })[]", required: true, desc: 'Segment data. Strings auto-convert.' },
+      { name: 'data', type: "(string | { value, label?, icon?, disabled? })[]", required: true, desc: 'Segment data. Can have icon, label, or both.' },
       { name: 'value', type: 'string', required: true, desc: 'Currently selected value.' },
       { name: 'onChange', type: '(value: string) => void', required: true, desc: 'Change callback.' },
       { name: 'size', type: "'sm' | 'md' | 'lg'", default: "'md'", desc: 'Size preset.' },
@@ -252,6 +252,26 @@ const components = [
   ]}
   value={plan}
   onChange={setPlan}
+/>
+
+// Icon only
+<SegmentedControl
+  data={[
+    { value: 'list', icon: <ListIcon size={16} /> },
+    { value: 'grid', icon: <GridFourIcon size={16} /> },
+  ]}
+  value={view}
+  onChange={setView}
+/>
+
+// Icon + label
+<SegmentedControl
+  data={[
+    { value: 'light', label: 'Light', icon: <SunIcon size={14} /> },
+    { value: 'dark', label: 'Dark', icon: <MoonIcon size={14} /> },
+  ]}
+  value={theme}
+  onChange={setTheme}
 />`,
   },
   // ── Data display ──────────────────────────────────────────────────────

@@ -17,9 +17,9 @@ const colors = {
 // ─── Size config ─────────────────────────────────────────────────────────────
 
 const sizeConfig = {
-  sm: { paddingText: '6px 12px', paddingSquare: '6px', fontSize: '12px', gap: '6px' },
-  md: { paddingText: '8px 16px', paddingSquare: '8px', fontSize: '14px', gap: '8px' },
-  lg: { paddingText: '12px 20px', paddingSquare: '12px', fontSize: '16px', gap: '10px' },
+  sm: { paddingText: '6px 12px', paddingSquare: '6px', fontSize: '12px', gap: '6px', height: '30px' },
+  md: { paddingText: '8px 16px', paddingSquare: '8px', fontSize: '14px', gap: '8px', height: '36px' },
+  lg: { paddingText: '12px 20px', paddingSquare: '12px', fontSize: '16px', gap: '10px', height: '42px' },
 } as const;
 
 // ─── Spinner (no CSS required — rAF-driven rotation) ─────────────────────────
@@ -168,7 +168,7 @@ export const Button = React.forwardRef<
     const hasIcon = icon !== undefined && icon !== null;
     const isSquare = (hasIcon || loading) && !hasText;
 
-    const { paddingText, paddingSquare, fontSize, gap } = sizeConfig[size];
+    const { paddingText, paddingSquare, fontSize, gap, height } = sizeConfig[size];
 
     // ── Base styles ──────────────────────────────────────────────────────────
     const base: React.CSSProperties = {
@@ -179,6 +179,7 @@ export const Button = React.forwardRef<
       flexShrink: 0,
       gap: hasText && (hasIcon || loading) ? gap : undefined,
       padding: isSquare ? paddingSquare : paddingText,
+      height: isSquare ? height : height,
       borderRadius: '8px',
       cursor: isDisabled ? 'not-allowed' : 'pointer',
       opacity: isDisabled ? 0.5 : 1,

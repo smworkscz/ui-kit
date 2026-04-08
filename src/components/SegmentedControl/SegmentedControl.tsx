@@ -45,6 +45,8 @@ export interface SegmentedControlItem {
   value: string;
   /** Zobrazovaný text. Výchozí: `value`. */
   label?: string;
+  /** Ikona zobrazená v segmentu. Může být samostatně nebo s label. */
+  icon?: React.ReactNode;
   /** Zakáže tento segment. */
   disabled?: boolean;
 }
@@ -240,6 +242,10 @@ export const SegmentedControl: React.FC<SegmentedControlProps> = ({
             style={{
               position: 'relative',
               zIndex: 1,
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '6px',
               flex: fullWidth ? 1 : undefined,
               padding: sc.itemPadding,
               border: '0 none',
@@ -273,7 +279,8 @@ export const SegmentedControl: React.FC<SegmentedControlProps> = ({
               }
             }}
           >
-            {item.label ?? item.value}
+            {item.icon && <span style={{ display: 'inline-flex', alignItems: 'center', flexShrink: 0 }}>{item.icon}</span>}
+            {(item.label || (!item.icon && item.value)) && <span>{item.label ?? item.value}</span>}
           </button>
         );
       })}

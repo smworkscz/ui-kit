@@ -91,6 +91,11 @@ export interface FileUploadProps {
    * @default true
    */
   showFileList?: boolean;
+  /**
+   * Text tlačítka u button varianty.
+   * Pokud zadáno, zobrazí se vždy tento text místo názvu souboru.
+   */
+  buttonLabel?: string;
   /** Dodatečná CSS třída. */
   className?: string;
   /** Další inline styly. */
@@ -139,6 +144,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
   error,
   buttonStyle = 'default',
   showFileList = true,
+  buttonLabel,
   className,
   style,
 }) => {
@@ -324,11 +330,13 @@ export const FileUpload: React.FC<FileUploadProps> = ({
         >
           <UploadSimpleIcon size={16} color="#ffffff" style={{ flexShrink: 0 }} />
           <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-            {files.length === 0
-              ? 'Nahrát soubor'
-              : files.length === 1
-                ? files[0].file.name
-                : `${files.length} souborů`}
+            {buttonLabel
+              ? buttonLabel
+              : files.length === 0
+                ? 'Nahrát soubor'
+                : files.length === 1
+                  ? files[0].file.name
+                  : `${files.length} souborů`}
           </span>
         </button>
         ) : (
@@ -373,11 +381,13 @@ export const FileUpload: React.FC<FileUploadProps> = ({
               whiteSpace: 'nowrap',
             }}
           >
-            {files.length === 0
-              ? 'Vyberte soubor...'
-              : files.length === 1
-                ? files[0].file.name
-                : `${files.length} souborů`}
+            {buttonLabel
+              ? buttonLabel
+              : files.length === 0
+                ? 'Vyberte soubor...'
+                : files.length === 1
+                  ? files[0].file.name
+                  : `${files.length} souborů`}
           </span>
 
           {/* Velikost souboru */}

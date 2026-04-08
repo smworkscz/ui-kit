@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { SegmentedControl } from '../../../src';
+import { ListIcon, GridFourIcon, TableIcon, SunIcon, MoonIcon, DesktopIcon } from '@phosphor-icons/react';
 import { PageLayout, H1, H2, Paragraph, Playground, PropsTable, VariantShowcase } from './shared';
 import type { PlaygroundControl, PropDef } from './shared';
 
@@ -11,7 +12,7 @@ const controls: PlaygroundControl[] = [
 ];
 
 const propDefs: PropDef[] = [
-  { name: 'data', type: "(string | { value, label?, disabled? })[]", required: true, description: 'Data segmentů. Řetězce se převedou automaticky.' },
+  { name: 'data', type: "(string | { value, label?, icon?, disabled? })[]", required: true, description: 'Data segmentů. Může obsahovat ikonu, text nebo obojí.' },
   { name: 'value', type: 'string', required: true, description: 'Aktuálně vybraná hodnota.' },
   { name: 'onChange', type: '(value: string) => void', required: true, description: 'Callback při změně výběru.' },
   { name: 'size', type: "'sm' | 'md' | 'lg'", defaultValue: "'md'", description: 'Velikostní preset.' },
@@ -70,6 +71,30 @@ export const SegmentedControlPage: React.FC = () => {
           ]}
           value={period}
           onChange={setPeriod}
+        />
+      </VariantShowcase>
+
+      <VariantShowcase label="Pouze ikony">
+        <SegmentedControl
+          data={[
+            { value: 'list', icon: <ListIcon size={16} /> },
+            { value: 'grid', icon: <GridFourIcon size={16} /> },
+            { value: 'table', icon: <TableIcon size={16} /> },
+          ]}
+          value="list"
+          onChange={() => {}}
+        />
+      </VariantShowcase>
+
+      <VariantShowcase label="Ikona + text">
+        <SegmentedControl
+          data={[
+            { value: 'light', label: 'Light', icon: <SunIcon size={14} /> },
+            { value: 'dark', label: 'Dark', icon: <MoonIcon size={14} /> },
+            { value: 'system', label: 'System', icon: <DesktopIcon size={14} /> },
+          ]}
+          value="dark"
+          onChange={() => {}}
         />
       </VariantShowcase>
 

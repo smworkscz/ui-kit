@@ -5,9 +5,10 @@ import {
   DropdownMenu,
   Spotlight,
   useTheme,
+  useToast,
 } from '../../src';
 import type { DropdownMenuItem } from '../../src';
-import { SunIcon, MoonIcon, DesktopIcon, MagnifyingGlassIcon } from '@phosphor-icons/react';
+import { SunIcon, MoonIcon, DesktopIcon, MagnifyingGlassIcon, CopySimpleIcon, CheckIcon } from '@phosphor-icons/react';
 import { spotlightItems } from './spotlightData';
 import { Sidebar } from './Sidebar';
 import { version } from '../../package.json';
@@ -110,6 +111,103 @@ const SearchTrigger: React.FC<{ onClick: () => void }> = ({ onClick }) => {
       >
         ⌘K
       </kbd>
+    </button>
+  );
+};
+
+// ─── LLM docs copy button ───────────────────────────────────────────────────
+
+const LlmCopyButton: React.FC<{ activeId: string }> = ({ activeId }) => {
+  const theme = useTheme();
+  const { toast } = useToast();
+  const [copied, setCopied] = useState(false);
+  const isDark = theme === 'dark';
+
+  // Pages that have per-component LLM docs
+  const introPages = ['introduction', 'installation', 'usage', 'theming', 'design-tokens'];
+  const hasComponentDoc = !introPages.includes(activeId);
+
+  const baseUrl = window.location.origin;
+  const llmUrl = hasComponentDoc
+    ? `${baseUrl}/llm/${activeId}.md`
+    : `${baseUrl}/llm/all.md`;
+
+  const handleCopy = useCallback(() => {
+    const text = llmUrl;
+    if (navigator.clipboard?.writeText) {
+      navigator.clipboard.writeText(text).then(() => done()).catch(() => { fallback(text); done(); });
+    } else {
+      fallback(text);
+      done();
+    }
+
+    function fallback(t: string) {
+      const ta = document.createElement('textarea');
+      ta.value = t;
+      ta.setAttribute('readonly', '');
+      ta.style.cssText = 'position:fixed;left:-9999px;top:-9999px;opacity:0';
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      try { document.execCommand('copy'); } catch (_) {}
+      document.body.removeChild(ta);
+    }
+
+    function done() {
+      setCopied(true);
+      toast({
+        variant: 'success',
+        title: 'LLM odkaz zkopírován',
+        content: hasComponentDoc ? `${activeId}.md` : 'all.md',
+        duration: 2000,
+      });
+      setTimeout(() => setCopied(false), 2000);
+    }
+  }, [llmUrl, activeId, hasComponentDoc, toast]);
+
+  return (
+    <button
+      type="button"
+      onClick={handleCopy}
+      title={copied ? 'Zkopírováno!' : `Kopírovat LLM docs odkaz (${hasComponentDoc ? activeId + '.md' : 'all.md'})`}
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 6,
+        padding: '5px 10px',
+        borderRadius: 8,
+        border: `1px solid ${isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)'}`,
+        backgroundColor: copied
+          ? 'rgba(0,162,5,0.12)'
+          : isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.03)',
+        color: copied
+          ? '#00A205'
+          : isDark ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.4)',
+        cursor: 'pointer',
+        fontFamily: "'Zalando Sans', sans-serif",
+        fontSize: 12,
+        fontWeight: 400,
+        transition: 'border-color 0.12s ease, background-color 0.12s ease, color 0.12s ease',
+        outline: 'none',
+        flexShrink: 0,
+        whiteSpace: 'nowrap',
+      }}
+      onMouseEnter={(e) => {
+        if (!copied) {
+          e.currentTarget.style.borderColor = isDark ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.15)';
+          e.currentTarget.style.backgroundColor = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.05)';
+        }
+      }}
+      onMouseLeave={(e) => {
+        if (!copied) {
+          e.currentTarget.style.borderColor = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)';
+          e.currentTarget.style.backgroundColor = isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.03)';
+        }
+      }}
+    >
+      {copied ? <CheckIcon size={13} weight="bold" /> : <CopySimpleIcon size={13} />}
+      LLM
     </button>
   );
 };
@@ -349,6 +447,9 @@ export function App() {
 
         {/* Search trigger */}
         <SearchTrigger onClick={() => setSpotlightOpen(true)} />
+
+        {/* LLM docs copy */}
+        <LlmCopyButton activeId={activeId} />
 
         {/* Theme switcher */}
         <DropdownMenu

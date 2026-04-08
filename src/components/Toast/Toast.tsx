@@ -1,21 +1,27 @@
 import React from 'react';
 import { Info as InfoIcon, CheckCircle as CheckCircleIcon, XCircle as XCircleIcon, X as XIcon } from '@phosphor-icons/react';
+import { useTheme } from '../../hooks/useTheme';
 
 // ─── Design tokens ───────────────────────────────────────────────────────────
-// Toast is always dark-themed by design (overlays / notification tray).
 
-const variantTokens = {
-  info: {
-    border: 'rgba(255,255,255,0.5)',
-    background: 'rgba(3,3,3,0.55)',
+const tokens = {
+  dark: {
+    info:    { border: 'rgba(255,255,255,0.5)', background: 'rgba(3,3,3,0.55)' },
+    success: { border: 'rgba(0,162,5,0.7)',     background: 'rgba(3,21,4,0.55)' },
+    error:   { border: 'rgba(222,0,0,0.7)',     background: 'rgba(21,3,3,0.55)' },
+    text: '#ffffff',
+    textSecondary: '#ffffff',
+    iconColor: '#ffffff',
+    closeColor: '#ffffff',
   },
-  success: {
-    border: 'rgba(0,162,5,0.7)',
-    background: 'rgba(3,21,4,0.55)',
-  },
-  error: {
-    border: 'rgba(222,0,0,0.7)',
-    background: 'rgba(21,3,3,0.55)',
+  light: {
+    info:    { border: 'rgba(0,0,0,0.12)',   background: 'rgba(255,255,255,0.7)' },
+    success: { border: 'rgba(0,162,5,0.3)',  background: 'rgba(240,255,240,0.7)' },
+    error:   { border: 'rgba(222,0,0,0.3)', background: 'rgba(255,240,240,0.7)' },
+    text: '#1a1a1a',
+    textSecondary: '#333333',
+    iconColor: '#1a1a1a',
+    closeColor: '#888888',
   },
 } as const;
 
@@ -94,7 +100,9 @@ export const Toast: React.FC<ToastProps> = ({
   style,
   className,
 }) => {
-  const { border, background } = variantTokens[variant];
+  const theme = useTheme();
+  const t = tokens[theme];
+  const { border, background } = t[variant];
   const resolvedIcon = icon ?? defaultIcons[variant];
 
   return (
@@ -118,7 +126,7 @@ export const Toast: React.FC<ToastProps> = ({
     >
       {/* Body: icon + text */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flex: 1, minWidth: 0 }}>
-        <span style={{ display: 'flex', alignItems: 'center', flexShrink: 0, color: '#ffffff' }}>
+        <span style={{ display: 'flex', alignItems: 'center', flexShrink: 0, color: t.iconColor }}>
           {resolvedIcon}
         </span>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', flex: 1, minWidth: 0 }}>
@@ -126,7 +134,7 @@ export const Toast: React.FC<ToastProps> = ({
             fontFamily: "'Zalando Sans Expanded', sans-serif",
             fontWeight: 700,
             fontSize: '16px',
-            color: '#ffffff',
+            color: t.text,
             lineHeight: 'normal',
           }}>
             {title}
@@ -136,7 +144,7 @@ export const Toast: React.FC<ToastProps> = ({
               fontFamily: "'Zalando Sans', sans-serif",
               fontWeight: 400,
               fontSize: '12px',
-              color: '#ffffff',
+              color: t.textSecondary,
               lineHeight: 'normal',
             }}>
               {content}
@@ -159,7 +167,7 @@ export const Toast: React.FC<ToastProps> = ({
             border: 'none',
             cursor: 'pointer',
             padding: 0,
-            color: '#ffffff',
+            color: t.closeColor,
             opacity: 0.7,
             flexShrink: 0,
           }}

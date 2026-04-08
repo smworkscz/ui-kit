@@ -8,13 +8,14 @@ Button for primary actions, secondary operations, and outline variants. Supports
 
 | Prop | Type | Default | Required | Description |
 |------|------|---------|----------|-------------|
-| `variant` | `'primary' | 'secondary' | 'outline'` | 'primary' |  | Visual style of the button. |
+| `variant` | `'primary' | 'secondary' | 'outline' | 'danger'` | 'primary' |  | Visual style. Danger variant is red (#EF3838). |
 | `size` | `'sm' | 'md' | 'lg'` | 'md' |  | Size preset. |
 | `icon` | `ReactNode` | — |  | Optional icon (SVG or component). |
 | `iconPosition` | `'left' | 'right'` | 'left' |  | Icon position relative to text. |
 | `loading` | `boolean` | false |  | Shows spinner and disables interaction. |
 | `fullWidth` | `boolean` | false |  | Stretches button to full container width. |
 | `disabled` | `boolean` | false |  | Disables interaction. |
+| `onClick` | `() => void` | — |  | Click callback. Inherited from native HTML attributes. |
 | `href` | `string` | — |  | If provided, renders as <a> instead of <button>. |
 | `children` | `ReactNode` | — |  | Button text content. |
 

@@ -5,7 +5,7 @@ import { PageLayout, H1, H2, Paragraph, Playground, PropsTable, VariantShowcase 
 import type { PlaygroundControl, PropDef } from './shared';
 
 const controls: PlaygroundControl[] = [
-  { type: 'select', prop: 'variant', label: 'Varianta', options: ['primary', 'secondary', 'outline'], defaultValue: 'primary' },
+  { type: 'select', prop: 'variant', label: 'Varianta', options: ['primary', 'secondary', 'outline', 'danger'], defaultValue: 'primary' },
   { type: 'select', prop: 'size', label: 'Velikost', options: ['sm', 'md', 'lg'], defaultValue: 'md' },
   { type: 'text', prop: 'children', label: 'Text', defaultValue: 'Tlačítko' },
   { type: 'boolean', prop: 'loading', label: 'Loading', defaultValue: false },
@@ -15,13 +15,14 @@ const controls: PlaygroundControl[] = [
 ];
 
 const propDefs: PropDef[] = [
-  { name: 'variant', type: "'primary' | 'secondary' | 'outline'", defaultValue: "'primary'", description: 'Vizuální styl tlačítka.' },
+  { name: 'variant', type: "'primary' | 'secondary' | 'outline' | 'danger'", defaultValue: "'primary'", description: 'Vizuální styl tlačítka.' },
   { name: 'size', type: "'sm' | 'md' | 'lg'", defaultValue: "'md'", description: 'Velikostní preset.' },
   { name: 'icon', type: 'ReactNode', description: 'Volitelná ikona (SVG nebo komponenta).' },
   { name: 'iconPosition', type: "'left' | 'right'", defaultValue: "'left'", description: 'Pozice ikony vůči textu.' },
   { name: 'loading', type: 'boolean', defaultValue: 'false', description: 'Zobrazí spinner a zakáže interakci.' },
   { name: 'fullWidth', type: 'boolean', defaultValue: 'false', description: 'Roztáhne tlačítko na celou šířku kontejneru.' },
   { name: 'disabled', type: 'boolean', defaultValue: 'false', description: 'Zakáže interakci s tlačítkem.' },
+  { name: 'onClick', type: '() => void', description: 'Callback při kliknutí. Zděděno z nativních HTML atributů.' },
   { name: 'href', type: 'string', description: 'Pokud je zadáno, vykreslí se jako <a> místo <button>.' },
   { name: 'target', type: 'string', description: 'Cíl odkazu (např. "_blank"). Pouze s href. Auto rel="noopener noreferrer" pro _blank.' },
   { name: 'children', type: 'ReactNode', description: 'Textový obsah tlačítka.' },
@@ -58,6 +59,7 @@ export const ButtonPage: React.FC = () => (
       <Button variant="primary">Primary</Button>
       <Button variant="secondary">Secondary</Button>
       <Button variant="outline">Outline</Button>
+      <Button variant="danger">Danger</Button>
     </VariantShowcase>
 
     <VariantShowcase label="Velikosti">

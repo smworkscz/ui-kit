@@ -54,6 +54,7 @@ export { LinkPage } from './LinkPage';
 export { SpotlightPage } from './SpotlightPage';
 export { CommandMenuPage } from './CommandMenuPage';
 export { AppSidebarPage } from './AppSidebarPage';
+export { SidebarItemPage } from './SidebarItemPage';
 export { NavbarPage } from './NavbarPage';
 
 // ── Feedback ────────────────────────────────────────────────────────────────

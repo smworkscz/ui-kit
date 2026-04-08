@@ -86,6 +86,7 @@ const menu: MenuCategory[] = [
         title: 'Navigace & Layout',
         items: [
           { id: 'appsidebar', label: 'AppSidebar' },
+          { id: 'sidebaritem', label: 'SidebarItem' },
           { id: 'breadcrumb', label: 'Breadcrumb' },
           { id: 'commandmenu', label: 'CommandMenu' },
           { id: 'drawer', label: 'Drawer' },

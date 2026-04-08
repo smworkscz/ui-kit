@@ -495,6 +495,14 @@ export const spotlightItems: SpotlightItem[] = [
     onSelect: () => {},
   },
   {
+    id: 'sidebaritem',
+    label: 'SidebarItem',
+    description: 'Navigační položka s rozbalováním',
+    category: 'Navigace',
+    icon: <Layout size={ICON_SIZE} />,
+    onSelect: () => {},
+  },
+  {
     id: 'navbar',
     label: 'Navbar',
     description: 'Horní navigační lišta',

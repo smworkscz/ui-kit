@@ -22,13 +22,14 @@ Button for primary actions, secondary operations, and outline variants. Supports
 
 | Prop | Type | Default | Required | Description |
 |------|------|---------|----------|-------------|
-| `variant` | `'primary' | 'secondary' | 'outline'` | 'primary' |  | Visual style of the button. |
+| `variant` | `'primary' | 'secondary' | 'outline' | 'danger'` | 'primary' |  | Visual style. Danger variant is red (#EF3838). |
 | `size` | `'sm' | 'md' | 'lg'` | 'md' |  | Size preset. |
 | `icon` | `ReactNode` | — |  | Optional icon (SVG or component). |
 | `iconPosition` | `'left' | 'right'` | 'left' |  | Icon position relative to text. |
 | `loading` | `boolean` | false |  | Shows spinner and disables interaction. |
 | `fullWidth` | `boolean` | false |  | Stretches button to full container width. |
 | `disabled` | `boolean` | false |  | Disables interaction. |
+| `onClick` | `() => void` | — |  | Click callback. Inherited from native HTML attributes. |
 | `href` | `string` | — |  | If provided, renders as <a> instead of <button>. |
 | `children` | `ReactNode` | — |  | Button text content. |
 
@@ -315,7 +316,7 @@ Range slider for selecting numeric values. Supports range mode.
 
 # FileUpload
 
-File upload with drag & drop zone or compact input-style variant.
+File upload with drag & drop zone, compact input-style, or primary button variant.
 
 **Import:** `import { FileUpload } from '@smworks-cz/ui-kit'`
 
@@ -323,7 +324,9 @@ File upload with drag & drop zone or compact input-style variant.
 
 | Prop | Type | Default | Required | Description |
 |------|------|---------|----------|-------------|
-| `variant` | `'dropzone' | 'button'` | 'dropzone' |  | Visual variant — large zone or compact input. |
+| `variant` | `'dropzone' | 'button'` | 'dropzone' |  | Visual variant — large zone or compact button. |
+| `buttonStyle` | `'default' | 'primary'` | 'default' |  | Button variant style — neutral input or primary orange button. |
+| `showFileList` | `boolean` | true |  | Show uploaded file list below component. |
 | `onFiles` | `(files: File[]) => void` | — |  | Callback with selected files. |
 | `accept` | `string` | — |  | Allowed file types (e.g. 'image/*,.pdf'). |
 | `multiple` | `boolean` | false |  | Allow multiple files. |
@@ -337,6 +340,7 @@ File upload with drag & drop zone or compact input-style variant.
 ```tsx
 <FileUpload label="Documents" accept="image/*,.pdf" multiple onFiles={handleFiles} />
 <FileUpload variant="button" label="Avatar" accept="image/*" />
+<FileUpload variant="button" buttonStyle="primary" label="Upload" showFileList={false} />
 ```
 
 ---
@@ -1285,6 +1289,46 @@ Collapsible application sidebar with glass effect. No built-in toggle — consum
 
 - No built-in collapse button — add your own
 - Icons center horizontally when collapsed
+
+---
+
+# SidebarItem
+
+Navigation item for AppSidebar with icon, hover effect, active state, and collapsible children.
+
+**Import:** `import { SidebarItem } from '@smworks-cz/ui-kit'`
+
+## Props
+
+| Prop | Type | Default | Required | Description |
+|------|------|---------|----------|-------------|
+| `label` | `string` | — | Yes | Item text label. |
+| `icon` | `ReactNode` | — |  | Icon before text. |
+| `active` | `boolean` | false |  | Active (selected) state. |
+| `defaultExpanded` | `boolean` | false |  | Default expanded state (uncontrolled). |
+| `expanded` | `boolean` | — |  | Controlled expanded state. |
+| `onExpandedChange` | `(expanded: boolean) => void` | — |  | Expand change callback. |
+| `onClick` | `() => void` | — |  | Click callback. |
+| `children` | `ReactNode` | — |  | Nested SidebarItem components. Enables collapsible mode. |
+| `collapsed` | `boolean` | false |  | Collapsed sidebar mode (icon only). |
+| `disabled` | `boolean` | false |  | Disable interaction. |
+
+## Usage
+
+```tsx
+<SidebarItem label="Dashboard" icon={<HouseIcon size={18} />} active onClick={...} />
+
+<SidebarItem label="Settings" icon={<GearIcon size={18} />} defaultExpanded>
+  <SidebarItem label="General" onClick={...} />
+  <SidebarItem label="Security" onClick={...} />
+</SidebarItem>
+```
+
+## Notes
+
+- Nest SidebarItem inside SidebarItem for collapsible groups
+- collapsed prop shows icon-only mode (for collapsed AppSidebar)
+- Children animate open/close with max-height transition
 
 ---
 

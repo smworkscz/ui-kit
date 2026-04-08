@@ -47,6 +47,7 @@ export * from './components/Link';
 export * from './components/Spotlight';
 export * from './components/CommandMenu';
 export * from './components/AppSidebar';
+export * from './components/SidebarItem';
 export * from './components/Navbar';
 
 // ── Feedback ─────────────────────────────────────────────────────────────────

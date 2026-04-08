@@ -17,13 +17,14 @@ const components = [
     category: 'Forms',
     description: 'Button for primary actions, secondary operations, and outline variants. Supports icons, loading state, and can render as a link.',
     props: [
-      { name: 'variant', type: "'primary' | 'secondary' | 'outline'", default: "'primary'", desc: 'Visual style of the button.' },
+      { name: 'variant', type: "'primary' | 'secondary' | 'outline' | 'danger'", default: "'primary'", desc: 'Visual style. Danger variant is red (#EF3838).' },
       { name: 'size', type: "'sm' | 'md' | 'lg'", default: "'md'", desc: 'Size preset.' },
       { name: 'icon', type: 'ReactNode', desc: 'Optional icon (SVG or component).' },
       { name: 'iconPosition', type: "'left' | 'right'", default: "'left'", desc: 'Icon position relative to text.' },
       { name: 'loading', type: 'boolean', default: 'false', desc: 'Shows spinner and disables interaction.' },
       { name: 'fullWidth', type: 'boolean', default: 'false', desc: 'Stretches button to full container width.' },
       { name: 'disabled', type: 'boolean', default: 'false', desc: 'Disables interaction.' },
+      { name: 'onClick', type: '() => void', desc: 'Click callback. Inherited from native HTML attributes.' },
       { name: 'href', type: 'string', desc: 'If provided, renders as <a> instead of <button>.' },
       { name: 'children', type: 'ReactNode', desc: 'Button text content.' },
     ],
@@ -211,9 +212,11 @@ const components = [
     id: 'fileupload',
     name: 'FileUpload',
     category: 'Forms',
-    description: 'File upload with drag & drop zone or compact input-style variant.',
+    description: 'File upload with drag & drop zone, compact input-style, or primary button variant.',
     props: [
-      { name: 'variant', type: "'dropzone' | 'button'", default: "'dropzone'", desc: 'Visual variant — large zone or compact input.' },
+      { name: 'variant', type: "'dropzone' | 'button'", default: "'dropzone'", desc: 'Visual variant — large zone or compact button.' },
+      { name: 'buttonStyle', type: "'default' | 'primary'", default: "'default'", desc: 'Button variant style — neutral input or primary orange button.' },
+      { name: 'showFileList', type: 'boolean', default: 'true', desc: 'Show uploaded file list below component.' },
       { name: 'onFiles', type: '(files: File[]) => void', desc: 'Callback with selected files.' },
       { name: 'accept', type: 'string', desc: "Allowed file types (e.g. 'image/*,.pdf')." },
       { name: 'multiple', type: 'boolean', default: 'false', desc: 'Allow multiple files.' },
@@ -223,7 +226,8 @@ const components = [
       { name: 'error', type: 'boolean | string', desc: 'Error state.' },
     ],
     usage: `<FileUpload label="Documents" accept="image/*,.pdf" multiple onFiles={handleFiles} />
-<FileUpload variant="button" label="Avatar" accept="image/*" />`,
+<FileUpload variant="button" label="Avatar" accept="image/*" />
+<FileUpload variant="button" buttonStyle="primary" label="Upload" showFileList={false} />`,
   },
   {
     id: 'segmentedcontrol',
@@ -964,6 +968,31 @@ dismiss(id);`,
   <nav>...</nav>
 </AppSidebar>`,
     notes: ['No built-in collapse button — add your own', 'Icons center horizontally when collapsed'],
+  },
+  {
+    id: 'sidebaritem',
+    name: 'SidebarItem',
+    category: 'Navigation',
+    description: 'Navigation item for AppSidebar with icon, hover effect, active state, and collapsible children.',
+    props: [
+      { name: 'label', type: 'string', required: true, desc: 'Item text label.' },
+      { name: 'icon', type: 'ReactNode', desc: 'Icon before text.' },
+      { name: 'active', type: 'boolean', default: 'false', desc: 'Active (selected) state.' },
+      { name: 'defaultExpanded', type: 'boolean', default: 'false', desc: 'Default expanded state (uncontrolled).' },
+      { name: 'expanded', type: 'boolean', desc: 'Controlled expanded state.' },
+      { name: 'onExpandedChange', type: '(expanded: boolean) => void', desc: 'Expand change callback.' },
+      { name: 'onClick', type: '() => void', desc: 'Click callback.' },
+      { name: 'children', type: 'ReactNode', desc: 'Nested SidebarItem components. Enables collapsible mode.' },
+      { name: 'collapsed', type: 'boolean', default: 'false', desc: 'Collapsed sidebar mode (icon only).' },
+      { name: 'disabled', type: 'boolean', default: 'false', desc: 'Disable interaction.' },
+    ],
+    usage: `<SidebarItem label="Dashboard" icon={<HouseIcon size={18} />} active onClick={...} />
+
+<SidebarItem label="Settings" icon={<GearIcon size={18} />} defaultExpanded>
+  <SidebarItem label="General" onClick={...} />
+  <SidebarItem label="Security" onClick={...} />
+</SidebarItem>`,
+    notes: ['Nest SidebarItem inside SidebarItem for collapsible groups', 'collapsed prop shows icon-only mode (for collapsed AppSidebar)', 'Children animate open/close with max-height transition'],
   },
   {
     id: 'navbar',

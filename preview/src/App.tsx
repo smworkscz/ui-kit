@@ -23,6 +23,7 @@ import {
   DropdownMenuPage, LinkPage, SpotlightPage, CommandMenuPage, AppSidebarPage, NavbarPage,
   ToastPage, AlertPage, NotificationPage, ProgressPage, SpinnerPage,
   ConfirmDialogPage, CopyButtonPage,
+  SidebarItemPage,
   DividerPage, StackPage, ContainerPage, DragListPage,
   UseThemePage, UseToastPage,
 } from './pages';
@@ -169,6 +170,7 @@ const pages: Record<string, React.FC> = {
   spotlight: SpotlightPage,
   commandmenu: CommandMenuPage,
   appsidebar: AppSidebarPage,
+  sidebaritem: SidebarItemPage,
   navbar: NavbarPage,
   // Feedback
   toast: ToastPage,

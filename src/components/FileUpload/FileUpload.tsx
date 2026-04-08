@@ -79,6 +79,18 @@ export interface FileUploadProps {
    * Chybový stav. Při řetězci se zobrazí chybová zpráva.
    */
   error?: boolean | string;
+  /**
+   * Styl tlačítka u button varianty.
+   * - `'default'` — neutrální vstupní pole
+   * - `'primary'` — oranžové tlačítko jako primární Button
+   * @default 'default'
+   */
+  buttonStyle?: 'default' | 'primary';
+  /**
+   * Zda zobrazit seznam nahraných souborů pod komponentou.
+   * @default true
+   */
+  showFileList?: boolean;
   /** Dodatečná CSS třída. */
   className?: string;
   /** Další inline styly. */
@@ -125,6 +137,8 @@ export const FileUpload: React.FC<FileUploadProps> = ({
   label,
   helperText,
   error,
+  buttonStyle = 'default',
+  showFileList = true,
   className,
   style,
 }) => {
@@ -274,7 +288,50 @@ export const FileUpload: React.FC<FileUploadProps> = ({
           </span>
         </div>
       ) : (
-        /* ── Button varianta (input-style) ──────────────────────────────── */
+        /* ── Button varianta ─────────────────────────────────────────────── */
+        buttonStyle === 'primary' ? (
+        <button
+          type="button"
+          disabled={disabled}
+          onClick={() => !disabled && inputRef.current?.click()}
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '8px',
+            padding: '8px 16px',
+            borderRadius: '8px',
+            border: '1px solid transparent',
+            backgroundColor: '#FC4F00',
+            color: '#ffffff',
+            opacity: disabled ? 0.5 : 1,
+            cursor: disabled ? 'not-allowed' : 'pointer',
+            fontFamily: "'Zalando Sans Expanded', sans-serif",
+            fontSize: '14px',
+            fontWeight: 400,
+            lineHeight: 'normal',
+            transition: 'background-color 0.15s ease',
+            boxSizing: 'border-box',
+            outline: 'none',
+            maxWidth: '100%',
+          }}
+          onMouseEnter={(e) => {
+            if (!disabled) (e.currentTarget as HTMLElement).style.backgroundColor = '#FF6D2A';
+          }}
+          onMouseLeave={(e) => {
+            (e.currentTarget as HTMLElement).style.backgroundColor = '#FC4F00';
+          }}
+        >
+          <UploadSimpleIcon size={16} color="#ffffff" style={{ flexShrink: 0 }} />
+          <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            {files.length === 0
+              ? 'Nahrát soubor'
+              : files.length === 1
+                ? files[0].file.name
+                : `${files.length} souborů`}
+          </span>
+        </button>
+        ) : (
         <div
           onClick={() => !disabled && inputRef.current?.click()}
           style={{
@@ -335,10 +392,11 @@ export const FileUpload: React.FC<FileUploadProps> = ({
             <FolderIcon size={16} color={t.textSecondary} />
           </span>
         </div>
+        )
       )}
 
       {/* File list */}
-      {files.length > 0 && (
+      {showFileList && files.length > 0 && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
           {files.map((f) => (
             <div

@@ -5,13 +5,17 @@ import type { PlaygroundControl, PropDef } from './shared';
 
 const controls: PlaygroundControl[] = [
   { type: 'select', prop: 'variant', label: 'Varianta', options: ['dropzone', 'button'], defaultValue: 'dropzone' },
+  { type: 'select', prop: 'buttonStyle', label: 'Styl tlačítka', options: ['default', 'primary'], defaultValue: 'default' },
   { type: 'boolean', prop: 'multiple', label: 'Multiple', defaultValue: false },
+  { type: 'boolean', prop: 'showFileList', label: 'Seznam souborů', defaultValue: true },
   { type: 'boolean', prop: 'disabled', label: 'Disabled', defaultValue: false },
   { type: 'boolean', prop: 'error', label: 'Chyba', defaultValue: false },
 ];
 
 const propDefs: PropDef[] = [
   { name: 'variant', type: "'dropzone' | 'button'", defaultValue: "'dropzone'", description: 'Vizuální varianta — velká zóna nebo kompaktní tlačítko.' },
+  { name: 'buttonStyle', type: "'default' | 'primary'", defaultValue: "'default'", description: 'Styl button varianty — neutrální pole nebo primární tlačítko.' },
+  { name: 'showFileList', type: 'boolean', defaultValue: 'true', description: 'Zobrazí seznam nahraných souborů.' },
   { name: 'onFiles', type: '(files: File[]) => void', description: 'Callback s vybranými soubory.' },
   { name: 'accept', type: 'string', description: "Povolené typy souborů (např. 'image/*,.pdf')." },
   { name: 'multiple', type: 'boolean', defaultValue: 'false', description: 'Více souborů najednou.' },
@@ -25,8 +29,8 @@ export const FileUploadPage: React.FC = () => (
   <PageLayout>
     <H1>FileUpload</H1>
     <Paragraph large>
-      Nahrání souborů přetažením nebo kliknutím. Dvě varianty — velká dropzone
-      pro drag & drop a kompaktní tlačítko ve stylu inputu.
+      Nahrání souborů přetažením nebo kliknutím. Tři styly — velká dropzone,
+      kompaktní vstup a primární tlačítko.
     </Paragraph>
 
     <Playground
@@ -35,7 +39,9 @@ export const FileUploadPage: React.FC = () => (
         <div style={{ width: 360 }}>
           <FileUpload
             variant={props.variant}
+            buttonStyle={props.buttonStyle}
             multiple={props.multiple}
+            showFileList={props.showFileList}
             disabled={props.disabled}
             error={props.error ? 'Soubor je příliš velký' : false}
             label="Dokumenty"
@@ -51,14 +57,17 @@ export const FileUploadPage: React.FC = () => (
         <FileUpload variant="dropzone" label="Přílohy" accept="image/*,.pdf" />
       </div>
     </VariantShowcase>
-    <VariantShowcase label="Button — kompaktní">
+    <VariantShowcase label="Button — kompaktní vstup">
       <div style={{ width: 340 }}>
         <FileUpload variant="button" label="Profilový obrázek" accept="image/*" />
       </div>
     </VariantShowcase>
-    <VariantShowcase label="Button — multiple">
+    <VariantShowcase label="Button — primární tlačítko">
+      <FileUpload variant="button" buttonStyle="primary" label="Přílohy" accept="image/*,.pdf" />
+    </VariantShowcase>
+    <VariantShowcase label="Bez seznamu souborů">
       <div style={{ width: 340 }}>
-        <FileUpload variant="button" label="Dokumenty" accept=".pdf,.doc" multiple />
+        <FileUpload variant="button" label="Avatar" accept="image/*" showFileList={false} />
       </div>
     </VariantShowcase>
 

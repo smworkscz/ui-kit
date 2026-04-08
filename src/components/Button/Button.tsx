@@ -62,7 +62,7 @@ const Spinner: React.FC<{ size?: number }> = ({ size = 14 }) => {
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
-export type ButtonVariant = 'primary' | 'secondary' | 'outline';
+export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'danger';
 export type ButtonSize = 'sm' | 'md' | 'lg';
 export type ButtonIconPosition = 'left' | 'right';
 
@@ -73,6 +73,7 @@ interface ButtonBaseProps {
    * - `primary`   — oranžové vyplnění (#FC4F00)
    * - `secondary` — průhledné, bez okraje
    * - `outline`   — průhledné s bílým okrajem
+   * - `danger`    — červené vyplnění (#EF3838)
    * @default 'primary'
    */
   variant?: ButtonVariant;
@@ -187,7 +188,7 @@ export const Button = React.forwardRef<
       fontStyle: 'normal',
       fontWeight: 400,
       fontSize,
-      lineHeight: 'normal',
+      lineHeight: '1',
       whiteSpace: 'nowrap',
       transition: 'background-color 0.15s ease, border-color 0.15s ease',
       userSelect: 'none',
@@ -223,6 +224,12 @@ export const Button = React.forwardRef<
                 ? (isDark ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.5)')
                 : (isDark ? colors.borderDark : colors.borderLight)
               }`,
+          };
+        case 'danger':
+          return {
+            backgroundColor: hovered ? '#FF5252' : '#EF3838',
+            color: colors.white,
+            border: '1px solid transparent',
           };
       }
     })();

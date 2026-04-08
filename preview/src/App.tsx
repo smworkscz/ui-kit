@@ -339,7 +339,7 @@ export function App() {
         <div style={{ width: 4 }} />
 
         {/* Version badge */}
-        <Badge label="v1.0.0" />
+        <Badge label="v1.1.2" />
 
         {/* Spacer */}
         <div style={{ flex: 1 }} />

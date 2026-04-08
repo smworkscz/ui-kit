@@ -17,6 +17,11 @@ For complete documentation in one file: [all.md](all.md)
 - [Slider](slider.md)
 - [FileUpload](fileupload.md)
 - [SegmentedControl](segmentedcontrol.md)
+- [NumberInput](numberinput.md)
+- [Combobox](combobox.md)
+- [ColorPicker](colorpicker.md)
+- [Rating](rating.md)
+- [OTPInput](otpinput.md)
 
 ### Data Display
 
@@ -31,6 +36,12 @@ For complete documentation in one file: [all.md](all.md)
 - [Stat](stat.md)
 - [Avatar](avatar.md)
 - [Tag / Badge](tag.md)
+- [Calendar](calendar.md)
+- [Timeline](timeline.md)
+- [DataList](datalist.md)
+- [Tree](tree.md)
+- [DataGrid](datagrid.md)
+- [StatusBadge](statusbadge.md)
 
 ### Navigation
 
@@ -42,6 +53,10 @@ For complete documentation in one file: [all.md](all.md)
 - [DropdownMenu](dropdownmenu.md)
 - [Link](link.md)
 - [Spotlight](spotlight.md)
+- [AppSidebar](appsidebar.md)
+- [Navbar](navbar.md)
+- [CommandMenu](commandmenu.md)
+- [Sheet](sheet.md)
 
 ### Feedback
 
@@ -49,6 +64,9 @@ For complete documentation in one file: [all.md](all.md)
 - [Alert](alert.md)
 - [ProgressBar / ProgressCircle](progress.md)
 - [Spinner](spinner.md)
+- [Notification](notification.md)
+- [ConfirmDialog](confirmdialog.md)
+- [CopyButton](copybutton.md)
 
 ### Utility
 

@@ -733,6 +733,353 @@ dismiss(id);`,
 />`,
     notes: ['renderItem receives handleProps for custom drag handle placement', 'allowNesting enables tree mode — drag to center of card to nest', 'Collapsed nodes auto-expand on hover during drag'],
   },
+  // ── New components ────────────────────────────────────────────────────
+  {
+    id: 'numberinput',
+    name: 'NumberInput',
+    category: 'Forms',
+    description: 'Numeric input with +/- buttons, min/max clamping, step, prefix/suffix. Compact variant with stacked chevrons.',
+    props: [
+      { name: 'value', type: 'number', required: true, desc: 'Current value.' },
+      { name: 'onChange', type: '(value: number) => void', required: true, desc: 'Change callback.' },
+      { name: 'variant', type: "'default' | 'compact'", default: "'default'", desc: 'Default: side buttons. Compact: stacked chevrons on right.' },
+      { name: 'min', type: 'number', desc: 'Minimum value.' },
+      { name: 'max', type: 'number', desc: 'Maximum value.' },
+      { name: 'step', type: 'number', default: '1', desc: 'Increment/decrement step.' },
+      { name: 'label', type: 'string', desc: 'Label text.' },
+      { name: 'prefix', type: 'string', desc: 'Text before value (e.g. "$").' },
+      { name: 'suffix', type: 'string', desc: 'Text after value (e.g. "kg").' },
+      { name: 'error', type: 'boolean | string', desc: 'Error state.' },
+      { name: 'disabled', type: 'boolean', default: 'false', desc: 'Disable input.' },
+      { name: 'size', type: "'sm' | 'md' | 'lg'", default: "'md'", desc: 'Size preset.' },
+    ],
+    usage: `<NumberInput value={qty} onChange={setQty} min={0} max={100} label="Množství" />
+<NumberInput variant="compact" value={count} onChange={setCount} suffix="ks" />`,
+    notes: ['Hold +/- button for continuous increment', 'Value is clamped to min/max on change'],
+  },
+  {
+    id: 'combobox',
+    name: 'Combobox',
+    category: 'Forms',
+    description: 'Input with autocomplete dropdown. Type to filter, select from options or enter custom values.',
+    props: [
+      { name: 'options', type: '{ value: string; label?: string }[]', required: true, desc: 'Available options.' },
+      { name: 'value', type: 'string', required: true, desc: 'Current value.' },
+      { name: 'onChange', type: '(value: string) => void', required: true, desc: 'Change callback.' },
+      { name: 'onInputChange', type: '(input: string) => void', desc: 'Callback for input text changes (for async filtering).' },
+      { name: 'onCreate', type: '(value: string) => void', desc: 'Called when Enter pressed with custom value (allowCustom only).' },
+      { name: 'renderOption', type: '(option, highlighted) => ReactNode', desc: 'Custom option rendering.' },
+      { name: 'notFoundContent', type: 'ReactNode', desc: 'Custom "no results" content.' },
+      { name: 'footer', type: 'ReactNode', desc: 'Content below the options list.' },
+      { name: 'allowCustom', type: 'boolean', default: 'false', desc: 'Allow typing arbitrary values.' },
+      { name: 'placeholder', type: 'string', desc: 'Placeholder text.' },
+      { name: 'label', type: 'string', desc: 'Label text.' },
+      { name: 'error', type: 'boolean | string', desc: 'Error state.' },
+      { name: 'disabled', type: 'boolean', default: 'false', desc: 'Disable input.' },
+      { name: 'loading', type: 'boolean', default: 'false', desc: 'Show loading spinner.' },
+      { name: 'size', type: "'sm' | 'md' | 'lg'", default: "'md'", desc: 'Size preset.' },
+    ],
+    usage: `<Combobox
+  options={countries}
+  value={country}
+  onChange={setCountry}
+  allowCustom
+  onCreate={(val) => addCountry(val)}
+  placeholder="Vyberte zemi..."
+/>`,
+  },
+  {
+    id: 'colorpicker',
+    name: 'ColorPicker',
+    category: 'Forms',
+    description: 'Color picker with swatch, hex input, and preset color palette.',
+    props: [
+      { name: 'value', type: 'string', required: true, desc: 'Current hex color.' },
+      { name: 'onChange', type: '(color: string) => void', required: true, desc: 'Change callback.' },
+      { name: 'presets', type: 'string[]', desc: 'Preset color palette.' },
+      { name: 'label', type: 'string', desc: 'Label text.' },
+      { name: 'disabled', type: 'boolean', default: 'false', desc: 'Disable picker.' },
+    ],
+    usage: `<ColorPicker value={color} onChange={setColor} label="Brand color" />`,
+  },
+  {
+    id: 'rating',
+    name: 'Rating',
+    category: 'Forms',
+    description: 'Star rating input with hover preview.',
+    props: [
+      { name: 'value', type: 'number', required: true, desc: 'Current rating.' },
+      { name: 'onChange', type: '(value: number) => void', desc: 'Change callback.' },
+      { name: 'max', type: 'number', default: '5', desc: 'Maximum stars.' },
+      { name: 'size', type: "'sm' | 'md' | 'lg'", default: "'md'", desc: 'Size preset.' },
+      { name: 'readOnly', type: 'boolean', default: 'false', desc: 'Display only, no interaction.' },
+      { name: 'label', type: 'string', desc: 'Label text.' },
+    ],
+    usage: `<Rating value={rating} onChange={setRating} max={5} />
+<Rating value={4.5} readOnly />`,
+  },
+  {
+    id: 'otpinput',
+    name: 'OTPInput',
+    category: 'Forms',
+    description: 'One-time password input with individual digit boxes. Supports paste, auto-advance, and separators.',
+    props: [
+      { name: 'length', type: 'number', default: '6', desc: 'Number of digit boxes.' },
+      { name: 'value', type: 'string', required: true, desc: 'Current OTP string.' },
+      { name: 'onChange', type: '(value: string) => void', required: true, desc: 'Change callback.' },
+      { name: 'separatorAfter', type: 'number', desc: 'Insert separator after every N digits.' },
+      { name: 'separator', type: 'ReactNode', default: "'-'", desc: 'Separator content.' },
+      { name: 'error', type: 'boolean | string', desc: 'Error state.' },
+      { name: 'disabled', type: 'boolean', default: 'false', desc: 'Disable input.' },
+      { name: 'autoFocus', type: 'boolean', default: 'false', desc: 'Auto-focus first box.' },
+      { name: 'label', type: 'string', desc: 'Label text.' },
+    ],
+    usage: `<OTPInput value={otp} onChange={setOtp} length={6} separatorAfter={3} />`,
+    notes: ['Auto-advances to next box on input', 'Backspace moves to previous box', 'Paste fills all boxes'],
+  },
+  {
+    id: 'calendar',
+    name: 'Calendar',
+    category: 'Data Display',
+    description: 'Full month/week calendar grid with event dots and date selection.',
+    props: [
+      { name: 'value', type: 'Date | null', desc: 'Selected date.' },
+      { name: 'onChange', type: '(date: Date) => void', desc: 'Date select callback.' },
+      { name: 'view', type: "'month' | 'week'", default: "'month'", desc: 'Calendar view.' },
+      { name: 'events', type: '{ date: Date; title: string; color?: string }[]', desc: 'Events shown as colored dots.' },
+      { name: 'minDate', type: 'Date', desc: 'Minimum selectable date.' },
+      { name: 'maxDate', type: 'Date', desc: 'Maximum selectable date.' },
+    ],
+    usage: `<Calendar value={date} onChange={setDate} events={events} />`,
+    notes: ['Events are visual dots only — handle display yourself', 'Today highlighted with primary color'],
+  },
+  {
+    id: 'timeline',
+    name: 'Timeline',
+    category: 'Data Display',
+    description: 'Vertical or horizontal timeline with dots/icons and connecting line.',
+    props: [
+      { name: 'items', type: 'TimelineItem[]', required: true, desc: 'Items: { title, description?, date?, icon?, color? }.' },
+      { name: 'orientation', type: "'vertical' | 'horizontal'", default: "'vertical'", desc: 'Timeline orientation.' },
+    ],
+    usage: `<Timeline items={[
+  { title: 'Created', date: '10:00', description: 'Order placed.' },
+  { title: 'Shipped', date: '14:30', color: '#00A205' },
+  { title: 'Delivered', date: '18:45' },
+]} />`,
+  },
+  {
+    id: 'datalist',
+    name: 'DataList',
+    category: 'Data Display',
+    description: 'Key-value pair list for detail views. Supports multi-column grid and striped rows.',
+    props: [
+      { name: 'items', type: '{ label: string; value: ReactNode }[]', required: true, desc: 'Key-value pairs.' },
+      { name: 'columns', type: 'number', default: '1', desc: 'Number of columns.' },
+      { name: 'striped', type: 'boolean', default: 'false', desc: 'Striped row backgrounds.' },
+    ],
+    usage: `<DataList items={[
+  { label: 'Name', value: 'John Doe' },
+  { label: 'Email', value: 'john@example.com' },
+  { label: 'Role', value: <Badge label="Admin" /> },
+]} columns={2} />`,
+  },
+  {
+    id: 'tree',
+    name: 'Tree',
+    category: 'Data Display',
+    description: 'Tree view with expand/collapse, selection, and custom icons.',
+    props: [
+      { name: 'data', type: 'TreeNode[]', required: true, desc: 'Tree data: { id, label, icon?, children? }.' },
+      { name: 'onSelect', type: '(node: TreeNode) => void', desc: 'Node select callback.' },
+      { name: 'selectedId', type: 'string', desc: 'Currently selected node ID.' },
+      { name: 'defaultExpanded', type: 'string[]', desc: 'Initially expanded node IDs.' },
+    ],
+    usage: `<Tree
+  data={[
+    { id: 'src', label: 'src', children: [
+      { id: 'index', label: 'index.ts' },
+    ]},
+  ]}
+  selectedId={selected}
+  onSelect={(node) => setSelected(node.id)}
+  defaultExpanded={['src']}
+/>`,
+  },
+  {
+    id: 'datagrid',
+    name: 'DataGrid',
+    category: 'Data Display',
+    description: 'Advanced table with row selection, sticky header, and custom cell rendering.',
+    props: [
+      { name: 'columns', type: 'DataGridColumn[]', required: true, desc: 'Column defs with optional align, minWidth.' },
+      { name: 'data', type: 'any[]', required: true, desc: 'Row data.' },
+      { name: 'selectable', type: 'boolean', default: 'false', desc: 'Show row checkboxes.' },
+      { name: 'onSelectionChange', type: '(ids: string[]) => void', desc: 'Selection change callback.' },
+      { name: 'loading', type: 'boolean', default: 'false', desc: 'Show skeleton rows.' },
+      { name: 'stickyHeader', type: 'boolean', default: 'false', desc: 'Sticky table header.' },
+      { name: 'rowKey', type: 'string', default: "'id'", desc: 'Key for row identification.' },
+      { name: 'onRowClick', type: '(row: any) => void', desc: 'Row click callback.' },
+    ],
+    usage: `<DataGrid
+  columns={[
+    { key: 'name', header: 'Name', sortable: true },
+    { key: 'status', header: 'Status', align: 'center' },
+  ]}
+  data={users}
+  selectable
+  stickyHeader
+/>`,
+  },
+  {
+    id: 'statusbadge',
+    name: 'StatusBadge',
+    category: 'Data Display',
+    description: 'Status dot indicator with optional label and pulse animation. Supports custom statuses.',
+    props: [
+      { name: 'status', type: "'online' | 'offline' | 'away' | 'busy' | string", required: true, desc: 'Status type. Custom strings use color prop.' },
+      { name: 'color', type: 'string', desc: 'Override dot color for custom statuses.' },
+      { name: 'label', type: 'string', desc: 'Text label next to dot.' },
+      { name: 'size', type: "'sm' | 'md' | 'lg'", default: "'md'", desc: 'Size preset.' },
+      { name: 'pulse', type: 'boolean', default: 'false', desc: 'Pulsing animation on any status.' },
+    ],
+    usage: `<StatusBadge status="online" label="Online" pulse />
+<StatusBadge status="custom" color="#8B5CF6" label="In review" />`,
+  },
+  {
+    id: 'appsidebar',
+    name: 'AppSidebar',
+    category: 'Navigation',
+    description: 'Collapsible application sidebar with glass effect. No built-in toggle — consumer provides their own.',
+    props: [
+      { name: 'children', type: 'ReactNode', required: true, desc: 'Sidebar content (nav items).' },
+      { name: 'collapsed', type: 'boolean', default: 'false', desc: 'Collapsed state.' },
+      { name: 'onCollapse', type: '(collapsed: boolean) => void', desc: 'Collapse change callback.' },
+      { name: 'width', type: 'number', default: '260', desc: 'Expanded width in px.' },
+      { name: 'collapsedWidth', type: 'number', default: '64', desc: 'Collapsed width in px.' },
+    ],
+    usage: `<AppSidebar collapsed={collapsed} onCollapse={setCollapsed}>
+  <nav>...</nav>
+</AppSidebar>`,
+    notes: ['No built-in collapse button — add your own', 'Icons center horizontally when collapsed'],
+  },
+  {
+    id: 'navbar',
+    name: 'Navbar',
+    category: 'Navigation',
+    description: 'Top navigation bar with logo, content, and actions slots. Optional glass effect.',
+    props: [
+      { name: 'logo', type: 'ReactNode', desc: 'Left logo slot.' },
+      { name: 'children', type: 'ReactNode', desc: 'Center content (nav links).' },
+      { name: 'actions', type: 'ReactNode', desc: 'Right actions slot.' },
+      { name: 'sticky', type: 'boolean', default: 'true', desc: 'Sticky positioning.' },
+      { name: 'glass', type: 'boolean', default: 'true', desc: 'Glass effect background.' },
+    ],
+    usage: `<Navbar logo={<Logo />} actions={<Button>Login</Button>}>
+  <a href="/">Home</a>
+  <a href="/about">About</a>
+</Navbar>`,
+  },
+  {
+    id: 'commandmenu',
+    name: 'CommandMenu',
+    category: 'Navigation',
+    description: 'Command palette with grouped commands, search, keyboard shortcuts display.',
+    props: [
+      { name: 'open', type: 'boolean', required: true, desc: 'Controls visibility.' },
+      { name: 'onClose', type: '() => void', required: true, desc: 'Close callback.' },
+      { name: 'groups', type: 'CommandGroup[]', required: true, desc: 'Command groups: { label, items: CommandItem[] }.' },
+      { name: 'placeholder', type: 'string', desc: 'Search placeholder.' },
+    ],
+    usage: `<CommandMenu
+  open={open}
+  onClose={() => setOpen(false)}
+  groups={[
+    { label: 'Actions', items: [
+      { id: 'new', label: 'New project', shortcut: '⌘N', onSelect: handleNew },
+      { id: 'search', label: 'Search', icon: <MagnifyingGlassIcon />, onSelect: handleSearch },
+    ]},
+  ]}
+/>`,
+    notes: ['CommandItem: { id, label, description?, icon?, shortcut?, onSelect }', 'Search filters across all groups', 'Keyboard: arrows navigate, enter selects, escape closes'],
+  },
+  {
+    id: 'sheet',
+    name: 'Sheet',
+    category: 'Navigation',
+    description: 'Lightweight panel sliding from any direction. Glass effect with overlay.',
+    props: [
+      { name: 'open', type: 'boolean', required: true, desc: 'Controls visibility.' },
+      { name: 'onClose', type: '() => void', required: true, desc: 'Close callback.' },
+      { name: 'children', type: 'ReactNode', required: true, desc: 'Panel content.' },
+      { name: 'side', type: "'bottom' | 'right' | 'left' | 'top'", default: "'bottom'", desc: 'Slide direction.' },
+      { name: 'title', type: 'string', desc: 'Panel title.' },
+      { name: 'showClose', type: 'boolean', default: 'true', desc: 'Show close button.' },
+    ],
+    usage: `<Sheet open={open} onClose={() => setOpen(false)} side="bottom" title="Filters">
+  <FilterForm />
+</Sheet>`,
+  },
+  {
+    id: 'notification',
+    name: 'Notification',
+    category: 'Feedback',
+    description: 'Persistent in-layout notification banner. Not an overlay — stays in document flow.',
+    props: [
+      { name: 'variant', type: "'info' | 'success' | 'warning' | 'error'", default: "'info'", desc: 'Visual variant.' },
+      { name: 'title', type: 'string', required: true, desc: 'Notification title.' },
+      { name: 'children', type: 'ReactNode', desc: 'Description content.' },
+      { name: 'closable', type: 'boolean', default: 'false', desc: 'Show close button.' },
+      { name: 'onClose', type: '() => void', desc: 'Close callback.' },
+      { name: 'icon', type: 'ReactNode', desc: 'Custom icon.' },
+      { name: 'action', type: 'ReactNode', desc: 'Action button on the right.' },
+    ],
+    usage: `<Notification variant="warning" title="Update available" action={<Button size="sm">Update</Button>}>
+  Version 2.0 is ready to install.
+</Notification>`,
+    notes: ['Unlike Toast, this stays in the layout — not a floating overlay'],
+  },
+  {
+    id: 'confirmdialog',
+    name: 'ConfirmDialog',
+    category: 'Feedback',
+    description: 'Pre-built confirmation modal with confirm/cancel buttons. Uses Modal internally.',
+    props: [
+      { name: 'open', type: 'boolean', required: true, desc: 'Controls visibility.' },
+      { name: 'onConfirm', type: '() => void', required: true, desc: 'Confirm callback.' },
+      { name: 'onCancel', type: '() => void', required: true, desc: 'Cancel callback.' },
+      { name: 'title', type: 'string', required: true, desc: 'Dialog title.' },
+      { name: 'description', type: 'string', desc: 'Description text.' },
+      { name: 'confirmLabel', type: 'string', default: "'Potvrdit'", desc: 'Confirm button text.' },
+      { name: 'cancelLabel', type: 'string', default: "'Zrušit'", desc: 'Cancel button text.' },
+      { name: 'variant', type: "'default' | 'danger'", default: "'default'", desc: 'Danger variant: red confirm button.' },
+      { name: 'loading', type: 'boolean', default: 'false', desc: 'Loading state on confirm button.' },
+    ],
+    usage: `<ConfirmDialog
+  open={open}
+  onConfirm={handleDelete}
+  onCancel={() => setOpen(false)}
+  title="Smazat položku?"
+  description="Tato akce je nevratná."
+  variant="danger"
+  confirmLabel="Smazat"
+/>`,
+  },
+  {
+    id: 'copybutton',
+    name: 'CopyButton',
+    category: 'Feedback',
+    description: 'Button that copies text to clipboard. Shows check icon on success.',
+    props: [
+      { name: 'text', type: 'string', required: true, desc: 'Text to copy.' },
+      { name: 'children', type: 'ReactNode', desc: 'Button content (for button variant).' },
+      { name: 'variant', type: "'icon' | 'button'", default: "'icon'", desc: 'Icon-only or full button.' },
+      { name: 'size', type: "'sm' | 'md' | 'lg'", default: "'md'", desc: 'Size preset.' },
+      { name: 'onCopy', type: '() => void', desc: 'Callback after successful copy (e.g. show toast).' },
+    ],
+    usage: `<CopyButton text="npm install @smworks-cz/ui-kit" onCopy={() => toast({ title: 'Copied!' })} />`,
+    notes: ['2-second success state with check icon', 'Clipboard API with execCommand fallback', 'onCopy callback for custom feedback (e.g. toast)'],
+  },
 ];
 
 // ── Hooks ────────────────────────────────────────────────────────────────

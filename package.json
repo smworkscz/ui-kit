@@ -34,7 +34,8 @@
     "dev": "tsup --watch",
     "preview": "vite --config preview/vite.config.ts",
     "build:preview": "node scripts/generate-llm-docs.mjs && vite build --config preview/vite.config.ts && cp preview/dist/index.html preview/dist/404.html",
-    "generate:llm-docs": "node scripts/generate-llm-docs.mjs"
+    "generate:llm-docs": "node scripts/generate-llm-docs.mjs",
+    "deploy": "bash scripts/deploy.sh"
   },
   "peerDependencies": {
     "@phosphor-icons/react": ">=2.1.0",

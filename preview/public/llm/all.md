@@ -374,6 +374,168 @@ Segmented toggle for choosing between a few options. Animated sliding indicator.
 
 ---
 
+# NumberInput
+
+Numeric input with +/- buttons, min/max clamping, step, prefix/suffix. Compact variant with stacked chevrons.
+
+**Import:** `import { NumberInput } from '@smworks-cz/ui-kit'`
+
+## Props
+
+| Prop | Type | Default | Required | Description |
+|------|------|---------|----------|-------------|
+| `value` | `number` | — | Yes | Current value. |
+| `onChange` | `(value: number) => void` | — | Yes | Change callback. |
+| `variant` | `'default' | 'compact'` | 'default' |  | Default: side buttons. Compact: stacked chevrons on right. |
+| `min` | `number` | — |  | Minimum value. |
+| `max` | `number` | — |  | Maximum value. |
+| `step` | `number` | 1 |  | Increment/decrement step. |
+| `label` | `string` | — |  | Label text. |
+| `prefix` | `string` | — |  | Text before value (e.g. "$"). |
+| `suffix` | `string` | — |  | Text after value (e.g. "kg"). |
+| `error` | `boolean | string` | — |  | Error state. |
+| `disabled` | `boolean` | false |  | Disable input. |
+| `size` | `'sm' | 'md' | 'lg'` | 'md' |  | Size preset. |
+
+## Usage
+
+```tsx
+<NumberInput value={qty} onChange={setQty} min={0} max={100} label="Množství" />
+<NumberInput variant="compact" value={count} onChange={setCount} suffix="ks" />
+```
+
+## Notes
+
+- Hold +/- button for continuous increment
+- Value is clamped to min/max on change
+
+---
+
+# Combobox
+
+Input with autocomplete dropdown. Type to filter, select from options or enter custom values.
+
+**Import:** `import { Combobox } from '@smworks-cz/ui-kit'`
+
+## Props
+
+| Prop | Type | Default | Required | Description |
+|------|------|---------|----------|-------------|
+| `options` | `{ value: string; label?: string }[]` | — | Yes | Available options. |
+| `value` | `string` | — | Yes | Current value. |
+| `onChange` | `(value: string) => void` | — | Yes | Change callback. |
+| `onInputChange` | `(input: string) => void` | — |  | Callback for input text changes (for async filtering). |
+| `onCreate` | `(value: string) => void` | — |  | Called when Enter pressed with custom value (allowCustom only). |
+| `renderOption` | `(option, highlighted) => ReactNode` | — |  | Custom option rendering. |
+| `notFoundContent` | `ReactNode` | — |  | Custom "no results" content. |
+| `footer` | `ReactNode` | — |  | Content below the options list. |
+| `allowCustom` | `boolean` | false |  | Allow typing arbitrary values. |
+| `placeholder` | `string` | — |  | Placeholder text. |
+| `label` | `string` | — |  | Label text. |
+| `error` | `boolean | string` | — |  | Error state. |
+| `disabled` | `boolean` | false |  | Disable input. |
+| `loading` | `boolean` | false |  | Show loading spinner. |
+| `size` | `'sm' | 'md' | 'lg'` | 'md' |  | Size preset. |
+
+## Usage
+
+```tsx
+<Combobox
+  options={countries}
+  value={country}
+  onChange={setCountry}
+  allowCustom
+  onCreate={(val) => addCountry(val)}
+  placeholder="Vyberte zemi..."
+/>
+```
+
+---
+
+# ColorPicker
+
+Color picker with swatch, hex input, and preset color palette.
+
+**Import:** `import { ColorPicker } from '@smworks-cz/ui-kit'`
+
+## Props
+
+| Prop | Type | Default | Required | Description |
+|------|------|---------|----------|-------------|
+| `value` | `string` | — | Yes | Current hex color. |
+| `onChange` | `(color: string) => void` | — | Yes | Change callback. |
+| `presets` | `string[]` | — |  | Preset color palette. |
+| `label` | `string` | — |  | Label text. |
+| `disabled` | `boolean` | false |  | Disable picker. |
+
+## Usage
+
+```tsx
+<ColorPicker value={color} onChange={setColor} label="Brand color" />
+```
+
+---
+
+# Rating
+
+Star rating input with hover preview.
+
+**Import:** `import { Rating } from '@smworks-cz/ui-kit'`
+
+## Props
+
+| Prop | Type | Default | Required | Description |
+|------|------|---------|----------|-------------|
+| `value` | `number` | — | Yes | Current rating. |
+| `onChange` | `(value: number) => void` | — |  | Change callback. |
+| `max` | `number` | 5 |  | Maximum stars. |
+| `size` | `'sm' | 'md' | 'lg'` | 'md' |  | Size preset. |
+| `readOnly` | `boolean` | false |  | Display only, no interaction. |
+| `label` | `string` | — |  | Label text. |
+
+## Usage
+
+```tsx
+<Rating value={rating} onChange={setRating} max={5} />
+<Rating value={4.5} readOnly />
+```
+
+---
+
+# OTPInput
+
+One-time password input with individual digit boxes. Supports paste, auto-advance, and separators.
+
+**Import:** `import { OTPInput } from '@smworks-cz/ui-kit'`
+
+## Props
+
+| Prop | Type | Default | Required | Description |
+|------|------|---------|----------|-------------|
+| `length` | `number` | 6 |  | Number of digit boxes. |
+| `value` | `string` | — | Yes | Current OTP string. |
+| `onChange` | `(value: string) => void` | — | Yes | Change callback. |
+| `separatorAfter` | `number` | — |  | Insert separator after every N digits. |
+| `separator` | `ReactNode` | '-' |  | Separator content. |
+| `error` | `boolean | string` | — |  | Error state. |
+| `disabled` | `boolean` | false |  | Disable input. |
+| `autoFocus` | `boolean` | false |  | Auto-focus first box. |
+| `label` | `string` | — |  | Label text. |
+
+## Usage
+
+```tsx
+<OTPInput value={otp} onChange={setOtp} length={6} separatorAfter={3} />
+```
+
+## Notes
+
+- Auto-advances to next box on input
+- Backspace moves to previous box
+- Paste fills all boxes
+
+---
+
 # Data Display
 
 # Table
@@ -674,6 +836,179 @@ Tag for categorization. Badge for status labels.
 
 ---
 
+# Calendar
+
+Full month/week calendar grid with event dots and date selection.
+
+**Import:** `import { Calendar } from '@smworks-cz/ui-kit'`
+
+## Props
+
+| Prop | Type | Default | Required | Description |
+|------|------|---------|----------|-------------|
+| `value` | `Date | null` | — |  | Selected date. |
+| `onChange` | `(date: Date) => void` | — |  | Date select callback. |
+| `view` | `'month' | 'week'` | 'month' |  | Calendar view. |
+| `events` | `{ date: Date; title: string; color?: string }[]` | — |  | Events shown as colored dots. |
+| `minDate` | `Date` | — |  | Minimum selectable date. |
+| `maxDate` | `Date` | — |  | Maximum selectable date. |
+
+## Usage
+
+```tsx
+<Calendar value={date} onChange={setDate} events={events} />
+```
+
+## Notes
+
+- Events are visual dots only — handle display yourself
+- Today highlighted with primary color
+
+---
+
+# Timeline
+
+Vertical or horizontal timeline with dots/icons and connecting line.
+
+**Import:** `import { Timeline } from '@smworks-cz/ui-kit'`
+
+## Props
+
+| Prop | Type | Default | Required | Description |
+|------|------|---------|----------|-------------|
+| `items` | `TimelineItem[]` | — | Yes | Items: { title, description?, date?, icon?, color? }. |
+| `orientation` | `'vertical' | 'horizontal'` | 'vertical' |  | Timeline orientation. |
+
+## Usage
+
+```tsx
+<Timeline items={[
+  { title: 'Created', date: '10:00', description: 'Order placed.' },
+  { title: 'Shipped', date: '14:30', color: '#00A205' },
+  { title: 'Delivered', date: '18:45' },
+]} />
+```
+
+---
+
+# DataList
+
+Key-value pair list for detail views. Supports multi-column grid and striped rows.
+
+**Import:** `import { DataList } from '@smworks-cz/ui-kit'`
+
+## Props
+
+| Prop | Type | Default | Required | Description |
+|------|------|---------|----------|-------------|
+| `items` | `{ label: string; value: ReactNode }[]` | — | Yes | Key-value pairs. |
+| `columns` | `number` | 1 |  | Number of columns. |
+| `striped` | `boolean` | false |  | Striped row backgrounds. |
+
+## Usage
+
+```tsx
+<DataList items={[
+  { label: 'Name', value: 'John Doe' },
+  { label: 'Email', value: 'john@example.com' },
+  { label: 'Role', value: <Badge label="Admin" /> },
+]} columns={2} />
+```
+
+---
+
+# Tree
+
+Tree view with expand/collapse, selection, and custom icons.
+
+**Import:** `import { Tree } from '@smworks-cz/ui-kit'`
+
+## Props
+
+| Prop | Type | Default | Required | Description |
+|------|------|---------|----------|-------------|
+| `data` | `TreeNode[]` | — | Yes | Tree data: { id, label, icon?, children? }. |
+| `onSelect` | `(node: TreeNode) => void` | — |  | Node select callback. |
+| `selectedId` | `string` | — |  | Currently selected node ID. |
+| `defaultExpanded` | `string[]` | — |  | Initially expanded node IDs. |
+
+## Usage
+
+```tsx
+<Tree
+  data={[
+    { id: 'src', label: 'src', children: [
+      { id: 'index', label: 'index.ts' },
+    ]},
+  ]}
+  selectedId={selected}
+  onSelect={(node) => setSelected(node.id)}
+  defaultExpanded={['src']}
+/>
+```
+
+---
+
+# DataGrid
+
+Advanced table with row selection, sticky header, and custom cell rendering.
+
+**Import:** `import { DataGrid } from '@smworks-cz/ui-kit'`
+
+## Props
+
+| Prop | Type | Default | Required | Description |
+|------|------|---------|----------|-------------|
+| `columns` | `DataGridColumn[]` | — | Yes | Column defs with optional align, minWidth. |
+| `data` | `any[]` | — | Yes | Row data. |
+| `selectable` | `boolean` | false |  | Show row checkboxes. |
+| `onSelectionChange` | `(ids: string[]) => void` | — |  | Selection change callback. |
+| `loading` | `boolean` | false |  | Show skeleton rows. |
+| `stickyHeader` | `boolean` | false |  | Sticky table header. |
+| `rowKey` | `string` | 'id' |  | Key for row identification. |
+| `onRowClick` | `(row: any) => void` | — |  | Row click callback. |
+
+## Usage
+
+```tsx
+<DataGrid
+  columns={[
+    { key: 'name', header: 'Name', sortable: true },
+    { key: 'status', header: 'Status', align: 'center' },
+  ]}
+  data={users}
+  selectable
+  stickyHeader
+/>
+```
+
+---
+
+# StatusBadge
+
+Status dot indicator with optional label and pulse animation. Supports custom statuses.
+
+**Import:** `import { StatusBadge } from '@smworks-cz/ui-kit'`
+
+## Props
+
+| Prop | Type | Default | Required | Description |
+|------|------|---------|----------|-------------|
+| `status` | `'online' | 'offline' | 'away' | 'busy' | string` | — | Yes | Status type. Custom strings use color prop. |
+| `color` | `string` | — |  | Override dot color for custom statuses. |
+| `label` | `string` | — |  | Text label next to dot. |
+| `size` | `'sm' | 'md' | 'lg'` | 'md' |  | Size preset. |
+| `pulse` | `boolean` | false |  | Pulsing animation on any status. |
+
+## Usage
+
+```tsx
+<StatusBadge status="online" label="Online" pulse />
+<StatusBadge status="custom" color="#8B5CF6" label="In review" />
+```
+
+---
+
 # Navigation
 
 # Modal
@@ -920,6 +1255,129 @@ const filtered = items.filter(i => i.label.toLowerCase().includes(query.toLowerC
 
 ---
 
+# AppSidebar
+
+Collapsible application sidebar with glass effect. No built-in toggle — consumer provides their own.
+
+**Import:** `import { AppSidebar } from '@smworks-cz/ui-kit'`
+
+## Props
+
+| Prop | Type | Default | Required | Description |
+|------|------|---------|----------|-------------|
+| `children` | `ReactNode` | — | Yes | Sidebar content (nav items). |
+| `collapsed` | `boolean` | false |  | Collapsed state. |
+| `onCollapse` | `(collapsed: boolean) => void` | — |  | Collapse change callback. |
+| `width` | `number` | 260 |  | Expanded width in px. |
+| `collapsedWidth` | `number` | 64 |  | Collapsed width in px. |
+
+## Usage
+
+```tsx
+<AppSidebar collapsed={collapsed} onCollapse={setCollapsed}>
+  <nav>...</nav>
+</AppSidebar>
+```
+
+## Notes
+
+- No built-in collapse button — add your own
+- Icons center horizontally when collapsed
+
+---
+
+# Navbar
+
+Top navigation bar with logo, content, and actions slots. Optional glass effect.
+
+**Import:** `import { Navbar } from '@smworks-cz/ui-kit'`
+
+## Props
+
+| Prop | Type | Default | Required | Description |
+|------|------|---------|----------|-------------|
+| `logo` | `ReactNode` | — |  | Left logo slot. |
+| `children` | `ReactNode` | — |  | Center content (nav links). |
+| `actions` | `ReactNode` | — |  | Right actions slot. |
+| `sticky` | `boolean` | true |  | Sticky positioning. |
+| `glass` | `boolean` | true |  | Glass effect background. |
+
+## Usage
+
+```tsx
+<Navbar logo={<Logo />} actions={<Button>Login</Button>}>
+  <a href="/">Home</a>
+  <a href="/about">About</a>
+</Navbar>
+```
+
+---
+
+# CommandMenu
+
+Command palette with grouped commands, search, keyboard shortcuts display.
+
+**Import:** `import { CommandMenu } from '@smworks-cz/ui-kit'`
+
+## Props
+
+| Prop | Type | Default | Required | Description |
+|------|------|---------|----------|-------------|
+| `open` | `boolean` | — | Yes | Controls visibility. |
+| `onClose` | `() => void` | — | Yes | Close callback. |
+| `groups` | `CommandGroup[]` | — | Yes | Command groups: { label, items: CommandItem[] }. |
+| `placeholder` | `string` | — |  | Search placeholder. |
+
+## Usage
+
+```tsx
+<CommandMenu
+  open={open}
+  onClose={() => setOpen(false)}
+  groups={[
+    { label: 'Actions', items: [
+      { id: 'new', label: 'New project', shortcut: '⌘N', onSelect: handleNew },
+      { id: 'search', label: 'Search', icon: <MagnifyingGlassIcon />, onSelect: handleSearch },
+    ]},
+  ]}
+/>
+```
+
+## Notes
+
+- CommandItem: { id, label, description?, icon?, shortcut?, onSelect }
+- Search filters across all groups
+- Keyboard: arrows navigate, enter selects, escape closes
+
+---
+
+# Sheet
+
+Lightweight panel sliding from any direction. Glass effect with overlay.
+
+**Import:** `import { Sheet } from '@smworks-cz/ui-kit'`
+
+## Props
+
+| Prop | Type | Default | Required | Description |
+|------|------|---------|----------|-------------|
+| `open` | `boolean` | — | Yes | Controls visibility. |
+| `onClose` | `() => void` | — | Yes | Close callback. |
+| `children` | `ReactNode` | — | Yes | Panel content. |
+| `side` | `'bottom' | 'right' | 'left' | 'top'` | 'bottom' |  | Slide direction. |
+| `title` | `string` | — |  | Panel title. |
+| `showClose` | `boolean` | true |  | Show close button. |
+
+## Usage
+
+```tsx
+<Sheet open={open} onClose={() => setOpen(false)} side="bottom" title="Filters">
+  <FilterForm />
+</Sheet>
+```
+
+---
+
 # Feedback
 
 # Toast (useToast)
@@ -1036,6 +1494,104 @@ Rotating loading indicator.
 <Spinner size="md" />
 <Spinner size={32} color="#FC4F00" />
 ```
+
+---
+
+# Notification
+
+Persistent in-layout notification banner. Not an overlay — stays in document flow.
+
+**Import:** `import { Notification } from '@smworks-cz/ui-kit'`
+
+## Props
+
+| Prop | Type | Default | Required | Description |
+|------|------|---------|----------|-------------|
+| `variant` | `'info' | 'success' | 'warning' | 'error'` | 'info' |  | Visual variant. |
+| `title` | `string` | — | Yes | Notification title. |
+| `children` | `ReactNode` | — |  | Description content. |
+| `closable` | `boolean` | false |  | Show close button. |
+| `onClose` | `() => void` | — |  | Close callback. |
+| `icon` | `ReactNode` | — |  | Custom icon. |
+| `action` | `ReactNode` | — |  | Action button on the right. |
+
+## Usage
+
+```tsx
+<Notification variant="warning" title="Update available" action={<Button size="sm">Update</Button>}>
+  Version 2.0 is ready to install.
+</Notification>
+```
+
+## Notes
+
+- Unlike Toast, this stays in the layout — not a floating overlay
+
+---
+
+# ConfirmDialog
+
+Pre-built confirmation modal with confirm/cancel buttons. Uses Modal internally.
+
+**Import:** `import { ConfirmDialog } from '@smworks-cz/ui-kit'`
+
+## Props
+
+| Prop | Type | Default | Required | Description |
+|------|------|---------|----------|-------------|
+| `open` | `boolean` | — | Yes | Controls visibility. |
+| `onConfirm` | `() => void` | — | Yes | Confirm callback. |
+| `onCancel` | `() => void` | — | Yes | Cancel callback. |
+| `title` | `string` | — | Yes | Dialog title. |
+| `description` | `string` | — |  | Description text. |
+| `confirmLabel` | `string` | 'Potvrdit' |  | Confirm button text. |
+| `cancelLabel` | `string` | 'Zrušit' |  | Cancel button text. |
+| `variant` | `'default' | 'danger'` | 'default' |  | Danger variant: red confirm button. |
+| `loading` | `boolean` | false |  | Loading state on confirm button. |
+
+## Usage
+
+```tsx
+<ConfirmDialog
+  open={open}
+  onConfirm={handleDelete}
+  onCancel={() => setOpen(false)}
+  title="Smazat položku?"
+  description="Tato akce je nevratná."
+  variant="danger"
+  confirmLabel="Smazat"
+/>
+```
+
+---
+
+# CopyButton
+
+Button that copies text to clipboard. Shows check icon on success.
+
+**Import:** `import { CopyButton } from '@smworks-cz/ui-kit'`
+
+## Props
+
+| Prop | Type | Default | Required | Description |
+|------|------|---------|----------|-------------|
+| `text` | `string` | — | Yes | Text to copy. |
+| `children` | `ReactNode` | — |  | Button content (for button variant). |
+| `variant` | `'icon' | 'button'` | 'icon' |  | Icon-only or full button. |
+| `size` | `'sm' | 'md' | 'lg'` | 'md' |  | Size preset. |
+| `onCopy` | `() => void` | — |  | Callback after successful copy (e.g. show toast). |
+
+## Usage
+
+```tsx
+<CopyButton text="npm install @smworks-cz/ui-kit" onCopy={() => toast({ title: 'Copied!' })} />
+```
+
+## Notes
+
+- 2-second success state with check icon
+- Clipboard API with execCommand fallback
+- onCopy callback for custom feedback (e.g. toast)
 
 ---
 

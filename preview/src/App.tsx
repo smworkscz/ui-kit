@@ -10,6 +10,7 @@ import type { DropdownMenuItem } from '../../src';
 import { SunIcon, MoonIcon, DesktopIcon, MagnifyingGlassIcon } from '@phosphor-icons/react';
 import { spotlightItems } from './spotlightData';
 import { Sidebar } from './Sidebar';
+import { version } from '../../package.json';
 import {
   IntroductionPage, InstallationPage, UsagePage, ThemingPage, DesignTokensPage,
   ButtonPage, InputPage, NumberInputPage, SelectPage, ComboboxPage, DatePickerPage,
@@ -339,7 +340,7 @@ export function App() {
         <div style={{ width: 4 }} />
 
         {/* Version badge */}
-        <Badge label="v1.1.2" />
+        <Badge label={`v${version}`} />
 
         {/* Spacer */}
         <div style={{ flex: 1 }} />

@@ -24,7 +24,12 @@
       "Bash(find . -type f \\\\\\(-name tsconfig.json -o -name vite.config.ts -o -name webpack.config.js -o -name .eslintrc* \\\\\\))",
       "Bash(ls -d \"C:/Users/dancv/Documents/Projekty/SMWORKS/sm-ui/src/components\"/*/)",
       "Bash(xargs -I {} basename {})",
-      "Bash(timeout 3 npx vite --config preview/vite.config.ts)"
+      "Bash(timeout 3 npx vite --config preview/vite.config.ts)",
+      "Bash(head -20 /c/Users/dancv/Documents/Projekty/SMWORKS/sm-ui/src/fonts/*.ttf)",
+      "Bash(npm pkg:*)",
+      "Bash(npm ls:*)",
+      "Bash(grep -r \"proprietary\\\\|restricted\\\\|commercial\\\\|all rights reserved\" /c/Users/dancv/Documents/Projekty/SMWORKS/sm-ui/node_modules/*/package.json)",
+      "Bash(grep -E \"\\\\.\\(md|txt|yaml|yml|json|config|env\\)$\")"
     ]
   }
 }

@@ -1,2 +1,7 @@
 node_modules
 dist
+.claude
+preview/dist
+public/
+*.log
+.env*

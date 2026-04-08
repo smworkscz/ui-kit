@@ -2,15 +2,19 @@
   "version": "0.0.1",
   "configurations": [
     {
-      "name": "Storybook",
+      "name": "Preview",
       "runtimeExecutable": "yarn",
-      "runtimeArgs": ["preview"],
+      "runtimeArgs": [
+        "preview"
+      ],
       "port": 3000
     },
     {
       "name": "Library Dev (tsup watch)",
       "runtimeExecutable": "yarn",
-      "runtimeArgs": ["dev"],
+      "runtimeArgs": [
+        "dev"
+      ],
       "port": 0
     }
   ]

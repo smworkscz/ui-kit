@@ -4,15 +4,14 @@ on:
   release:
     types: [published]
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   publish:
     name: Publish to npm
     runs-on: ubuntu-latest
-    environment: npm-publish
-
-    permissions:
-      contents: read
-      id-token: write
 
     steps:
       - name: Checkout

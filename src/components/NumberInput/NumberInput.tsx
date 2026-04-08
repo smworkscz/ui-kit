@@ -38,9 +38,9 @@ const tokens = {
 // ─── Size config ─────────────────────────────────────────────────────────────
 
 const sizeConfig = {
-  sm: { padding: '6px 10px', fontSize: '14px', iconSize: 14, height: '32px', buttonPadding: '6px' },
-  md: { padding: '8px 12px', fontSize: '16px', iconSize: 16, height: '40px', buttonPadding: '8px' },
-  lg: { padding: '10px 14px', fontSize: '18px', iconSize: 18, height: '48px', buttonPadding: '10px' },
+  sm: { padding: '6px 10px', fontSize: '14px', iconSize: 14, height: '30px', buttonPadding: '6px' },
+  md: { padding: '8px 12px', fontSize: '16px', iconSize: 16, height: '36px', buttonPadding: '8px' },
+  lg: { padding: '10px 14px', fontSize: '18px', iconSize: 18, height: '42px', buttonPadding: '10px' },
 } as const;
 
 // ─── Types ───────────────────────────────────────────────────────────────────

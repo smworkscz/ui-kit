@@ -134,6 +134,11 @@ export interface SelectProps {
 
   // ── Zobrazení ──────────────────────────────────────────────────────────
 
+  /**
+   * Popisek zobrazený nad selectem.
+   * Stylizován velkými písmeny dle SM-UI design systému.
+   */
+  label?: string;
   /** Zástupný text zobrazený při prázdném výběru. */
   placeholder?: string;
   /** Maximální výška (px) rozbalovacího seznamu před scrollováním. @default 240 */
@@ -200,6 +205,7 @@ export const Select: React.FC<SelectProps> = ({
   disabled = false,
   loading = false,
   error,
+  label,
   placeholder = 'Vyberte…',
   maxDropdownHeight = 240,
   style,
@@ -443,7 +449,6 @@ export const Select: React.FC<SelectProps> = ({
     transition: 'border-color 0.15s ease',
     opacity: isDisabled ? 0.6 : 1,
     cursor: isDisabled ? 'not-allowed' : 'pointer',
-    minHeight: '40px',
     userSelect: 'none',
     outline: 'none',
   };
@@ -598,6 +603,25 @@ export const Select: React.FC<SelectProps> = ({
       style={{ position: 'relative', display: 'flex', flexDirection: 'column', gap: '4px', ...style }}
       className={className}
     >
+      {/* Label */}
+      {label && (
+        <label
+          htmlFor={selectId}
+          style={{
+            fontFamily: "'Zalando Sans Expanded', sans-serif",
+            fontStyle: 'normal',
+            fontWeight: 400,
+            fontSize: '10px',
+            lineHeight: 'normal',
+            textTransform: 'uppercase',
+            color: t.text,
+            userSelect: 'none',
+          }}
+        >
+          {label}
+        </label>
+      )}
+
       {/* Trigger */}
       <div
         ref={triggerRef}

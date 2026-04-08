@@ -64,6 +64,7 @@ const components = [
     category: 'Forms',
     description: 'Dropdown select with search, multi-select, clear, and keyboard navigation.',
     props: [
+      { name: 'label', type: 'string', desc: 'Label text above the select (uppercase styled).' },
       { name: 'options', type: 'SelectOption[]', required: true, desc: 'Array of { value: string; label?: string; disabled?: boolean }.' },
       { name: 'value', type: 'string | string[] | null', desc: 'Current value (string for single, array for multiple).' },
       { name: 'onChange', type: '(value: any) => void', desc: 'Change callback.' },
@@ -76,6 +77,7 @@ const components = [
       { name: 'placeholder', type: 'string', default: "'Vyberte…'", desc: 'Placeholder text.' },
     ],
     usage: `<Select
+  label="Framework"
   options={[
     { value: 'react', label: 'React' },
     { value: 'vue', label: 'Vue' },

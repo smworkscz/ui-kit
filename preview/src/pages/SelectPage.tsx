@@ -11,7 +11,7 @@ const demoOptions = [
   { value: 'solid', label: 'SolidJS' },
 ];
 
-const SelectDemo: React.FC<{ searchable: boolean; clearable: boolean; multiple: boolean; disabled: boolean; loading: boolean; error: boolean }> = (props) => {
+const SelectDemo: React.FC<{ searchable: boolean; clearable: boolean; multiple: boolean; disabled: boolean; loading: boolean; error: boolean; label: string }> = (props) => {
   const [value, setValue] = useState<string | string[] | null>(null);
   return (
     <div style={{ width: 280 }}>
@@ -25,6 +25,7 @@ const SelectDemo: React.FC<{ searchable: boolean; clearable: boolean; multiple: 
         disabled={props.disabled}
         loading={props.loading}
         error={props.error ? 'Vyberte alespoň jednu položku' : false}
+        label={props.label || undefined}
         placeholder="Vyberte framework..."
       />
     </div>
@@ -32,6 +33,7 @@ const SelectDemo: React.FC<{ searchable: boolean; clearable: boolean; multiple: 
 };
 
 const controls: PlaygroundControl[] = [
+  { type: 'text', prop: 'label', label: 'Label', defaultValue: 'Framework' },
   { type: 'boolean', prop: 'searchable', label: 'Searchable', defaultValue: false },
   { type: 'boolean', prop: 'clearable', label: 'Clearable', defaultValue: false },
   { type: 'boolean', prop: 'multiple', label: 'Multiple', defaultValue: false },
@@ -41,6 +43,7 @@ const controls: PlaygroundControl[] = [
 ];
 
 const propDefs: PropDef[] = [
+  { name: 'label', type: 'string', description: 'Popisek zobrazený nad selectem.' },
   { name: 'options', type: 'SelectOption[]', required: true, description: 'Dostupné položky pro výběr.' },
   { name: 'value', type: 'string | string[] | null', description: 'Aktuální hodnota (string pro single, array pro multiple).' },
   { name: 'onChange', type: '(value: any) => void', description: 'Callback při změně výběru.' },
@@ -62,7 +65,7 @@ export const SelectPage: React.FC = () => (
     <Playground
       controls={controls}
       render={(props) => (
-        <SelectDemo searchable={props.searchable} clearable={props.clearable} multiple={props.multiple} disabled={props.disabled} loading={props.loading} error={props.error} />
+        <SelectDemo label={props.label} searchable={props.searchable} clearable={props.clearable} multiple={props.multiple} disabled={props.disabled} loading={props.loading} error={props.error} />
       )}
     />
 

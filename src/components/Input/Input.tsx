@@ -373,7 +373,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
           </label>
         )}
 
-        <div style={wrapperStyle}>
+        <label htmlFor={inputId} style={wrapperStyle}>
           {leftSlot}
           <input
             ref={ref}
@@ -390,7 +390,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
             {...rest}
           />
           {rightSlot}
-        </div>
+        </label>
 
         {errorMessage && (
           <span style={{ ...bottomTextStyle, color: t.borderError }}>

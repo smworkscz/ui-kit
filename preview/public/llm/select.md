@@ -8,6 +8,7 @@ Dropdown select with search, multi-select, clear, and keyboard navigation.
 
 | Prop | Type | Default | Required | Description |
 |------|------|---------|----------|-------------|
+| `label` | `string` | — |  | Label text above the select (uppercase styled). |
 | `options` | `SelectOption[]` | — | Yes | Array of { value: string; label?: string; disabled?: boolean }. |
 | `value` | `string | string[] | null` | — |  | Current value (string for single, array for multiple). |
 | `onChange` | `(value: any) => void` | — |  | Change callback. |
@@ -23,6 +24,7 @@ Dropdown select with search, multi-select, clear, and keyboard navigation.
 
 ```tsx
 <Select
+  label="Framework"
   options={[
     { value: 'react', label: 'React' },
     { value: 'vue', label: 'Vue' },

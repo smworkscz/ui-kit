@@ -87,6 +87,12 @@ export interface FileUploadProps {
    */
   buttonStyle?: 'default' | 'primary';
   /**
+   * Řízená hodnota — pole souborů. Pokud je nastaveno, komponenta je plně
+   * řízená a interní stav se nepoužívá. Předejte prázdné pole `[]`
+   * pro reset / skrytí souborů.
+   */
+  value?: File[];
+  /**
    * Zda zobrazit seznam nahraných souborů pod komponentou.
    * @default true
    */
@@ -142,6 +148,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
   label,
   helperText,
   error,
+  value,
   buttonStyle = 'default',
   showFileList = true,
   buttonLabel,
@@ -153,8 +160,13 @@ export const FileUpload: React.FC<FileUploadProps> = ({
   const id = useId();
   const inputRef = useRef<HTMLInputElement>(null);
   const [dragging, setDragging] = useState(false);
-  const [files, setFiles] = useState<UploadedFile[]>([]);
+  const [internalFiles, setInternalFiles] = useState<UploadedFile[]>([]);
   const [sizeError, setSizeError] = useState<string | null>(null);
+
+  const isControlled = value !== undefined;
+  const files: UploadedFile[] = isControlled
+    ? value.map((file, i) => ({ file, id: `controlled-${i}` }))
+    : internalFiles;
 
   const hasError = Boolean(error) || Boolean(sizeError);
   const errorMessage = typeof error === 'string' ? error : sizeError ?? undefined;
@@ -174,16 +186,23 @@ export const FileUpload: React.FC<FileUploadProps> = ({
         }
       }
 
-      const newFiles: UploadedFile[] = arr.map((file) => ({
-        file,
-        id: `file-${++fileIdCounter}`,
-      }));
-
-      const updated = multiple ? [...files, ...newFiles] : newFiles;
-      setFiles(updated);
-      onFiles?.(updated.map((f) => f.file));
+      if (isControlled) {
+        // Controlled: just call onFiles, parent manages state
+        const currentFiles = value || [];
+        const merged = multiple ? [...currentFiles, ...arr] : arr;
+        onFiles?.(merged);
+      } else {
+        // Uncontrolled: manage internal state
+        const newFiles: UploadedFile[] = arr.map((file) => ({
+          file,
+          id: `file-${++fileIdCounter}`,
+        }));
+        const updated = multiple ? [...internalFiles, ...newFiles] : newFiles;
+        setInternalFiles(updated);
+        onFiles?.(updated.map((f) => f.file));
+      }
     },
-    [files, maxSize, multiple, onFiles]
+    [isControlled, value, internalFiles, maxSize, multiple, onFiles]
   );
 
   const handleDrop = useCallback(
@@ -200,11 +219,16 @@ export const FileUpload: React.FC<FileUploadProps> = ({
 
   const handleRemove = useCallback(
     (fileId: string) => {
-      const updated = files.filter((f) => f.id !== fileId);
-      setFiles(updated);
-      onFiles?.(updated.map((f) => f.file));
+      if (isControlled) {
+        const updated = (value || []).filter((_, i) => `controlled-${i}` !== fileId);
+        onFiles?.(updated);
+      } else {
+        const updated = internalFiles.filter((f) => f.id !== fileId);
+        setInternalFiles(updated);
+        onFiles?.(updated.map((f) => f.file));
+      }
     },
-    [files, onFiles]
+    [isControlled, value, internalFiles, onFiles]
   );
 
   const labelStyle: React.CSSProperties = {

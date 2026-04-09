@@ -11,6 +11,7 @@ File upload with drag & drop zone, compact input-style, or primary button varian
 | `variant` | `'dropzone' | 'button'` | 'dropzone' |  | Visual variant — large zone or compact button. |
 | `buttonStyle` | `'default' | 'primary'` | 'default' |  | Button variant style — neutral input or primary orange button. |
 | `showFileList` | `boolean` | true |  | Show uploaded file list below component. |
+| `value` | `File[]` | — |  | Controlled file list. Pass [] to hide files (e.g. after processing upload elsewhere). |
 | `onFiles` | `(files: File[]) => void` | — |  | Callback with selected files. |
 | `accept` | `string` | — |  | Allowed file types (e.g. 'image/*,.pdf'). |
 | `multiple` | `boolean` | false |  | Allow multiple files. |
@@ -25,4 +26,7 @@ File upload with drag & drop zone, compact input-style, or primary button varian
 <FileUpload label="Documents" accept="image/*,.pdf" multiple onFiles={handleFiles} />
 <FileUpload variant="button" label="Avatar" accept="image/*" />
 <FileUpload variant="button" buttonStyle="primary" label="Upload" showFileList={false} />
+
+// Controlled — grab file immediately, don't show filename
+<FileUpload value={[]} onFiles={(files) => handleUpload(files)} />
 ```

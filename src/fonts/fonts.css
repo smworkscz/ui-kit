@@ -1,3 +1,11 @@
+/* ── Placeholder fix ── */
+
+input::placeholder,
+textarea::placeholder {
+  color: inherit;
+  opacity: 0.45;
+}
+
 /* ── Zalando Sans ── */
 
 @font-face {

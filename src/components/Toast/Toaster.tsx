@@ -398,7 +398,7 @@ const StackContainerWrapper: React.FC<StackContainerWrapperProps> = ({
     <div
       style={{
         position: 'fixed',
-        zIndex: 9999,
+        zIndex: 99999,
         width: toastWidth,
         maxWidth: `calc(100vw - ${offset * 2}px)`,
         height: containerHeight,

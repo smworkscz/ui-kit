@@ -327,6 +327,7 @@ File upload with drag & drop zone, compact input-style, or primary button varian
 | `variant` | `'dropzone' | 'button'` | 'dropzone' |  | Visual variant — large zone or compact button. |
 | `buttonStyle` | `'default' | 'primary'` | 'default' |  | Button variant style — neutral input or primary orange button. |
 | `showFileList` | `boolean` | true |  | Show uploaded file list below component. |
+| `value` | `File[]` | — |  | Controlled file list. Pass [] to hide files (e.g. after processing upload elsewhere). |
 | `onFiles` | `(files: File[]) => void` | — |  | Callback with selected files. |
 | `accept` | `string` | — |  | Allowed file types (e.g. 'image/*,.pdf'). |
 | `multiple` | `boolean` | false |  | Allow multiple files. |
@@ -341,6 +342,9 @@ File upload with drag & drop zone, compact input-style, or primary button varian
 <FileUpload label="Documents" accept="image/*,.pdf" multiple onFiles={handleFiles} />
 <FileUpload variant="button" label="Avatar" accept="image/*" />
 <FileUpload variant="button" buttonStyle="primary" label="Upload" showFileList={false} />
+
+// Controlled — grab file immediately, don't show filename
+<FileUpload value={[]} onFiles={(files) => handleUpload(files)} />
 ```
 
 ---
@@ -448,13 +452,21 @@ Input with autocomplete dropdown. Type to filter, select from options or enter c
 | Prop | Type | Default | Required | Description |
 |------|------|---------|----------|-------------|
 | `options` | `{ value: string; label?: string }[]` | — | Yes | Available options. |
-| `value` | `string` | — | Yes | Current value. |
-| `onChange` | `(value: string) => void` | — | Yes | Change callback. |
+| `value` | `string | string[]` | — | Yes | Current value. string[] when multiple. |
+| `onChange` | `(value: any) => void` | — | Yes | Change callback. Returns string[] when multiple. |
+| `multiple` | `boolean` | false |  | Allow selecting multiple options (renders tags). |
+| `clearable` | `boolean` | false |  | Show clear button to reset selection. |
 | `onInputChange` | `(input: string) => void` | — |  | Callback for input text changes (for async filtering). |
 | `onCreate` | `(value: string) => void` | — |  | Called when Enter pressed with custom value (allowCustom only). |
 | `renderOption` | `(option, highlighted) => ReactNode` | — |  | Custom option rendering. |
 | `notFoundContent` | `ReactNode` | — |  | Custom "no results" content. |
-| `footer` | `ReactNode` | — |  | Content below the options list. |
+| `footer` | `ReactNode | ((close) => ReactNode)` | — |  | Content below options. Function receives close() to dismiss dropdown. |
+| `onOpenChange` | `(open: boolean) => void` | — |  | Called when dropdown opens/closes. |
+| `onSelect` | `(value, option) => void` | — |  | Called when an option is selected. |
+| `onDeselect` | `(value, option) => void` | — |  | Called when an option is deselected (multiple). |
+| `onClear` | `() => void` | — |  | Called when selection is cleared. |
+| `onFocus` | `(event) => void` | — |  | Called on focus. |
+| `onBlur` | `(event) => void` | — |  | Called on blur. |
 | `allowCustom` | `boolean` | false |  | Allow typing arbitrary values. |
 | `placeholder` | `string` | — |  | Placeholder text. |
 | `label` | `string` | — |  | Label text. |
@@ -473,6 +485,15 @@ Input with autocomplete dropdown. Type to filter, select from options or enter c
   allowCustom
   onCreate={(val) => addCountry(val)}
   placeholder="Vyberte zemi..."
+/>
+
+// Multi-select
+<Combobox
+  multiple
+  options={countries}
+  value={selectedCountries}
+  onChange={setSelectedCountries}
+  placeholder="Vyberte země..."
 />
 ```
 
@@ -864,7 +885,7 @@ Tag for categorization. Badge for status labels.
 
 # Calendar
 
-Full month/week calendar grid with event dots and date selection.
+Calendar with compact (date-picker with event dots) and full-size (month grid with spanning event bars) modes.
 
 **Import:** `import { Calendar } from '@smworks-cz/ui-kit'`
 
@@ -874,21 +895,33 @@ Full month/week calendar grid with event dots and date selection.
 |------|------|---------|----------|-------------|
 | `value` | `Date | null` | — |  | Selected date. |
 | `onChange` | `(date: Date) => void` | — |  | Date select callback. |
-| `view` | `'month' | 'week'` | 'month' |  | Calendar view. |
-| `events` | `{ date: Date; title: string; color?: string }[]` | — |  | Events shown as colored dots. |
+| `view` | `'month' | 'week'` | 'month' |  | Calendar view (compact mode only). |
+| `fullSize` | `boolean` | false |  | Full-size mode with event bars instead of dots. |
+| `events` | `CalendarEvent[]` | — |  | Events: { date, endDate?, title, color?, textColor?, emoji? }. |
+| `onEventClick` | `(event: CalendarEvent) => void` | — |  | Event click callback (fullSize). |
+| `firstDay` | `0 | 1` | 1 |  | First day of week (0=Sun, 1=Mon). |
+| `locale` | `'cs' | 'en'` | 'cs' |  | Language for labels. |
+| `maxEventsPerDay` | `number` | 3 |  | Max visible events per cell (fullSize). |
+| `initialDate` | `Date` | — |  | Initial navigation date. |
 | `minDate` | `Date` | — |  | Minimum selectable date. |
 | `maxDate` | `Date` | — |  | Maximum selectable date. |
 
 ## Usage
 
 ```tsx
+// Compact
 <Calendar value={date} onChange={setDate} events={events} />
+
+// Full-size with event bars
+<Calendar fullSize events={events} onEventClick={(ev) => console.log(ev)} />
 ```
 
 ## Notes
 
-- Events are visual dots only — handle display yourself
-- Today highlighted with primary color
+- fullSize shows colored bars that span multiple days via endDate
+- Compact mode shows event dots (original behavior)
+- Multi-day events span across columns in full-size mode
+- Events beyond maxEventsPerDay show "+N" indicator
 
 ---
 

@@ -171,7 +171,7 @@ export const Stepper: React.FC<StepperProps> = ({
             style={{
               display: 'flex',
               flexDirection: isHorizontal ? 'column' : 'row',
-              alignItems: isHorizontal ? 'center' : 'flex-start',
+              alignItems: isHorizontal ? 'flex-start' : 'flex-start',
               flex: isLast ? '0 0 auto' : '1 1 0',
               minWidth: 0,
               cursor: canClick ? 'pointer' : 'default',
@@ -256,7 +256,7 @@ export const Stepper: React.FC<StepperProps> = ({
                 marginTop: isHorizontal ? '10px' : 0,
                 marginLeft: isHorizontal ? 0 : '14px',
                 paddingTop: isHorizontal ? 0 : '4px',
-                textAlign: isHorizontal ? 'center' : 'left',
+                textAlign: 'left',
                 minHeight: isHorizontal ? undefined : !isLast ? '48px' : undefined,
               }}
             >

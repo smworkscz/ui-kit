@@ -16,6 +16,7 @@ const propDefs: PropDef[] = [
   { name: 'variant', type: "'dropzone' | 'button'", defaultValue: "'dropzone'", description: 'Vizuální varianta — velká zóna nebo kompaktní tlačítko.' },
   { name: 'buttonStyle', type: "'default' | 'primary'", defaultValue: "'default'", description: 'Styl button varianty — neutrální pole nebo primární tlačítko.' },
   { name: 'showFileList', type: 'boolean', defaultValue: 'true', description: 'Zobrazí seznam nahraných souborů.' },
+  { name: 'value', type: 'File[]', description: 'Řízená hodnota — pole souborů. Předejte [] pro skrytí souborů (např. po zpracování uploadu jinde).' },
   { name: 'onFiles', type: '(files: File[]) => void', description: 'Callback s vybranými soubory.' },
   { name: 'accept', type: 'string', description: "Povolené typy souborů (např. 'image/*,.pdf')." },
   { name: 'multiple', type: 'boolean', defaultValue: 'false', description: 'Více souborů najednou.' },

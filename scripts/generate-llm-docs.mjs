@@ -217,6 +217,7 @@ const components = [
       { name: 'variant', type: "'dropzone' | 'button'", default: "'dropzone'", desc: 'Visual variant — large zone or compact button.' },
       { name: 'buttonStyle', type: "'default' | 'primary'", default: "'default'", desc: 'Button variant style — neutral input or primary orange button.' },
       { name: 'showFileList', type: 'boolean', default: 'true', desc: 'Show uploaded file list below component.' },
+      { name: 'value', type: 'File[]', desc: 'Controlled file list. Pass [] to hide files (e.g. after processing upload elsewhere).' },
       { name: 'onFiles', type: '(files: File[]) => void', desc: 'Callback with selected files.' },
       { name: 'accept', type: 'string', desc: "Allowed file types (e.g. 'image/*,.pdf')." },
       { name: 'multiple', type: 'boolean', default: 'false', desc: 'Allow multiple files.' },
@@ -227,7 +228,10 @@ const components = [
     ],
     usage: `<FileUpload label="Documents" accept="image/*,.pdf" multiple onFiles={handleFiles} />
 <FileUpload variant="button" label="Avatar" accept="image/*" />
-<FileUpload variant="button" buttonStyle="primary" label="Upload" showFileList={false} />`,
+<FileUpload variant="button" buttonStyle="primary" label="Upload" showFileList={false} />
+
+// Controlled — grab file immediately, don't show filename
+<FileUpload value={[]} onFiles={(files) => handleUpload(files)} />`,
   },
   {
     id: 'segmentedcontrol',
@@ -790,13 +794,21 @@ dismiss(id);`,
     description: 'Input with autocomplete dropdown. Type to filter, select from options or enter custom values.',
     props: [
       { name: 'options', type: '{ value: string; label?: string }[]', required: true, desc: 'Available options.' },
-      { name: 'value', type: 'string', required: true, desc: 'Current value.' },
-      { name: 'onChange', type: '(value: string) => void', required: true, desc: 'Change callback.' },
+      { name: 'value', type: 'string | string[]', required: true, desc: 'Current value. string[] when multiple.' },
+      { name: 'onChange', type: '(value: any) => void', required: true, desc: 'Change callback. Returns string[] when multiple.' },
+      { name: 'multiple', type: 'boolean', default: 'false', desc: 'Allow selecting multiple options (renders tags).' },
+      { name: 'clearable', type: 'boolean', default: 'false', desc: 'Show clear button to reset selection.' },
       { name: 'onInputChange', type: '(input: string) => void', desc: 'Callback for input text changes (for async filtering).' },
       { name: 'onCreate', type: '(value: string) => void', desc: 'Called when Enter pressed with custom value (allowCustom only).' },
       { name: 'renderOption', type: '(option, highlighted) => ReactNode', desc: 'Custom option rendering.' },
       { name: 'notFoundContent', type: 'ReactNode', desc: 'Custom "no results" content.' },
-      { name: 'footer', type: 'ReactNode', desc: 'Content below the options list.' },
+      { name: 'footer', type: 'ReactNode | ((close) => ReactNode)', desc: 'Content below options. Function receives close() to dismiss dropdown.' },
+      { name: 'onOpenChange', type: '(open: boolean) => void', desc: 'Called when dropdown opens/closes.' },
+      { name: 'onSelect', type: '(value, option) => void', desc: 'Called when an option is selected.' },
+      { name: 'onDeselect', type: '(value, option) => void', desc: 'Called when an option is deselected (multiple).' },
+      { name: 'onClear', type: '() => void', desc: 'Called when selection is cleared.' },
+      { name: 'onFocus', type: '(event) => void', desc: 'Called on focus.' },
+      { name: 'onBlur', type: '(event) => void', desc: 'Called on blur.' },
       { name: 'allowCustom', type: 'boolean', default: 'false', desc: 'Allow typing arbitrary values.' },
       { name: 'placeholder', type: 'string', desc: 'Placeholder text.' },
       { name: 'label', type: 'string', desc: 'Label text.' },
@@ -812,6 +824,15 @@ dismiss(id);`,
   allowCustom
   onCreate={(val) => addCountry(val)}
   placeholder="Vyberte zemi..."
+/>
+
+// Multi-select
+<Combobox
+  multiple
+  options={countries}
+  value={selectedCountries}
+  onChange={setSelectedCountries}
+  placeholder="Vyberte země..."
 />`,
   },
   {
@@ -867,17 +888,32 @@ dismiss(id);`,
     id: 'calendar',
     name: 'Calendar',
     category: 'Data Display',
-    description: 'Full month/week calendar grid with event dots and date selection.',
+    description: 'Calendar with compact (date-picker with event dots) and full-size (month grid with spanning event bars) modes.',
     props: [
       { name: 'value', type: 'Date | null', desc: 'Selected date.' },
       { name: 'onChange', type: '(date: Date) => void', desc: 'Date select callback.' },
-      { name: 'view', type: "'month' | 'week'", default: "'month'", desc: 'Calendar view.' },
-      { name: 'events', type: '{ date: Date; title: string; color?: string }[]', desc: 'Events shown as colored dots.' },
+      { name: 'view', type: "'month' | 'week'", default: "'month'", desc: 'Calendar view (compact mode only).' },
+      { name: 'fullSize', type: 'boolean', default: 'false', desc: 'Full-size mode with event bars instead of dots.' },
+      { name: 'events', type: 'CalendarEvent[]', desc: 'Events: { date, endDate?, title, color?, textColor?, emoji? }.' },
+      { name: 'onEventClick', type: '(event: CalendarEvent) => void', desc: 'Event click callback (fullSize).' },
+      { name: 'firstDay', type: '0 | 1', default: '1', desc: 'First day of week (0=Sun, 1=Mon).' },
+      { name: 'locale', type: "'cs' | 'en'", default: "'cs'", desc: 'Language for labels.' },
+      { name: 'maxEventsPerDay', type: 'number', default: '3', desc: 'Max visible events per cell (fullSize).' },
+      { name: 'initialDate', type: 'Date', desc: 'Initial navigation date.' },
       { name: 'minDate', type: 'Date', desc: 'Minimum selectable date.' },
       { name: 'maxDate', type: 'Date', desc: 'Maximum selectable date.' },
     ],
-    usage: `<Calendar value={date} onChange={setDate} events={events} />`,
-    notes: ['Events are visual dots only — handle display yourself', 'Today highlighted with primary color'],
+    usage: `// Compact
+<Calendar value={date} onChange={setDate} events={events} />
+
+// Full-size with event bars
+<Calendar fullSize events={events} onEventClick={(ev) => console.log(ev)} />`,
+    notes: [
+      'fullSize shows colored bars that span multiple days via endDate',
+      'Compact mode shows event dots (original behavior)',
+      'Multi-day events span across columns in full-size mode',
+      'Events beyond maxEventsPerDay show "+N" indicator',
+    ],
   },
   {
     id: 'timeline',

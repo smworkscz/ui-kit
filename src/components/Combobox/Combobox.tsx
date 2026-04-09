@@ -1,6 +1,11 @@
 import React, { useState, useRef, useEffect, useCallback, useId } from 'react';
 import { createPortal } from 'react-dom';
-import { MagnifyingGlass as MagnifyingGlassIcon, CaretDown as CaretDownIcon, Check as CheckIcon } from '@phosphor-icons/react';
+import {
+  MagnifyingGlass as MagnifyingGlassIcon,
+  CaretDown as CaretDownIcon,
+  Check as CheckIcon,
+  X as XIcon,
+} from '@phosphor-icons/react';
 import { useTheme } from '../../hooks/useTheme';
 
 // ─── Spinner ─────────────────────────────────────────────────────────────────
@@ -55,6 +60,8 @@ const tokens = {
     optionSelectedText: '#E8612D',
     divider: 'rgba(255,255,255,0.08)',
     scrollbarThumb: 'rgba(255,255,255,0.15)',
+    tagBg: 'rgba(255,255,255,0.12)',
+    tagText: '#eaeaea',
   },
   light: {
     background: 'rgba(255,255,255,0.85)',
@@ -72,6 +79,8 @@ const tokens = {
     optionSelectedText: '#E8612D',
     divider: 'rgba(0,0,0,0.06)',
     scrollbarThumb: 'rgba(0,0,0,0.15)',
+    tagBg: 'rgba(0,0,0,0.08)',
+    tagText: '#1a1a1a',
   },
 } as const;
 
@@ -101,10 +110,18 @@ export interface ComboboxOption {
 export interface ComboboxProps {
   /** Dostupné položky k výběru. */
   options: ComboboxOption[];
-  /** Aktuální vybraná hodnota. */
-  value: string;
-  /** Callback volaný při výběru položky. */
-  onChange: (value: string) => void;
+  /**
+   * Aktuální vybraná hodnota.
+   * - Jednoduchý výběr: `string`
+   * - Vícenásobný výběr: `string[]`
+   */
+  value: string | string[];
+  /**
+   * Callback volaný při výběru položky.
+   * - Jednoduchý výběr: `(value: string) => void`
+   * - Vícenásobný výběr: `(value: string[]) => void`
+   */
+  onChange: (value: any) => void;
   /** Callback volaný při změně textu ve vyhledávacím poli. Vhodné pro asynchronní filtrování. */
   onInputChange?: (input: string) => void;
   /** Zástupný text zobrazený při prázdném poli. */
@@ -117,16 +134,41 @@ export interface ComboboxProps {
   disabled?: boolean;
   /** Zobrazí spinner místo ikony vyhledávání. Vhodné při načítání položek. */
   loading?: boolean;
+  /** Umožní vybrat více položek najednou. @default false */
+  multiple?: boolean;
+  /** Zobrazí tlačítko pro vymazání výběru. @default false */
+  clearable?: boolean;
+  /** Voláno při otevření/zavření dropdownu. */
+  onOpenChange?: (open: boolean) => void;
+  /** Voláno při výběru položky. */
+  onSelect?: (value: string, option: ComboboxOption) => void;
+  /** Voláno při odebrání položky (multiple). */
+  onDeselect?: (value: string, option: ComboboxOption) => void;
+  /** Voláno při vymazání výběru (clearable). */
+  onClear?: () => void;
+  /** Voláno při focus. */
+  onFocus?: (event: React.FocusEvent) => void;
+  /** Voláno při blur. */
+  onBlur?: (event: React.FocusEvent) => void;
   /** Povolí uživateli zadat vlastní hodnotu, která není v seznamu. @default false */
   allowCustom?: boolean;
   /** Callback volaný při vytvoření vlastní hodnoty (Enter při `allowCustom`). */
   onCreate?: (value: string) => void;
   /** Vlastní renderování položky v seznamu. */
   renderOption?: (option: { value: string; label?: string }, highlighted: boolean) => React.ReactNode;
-  /** Obsah zobrazený když žádné výsledky neodpovídají. @default "Žádné výsledky" */
-  notFoundContent?: React.ReactNode;
-  /** Obsah zobrazený pod seznamem položek uvnitř dropdownu. */
-  footer?: React.ReactNode;
+  /**
+   * Obsah zobrazený když žádné výsledky neodpovídají.
+   * Může být ReactNode nebo funkce `(close: () => void) => ReactNode`
+   * pro přístup k zavření dropdownu.
+   * @default "Žádné výsledky"
+   */
+  notFoundContent?: React.ReactNode | ((close: () => void) => React.ReactNode);
+  /**
+   * Obsah zobrazený pod seznamem položek uvnitř dropdownu.
+   * Může být ReactNode nebo funkce `(close: () => void) => ReactNode`
+   * pro přístup k zavření dropdownu.
+   */
+  footer?: React.ReactNode | ((close: () => void) => React.ReactNode);
   /**
    * Velikostní preset.
    * @default 'md'
@@ -144,16 +186,26 @@ export interface ComboboxProps {
  * Kombinované vyhledávací pole se seznamem dle SM-UI design systému.
  *
  * Uživatel zadává text pro filtrování položek. Dropdown se vykresluje
- * přes React portál. Podporuje navigaci klávesami, vlastní hodnoty
- * a asynchronní filtrování přes `onInputChange`.
+ * přes React portál. Podporuje navigaci klávesami, vlastní hodnoty,
+ * vícenásobný výběr a asynchronní filtrování přes `onInputChange`.
  *
  * @example
  * ```tsx
+ * // Jednoduchý výběr
  * <Combobox
  *   options={[{ value: 'cz', label: 'Česko' }, { value: 'sk', label: 'Slovensko' }]}
  *   value={zeme}
  *   onChange={setZeme}
  *   placeholder="Hledat zemi…"
+ * />
+ *
+ * // Vícenásobný výběr
+ * <Combobox
+ *   multiple
+ *   options={options}
+ *   value={selectedCountries}
+ *   onChange={setSelectedCountries}
+ *   placeholder="Vyberte země…"
  * />
  * ```
  */
@@ -169,6 +221,14 @@ export const Combobox = React.forwardRef<HTMLInputElement, ComboboxProps>(
       error,
       disabled = false,
       loading = false,
+      multiple = false,
+      clearable = false,
+      onOpenChange,
+      onSelect,
+      onDeselect,
+      onClear,
+      onFocus: onFocusProp,
+      onBlur: onBlurProp,
       allowCustom = false,
       onCreate,
       renderOption,
@@ -202,15 +262,30 @@ export const Combobox = React.forwardRef<HTMLInputElement, ComboboxProps>(
     const isDisabled = disabled || loading;
     const hasError = Boolean(error);
     const errorMessage = typeof error === 'string' ? error : undefined;
+    const showClear = clearable && !isDisabled;
 
-    // ── Sync input value with selected value ────────────────────────────
+    // ── Derived selected values ──────────────────────────────────────────
+
+    const selectedValues: string[] = multiple
+      ? (Array.isArray(value) ? value : value ? [value] : [])
+      : (typeof value === 'string' && value ? [value] : []);
+
+    const isSelected = (optValue: string) => selectedValues.includes(optValue);
+
+    const getLabel = (optValue: string) => {
+      const opt = options.find((o) => o.value === optValue);
+      return opt ? (opt.label ?? opt.value) : optValue;
+    };
+
+    // ── Sync input value with selected value (single mode only) ─────────
 
     useEffect(() => {
+      if (multiple) return;
       if (!focused) {
         const selectedOpt = options.find((o) => o.value === value);
-        setInputValue(selectedOpt ? (selectedOpt.label ?? selectedOpt.value) : value || '');
+        setInputValue(selectedOpt ? (selectedOpt.label ?? selectedOpt.value) : (typeof value === 'string' ? value : '') || '');
       }
-    }, [value, options, focused]);
+    }, [value, options, focused, multiple]);
 
     // ── Filtered options ─────────────────────────────────────────────────
 
@@ -226,20 +301,22 @@ export const Combobox = React.forwardRef<HTMLInputElement, ComboboxProps>(
       setOpen(true);
       setVisible(true);
       setAnimState('opening');
+      onOpenChange?.(true);
       requestAnimationFrame(() => {
         requestAnimationFrame(() => setAnimState('open'));
       });
-    }, []);
+    }, [onOpenChange]);
 
     const doClose = useCallback(() => {
       setOpen(false);
       setAnimState('closing');
+      onOpenChange?.(false);
       const timer = setTimeout(() => {
         setVisible(false);
         setAnimState('idle');
       }, ANIM_DURATION);
       return () => clearTimeout(timer);
-    }, []);
+    }, [onOpenChange]);
 
     // ── Position dropdown ────────────────────────────────────────────────
 
@@ -277,16 +354,19 @@ export const Combobox = React.forwardRef<HTMLInputElement, ComboboxProps>(
         const target = e.target as Node;
         if (!triggerRef.current?.contains(target) && !dropdownRef.current?.contains(target)) {
           doClose();
-          // Reset input to selected value
-          const selectedOpt = options.find((o) => o.value === value);
-          if (!allowCustom) {
-            setInputValue(selectedOpt ? (selectedOpt.label ?? selectedOpt.value) : '');
+          if (multiple) {
+            setInputValue('');
+          } else {
+            const selectedOpt = options.find((o) => o.value === value);
+            if (!allowCustom) {
+              setInputValue(selectedOpt ? (selectedOpt.label ?? selectedOpt.value) : '');
+            }
           }
         }
       };
       document.addEventListener('mousedown', handler);
       return () => document.removeEventListener('mousedown', handler);
-    }, [open, doClose, value, options, allowCustom]);
+    }, [open, doClose, value, options, allowCustom, multiple]);
 
     // ── Scroll highlighted into view ─────────────────────────────────────
 
@@ -309,12 +389,49 @@ export const Combobox = React.forwardRef<HTMLInputElement, ComboboxProps>(
 
     const selectOption = useCallback(
       (optValue: string) => {
-        onChange(optValue);
-        const opt = options.find((o) => o.value === optValue);
-        setInputValue(opt ? (opt.label ?? opt.value) : optValue);
-        doClose();
+        const opt = options.find((o) => o.value === optValue) || { value: optValue };
+        if (multiple) {
+          if (isSelected(optValue)) {
+            const next = selectedValues.filter((v) => v !== optValue);
+            onChange(next);
+            onDeselect?.(optValue, opt);
+          } else {
+            const next = [...selectedValues, optValue];
+            onChange(next);
+            onSelect?.(optValue, opt);
+          }
+          setInputValue('');
+          // Keep dropdown open in multi mode
+        } else {
+          onChange(optValue);
+          onSelect?.(optValue, opt);
+          setInputValue(opt.label ?? opt.value);
+          doClose();
+        }
       },
-      [onChange, options, doClose]
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      [onChange, options, doClose, multiple, selectedValues, onSelect, onDeselect]
+    );
+
+    const removeTag = useCallback(
+      (optValue: string) => {
+        if (!multiple) return;
+        const opt = options.find((o) => o.value === optValue) || { value: optValue };
+        const next = selectedValues.filter((v) => v !== optValue);
+        onChange(next);
+        onDeselect?.(optValue, opt);
+      },
+      [multiple, selectedValues, onChange, options, onDeselect]
+    );
+
+    const handleClear = useCallback(
+      (e: React.MouseEvent) => {
+        e.stopPropagation();
+        onChange(multiple ? [] : '');
+        setInputValue('');
+        onClear?.();
+      },
+      [multiple, onChange, onClear]
     );
 
     const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -339,9 +456,22 @@ export const Combobox = React.forwardRef<HTMLInputElement, ComboboxProps>(
           if (open && highlightIndex >= 0 && filteredOptions[highlightIndex]) {
             selectOption(filteredOptions[highlightIndex].value);
           } else if (allowCustom && inputValue) {
-            onChange(inputValue);
-            onCreate?.(inputValue);
-            doClose();
+            if (multiple) {
+              onChange([...selectedValues, inputValue]);
+              onCreate?.(inputValue);
+              setInputValue('');
+            } else {
+              onChange(inputValue);
+              onCreate?.(inputValue);
+              doClose();
+            }
+          }
+          break;
+        case 'Backspace':
+          // In multi mode, remove last tag when input is empty
+          if (multiple && inputValue === '' && selectedValues.length > 0) {
+            const next = selectedValues.slice(0, -1);
+            onChange(next);
           }
           break;
         case 'Escape':
@@ -353,17 +483,28 @@ export const Combobox = React.forwardRef<HTMLInputElement, ComboboxProps>(
       }
     };
 
-    const handleFocus = () => {
+    const handleFocus = (e: React.FocusEvent) => {
       setFocused(true);
+      onFocusProp?.(e);
       if (!open && !isDisabled) {
         doOpen();
       }
     };
 
-    const handleBlur = () => {
+    const handleBlur = (e: React.FocusEvent) => {
+      // If focus moves to an element inside the dropdown (e.g. a button in
+      // notFoundContent or footer), don't treat it as a real blur.
+      const related = e.relatedTarget as Node | null;
+      if (related && (dropdownRef.current?.contains(related) || triggerRef.current?.contains(related))) {
+        return;
+      }
       setFocused(false);
-      if (allowCustom && inputValue) {
+      onBlurProp?.(e);
+      if (!multiple && allowCustom && inputValue) {
         onChange(inputValue);
+      }
+      if (multiple) {
+        setInputValue('');
       }
     };
 
@@ -399,11 +540,12 @@ export const Combobox = React.forwardRef<HTMLInputElement, ComboboxProps>(
       transition: 'border-color 0.15s ease',
       opacity: isDisabled ? 0.6 : 1,
       cursor: isDisabled ? 'not-allowed' : 'text',
+      flexWrap: 'nowrap',
     };
 
     const nativeStyle: React.CSSProperties = {
       flex: 1,
-      minWidth: 0,
+      minWidth: multiple ? '60px' : 0,
       background: 'transparent',
       border: 'none',
       outline: 'none',
@@ -453,10 +595,16 @@ export const Combobox = React.forwardRef<HTMLInputElement, ComboboxProps>(
               transformOrigin: dropdownPos.openAbove ? 'bottom center' : 'top center',
               ...getDropdownAnimStyle(),
             }}
+            onMouseDown={(e) => {
+              // Prevent input blur so buttons inside the dropdown
+              // (notFoundContent, footer) receive their click events.
+              e.preventDefault();
+            }}
           >
             <div
               ref={listRef}
               role="listbox"
+              aria-multiselectable={multiple}
               style={{
                 maxHeight: 240,
                 overflowY: 'auto',
@@ -473,12 +621,12 @@ export const Combobox = React.forwardRef<HTMLInputElement, ComboboxProps>(
                 }}>
                   {allowCustom && inputValue
                     ? 'Stiskněte Enter pro potvrzení'
-                    : (notFoundContent ?? 'Žádné výsledky')}
+                    : (typeof notFoundContent === 'function' ? notFoundContent(doClose) : (notFoundContent ?? 'Žádné výsledky'))}
                 </div>
               )}
 
               {filteredOptions.map((opt, idx) => {
-                const selected = opt.value === value;
+                const selected = isSelected(opt.value);
                 const highlighted = idx === highlightIndex;
 
                 return (
@@ -531,7 +679,7 @@ export const Combobox = React.forwardRef<HTMLInputElement, ComboboxProps>(
                 borderTop: `1px solid ${t.divider}`,
                 padding: '8px 6px',
               }}>
-                {footer}
+                {typeof footer === 'function' ? footer(doClose) : footer}
               </div>
             )}
           </div>,
@@ -555,26 +703,79 @@ export const Combobox = React.forwardRef<HTMLInputElement, ComboboxProps>(
             {loading ? <Spinner size={sc.iconSize} color={t.placeholder} /> : <MagnifyingGlassIcon size={sc.iconSize} color={t.placeholder} />}
           </span>
 
-          <input
-            ref={(node) => {
-              (inputRef as React.MutableRefObject<HTMLInputElement | null>).current = node;
-              if (typeof ref === 'function') ref(node);
-              else if (ref) (ref as React.MutableRefObject<HTMLInputElement | null>).current = node;
-            }}
-            id={inputId}
-            type="text"
-            value={inputValue}
-            onChange={handleInputChangeInternal}
-            onFocus={handleFocus}
-            onBlur={handleBlur}
-            onKeyDown={handleKeyDown}
-            placeholder={placeholder}
-            disabled={disabled}
-            readOnly={loading}
-            style={nativeStyle}
-          />
+          {/* Scrollable tags + input area */}
+          <div style={{ flex: 1, minWidth: 0, display: 'flex', flexWrap: 'nowrap', gap: '4px', alignItems: 'center', overflowX: 'auto', overflowY: 'hidden', scrollbarWidth: 'none' }}>
+            {/* Multi-select tags */}
+            {multiple && selectedValues.map((v) => (
+              <span
+                key={v}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '4px',
+                  backgroundColor: t.tagBg,
+                  color: t.tagText,
+                  borderRadius: '4px',
+                  padding: '2px 8px',
+                  fontFamily: "'Zalando Sans', sans-serif",
+                  fontSize: '13px',
+                  lineHeight: 'normal',
+                  flexShrink: 0,
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  {getLabel(v)}
+                </span>
+                {!isDisabled && (
+                  <span
+                    role="button"
+                    tabIndex={-1}
+                    style={{ cursor: 'pointer', display: 'flex', opacity: 0.7 }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      removeTag(v);
+                    }}
+                  >
+                    <XIcon size={14} color={t.tagText} />
+                  </span>
+                )}
+              </span>
+            ))}
 
-          <span style={{ display: 'flex', alignItems: 'center', flexShrink: 0 }}>
+            <input
+              ref={(node) => {
+                (inputRef as React.MutableRefObject<HTMLInputElement | null>).current = node;
+                if (typeof ref === 'function') ref(node);
+                else if (ref) (ref as React.MutableRefObject<HTMLInputElement | null>).current = node;
+              }}
+              id={inputId}
+              type="text"
+              value={inputValue}
+              onChange={handleInputChangeInternal}
+              onFocus={handleFocus}
+              onBlur={handleBlur}
+              onKeyDown={handleKeyDown}
+              placeholder={multiple && selectedValues.length > 0 ? '' : placeholder}
+              disabled={disabled}
+              readOnly={loading}
+              style={nativeStyle}
+            />
+          </div>
+
+          {/* Actions */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '4px', flexShrink: 0 }}>
+            {showClear && selectedValues.length > 0 && (
+              <span
+                role="button"
+                tabIndex={-1}
+                aria-label="Vymazat výběr"
+                style={{ cursor: 'pointer', display: 'flex', padding: '2px' }}
+                onClick={handleClear}
+              >
+                <XIcon size={14} color={t.placeholder} />
+              </span>
+            )}
             <CaretDownIcon
               size={sc.iconSize}
               color={t.placeholder}
@@ -583,7 +784,7 @@ export const Combobox = React.forwardRef<HTMLInputElement, ComboboxProps>(
                 transform: open ? 'rotate(180deg)' : 'rotate(0deg)',
               }}
             />
-          </span>
+          </div>
         </div>
 
         {errorMessage && (

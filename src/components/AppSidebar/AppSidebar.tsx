@@ -80,7 +80,7 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
         borderRight: `1px solid ${t.border}`,
         boxSizing: 'border-box',
         overflow: 'hidden',
-        transition: 'width 180ms cubic-bezier(0.16, 1, 0.3, 1), min-width 180ms cubic-bezier(0.16, 1, 0.3, 1)',
+        transition: 'width 500ms cubic-bezier(0.16, 1, 0.3, 1), min-width 500ms cubic-bezier(0.16, 1, 0.3, 1)',
         ...style,
       }}
     >
@@ -94,7 +94,7 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
           display: 'flex',
           flexDirection: 'column' as const,
           alignItems: collapsed ? 'center' : 'stretch',
-          transition: 'padding 180ms cubic-bezier(0.16, 1, 0.3, 1)',
+          transition: 'padding 500ms cubic-bezier(0.16, 1, 0.3, 1)',
         }}
       >
         {children}

@@ -33,6 +33,7 @@
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",
+    "dev:link": "tsup --watch --onSuccess \"yalc push\"",
     "preview": "vite --config preview/vite.config.ts",
     "build:preview": "node scripts/generate-llm-docs.mjs && vite build --config preview/vite.config.ts && cp preview/dist/index.html preview/dist/404.html",
     "generate:llm-docs": "node scripts/generate-llm-docs.mjs"

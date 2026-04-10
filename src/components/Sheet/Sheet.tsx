@@ -98,10 +98,11 @@ export const Sheet: React.FC<SheetProps> = ({
     if (open) {
       setVisible(true);
       setAnimState('opening');
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => setAnimState('open'));
-      });
+      const timer = setTimeout(() => {
+        setAnimState('open');
+      }, 10);
       document.body.style.overflow = 'hidden';
+      return () => clearTimeout(timer);
     } else if (visible) {
       setAnimState('closing');
       const timer = setTimeout(() => {

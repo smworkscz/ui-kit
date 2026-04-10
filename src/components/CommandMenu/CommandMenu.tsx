@@ -161,9 +161,10 @@ export const CommandMenu: React.FC<CommandMenuProps> = ({
       setHighlightIndex(-1);
       setVisible(true);
       setAnimState('opening');
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => setAnimState('open'));
-      });
+      const timer = setTimeout(() => {
+        setAnimState('open');
+      }, 10);
+      return () => clearTimeout(timer);
     } else if (visible) {
       setAnimState('closing');
       const timer = setTimeout(() => {

@@ -115,11 +115,13 @@ export const Modal: React.FC<ModalProps> = ({
       previousFocusRef.current = document.activeElement;
       setVisible(true);
       setAnimState('opening');
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => setAnimState('open'));
-      });
+      // Force reflow then trigger transition — more reliable than double rAF
+      const timer = setTimeout(() => {
+        setAnimState('open');
+      }, 10);
       // Zabránit scrollu těla
       document.body.style.overflow = 'hidden';
+      return () => clearTimeout(timer);
     } else if (visible) {
       setAnimState('closing');
       const timer = setTimeout(() => {
@@ -192,15 +194,6 @@ export const Modal: React.FC<ModalProps> = ({
 
   // ── Animation styles ────────────────────────────────────────────────────
 
-  const getOverlayStyle = (): React.CSSProperties => {
-    const base: React.CSSProperties = {
-      transition: `opacity ${ANIM_DURATION}ms ease`,
-    };
-    if (animState === 'opening' || animState === 'idle') return { ...base, opacity: 0 };
-    if (animState === 'open') return { ...base, opacity: 1 };
-    return { ...base, opacity: 0, pointerEvents: 'none' };
-  };
-
   const getCardAnimStyle = (): React.CSSProperties => {
     const base: React.CSSProperties = {
       transition: `opacity ${ANIM_DURATION}ms cubic-bezier(0.16, 1, 0.3, 1), transform ${ANIM_DURATION}ms cubic-bezier(0.16, 1, 0.3, 1)`,
@@ -218,6 +211,15 @@ export const Modal: React.FC<ModalProps> = ({
 
   const isFullscreen = size === 'fullscreen';
 
+  const getBackdropStyle = (): React.CSSProperties => {
+    const base: React.CSSProperties = {
+      transition: `opacity ${ANIM_DURATION}ms ease`,
+    };
+    if (animState === 'opening' || animState === 'idle') return { ...base, opacity: 0 };
+    if (animState === 'open') return { ...base, opacity: 1 };
+    return { ...base, opacity: 0 };
+  };
+
   return createPortal(
     <div
       style={{
@@ -227,7 +229,7 @@ export const Modal: React.FC<ModalProps> = ({
         display: 'flex',
         alignItems: isFullscreen ? 'stretch' : 'center',
         justifyContent: 'center',
-        ...getOverlayStyle(),
+        ...(animState === 'closing' ? { pointerEvents: 'none' as const } : {}),
       }}
     >
       {/* Překryvná vrstva */}
@@ -238,6 +240,7 @@ export const Modal: React.FC<ModalProps> = ({
           backgroundColor: t.overlay,
           backdropFilter: 'blur(8px)',
           WebkitBackdropFilter: 'blur(8px)',
+          ...getBackdropStyle(),
         }}
         onClick={closeOnOverlay ? onClose : undefined}
         aria-hidden="true"

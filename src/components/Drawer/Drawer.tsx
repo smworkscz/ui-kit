@@ -104,10 +104,12 @@ export const Drawer: React.FC<DrawerProps> = ({
     if (open) {
       setVisible(true);
       setAnimState('opening');
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => setAnimState('open'));
-      });
+      // Force reflow then trigger transition — more reliable than double rAF
+      const timer = setTimeout(() => {
+        setAnimState('open');
+      }, 10);
       document.body.style.overflow = 'hidden';
+      return () => clearTimeout(timer);
     } else if (visible) {
       setAnimState('closing');
       const timer = setTimeout(() => {

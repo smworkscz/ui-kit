@@ -153,9 +153,10 @@ export const Spotlight: React.FC<SpotlightProps> = ({
       setVisible(true);
       setAnimState('opening');
       setHighlightIndex(-1);
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => setAnimState('open'));
-      });
+      const timer = setTimeout(() => {
+        setAnimState('open');
+      }, 10);
+      return () => clearTimeout(timer);
     } else if (visible) {
       setAnimState('closing');
       const timer = setTimeout(() => {

@@ -17,7 +17,7 @@ import {
   ButtonPage, InputPage, NumberInputPage, SelectPage, ComboboxPage, DatePickerPage,
   CheckboxPage, RadioPage, SwitchPage, TextareaPage, SliderPage, FileUploadPage,
   SegmentedControlPage, ColorPickerPage, RatingPage, OTPInputPage,
-  TablePage, DataGridPage, CardPage, AccordionPage, TabsPage, TooltipPage, PopoverPage,
+  TablePage, DataGridPage, MobileDataCardPage, CardPage, AccordionPage, TabsPage, TooltipPage, PopoverPage,
   SkeletonPage, EmptyStatePage, StatPage, AvatarPage, TagPage,
   CalendarPage, TimelinePage, DataListPage, TreePage, StatusBadgePage,
   ModalPage, DrawerPage, SheetPage, BreadcrumbPage, PaginationPage, StepperPage,
@@ -241,6 +241,7 @@ const pages: Record<string, React.FC> = {
   // Zobrazení dat
   table: TablePage,
   datagrid: DataGridPage,
+  mobiledatacard: MobileDataCardPage,
   card: CardPage,
   accordion: AccordionPage,
   tabs: TabsPage,

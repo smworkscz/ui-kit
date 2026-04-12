@@ -68,6 +68,7 @@ const menu: MenuCategory[] = [
           { id: 'calendar', label: 'Calendar' },
           { id: 'card', label: 'Card' },
           { id: 'datagrid', label: 'DataGrid' },
+          { id: 'mobiledatacard', label: 'MobileDataCard' },
           { id: 'datalist', label: 'DataList' },
           { id: 'emptystate', label: 'EmptyState' },
           { id: 'popover', label: 'Popover' },

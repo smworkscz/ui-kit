@@ -19,6 +19,7 @@ export * from './components/OTPInput';
 // ── Zobrazení dat ────────────────────────────────────────────────────────────
 export * from './components/Table';
 export * from './components/DataGrid';
+export * from './components/MobileDataCard';
 export * from './components/Card';
 export * from './components/Accordion';
 export * from './components/Tabs';

@@ -994,6 +994,46 @@ dismiss(id);`,
 />`,
   },
   {
+    id: 'mobiledatacard',
+    name: 'MobileDataCard',
+    category: 'Data Display',
+    description: 'Mobile-friendly card-based data display. Each row becomes a card with label:value pairs. Combines Table sorting and DataGrid selection.',
+    props: [
+      { name: 'columns', type: 'MobileDataCardColumn[]', required: true, desc: 'Column defs: { key, header, render?, hidden?, primary?, sortable? }.' },
+      { name: 'data', type: 'any[]', required: true, desc: 'Row data.' },
+      { name: 'primaryKey', type: 'string', desc: 'Key for card title. Alternative to primary on column.' },
+      { name: 'rowKey', type: 'string', default: "'id'", desc: 'Row identifier key.' },
+      { name: 'selectable', type: 'boolean', default: 'false', desc: 'Enable card checkboxes.' },
+      { name: 'selectedIds', type: 'string[]', desc: 'Controlled selected IDs.' },
+      { name: 'onSelectionChange', type: '(ids: string[]) => void', desc: 'Selection change callback.' },
+      { name: 'onCardClick', type: '(row: any) => void', desc: 'Card click callback.' },
+      { name: 'onSort', type: '(key, dir) => void', desc: 'Sort callback.' },
+      { name: 'sortKey', type: 'string', desc: 'Active sort column.' },
+      { name: 'sortDirection', type: "'asc' | 'desc'", desc: 'Sort direction.' },
+      { name: 'loading', type: 'boolean', default: 'false', desc: 'Show skeleton cards.' },
+      { name: 'cardActions', type: '(row, index) => ReactNode', desc: 'Render action buttons in card footer.' },
+      { name: 'emptyText', type: 'string', default: "'Žádná data'", desc: 'Empty state text.' },
+      { name: 'gap', type: 'number', default: '12', desc: 'Gap between cards in px.' },
+    ],
+    usage: `<MobileDataCard
+  columns={[
+    { key: 'name', header: 'Name', primary: true, sortable: true },
+    { key: 'email', header: 'Email' },
+    { key: 'role', header: 'Role' },
+  ]}
+  data={users}
+  selectable
+  onCardClick={(row) => openDetail(row)}
+  cardActions={(row) => <Button size="sm" onClick={() => edit(row)}>Edit</Button>}
+/>`,
+    notes: [
+      'Mark one column as primary to show it as the card title',
+      'Same render(value, row, index) signature as Table/DataGrid columns',
+      'Sort chips appear above cards for sortable columns',
+      'cardActions renders a footer with action buttons per card',
+    ],
+  },
+  {
     id: 'statusbadge',
     name: 'StatusBadge',
     category: 'Data Display',

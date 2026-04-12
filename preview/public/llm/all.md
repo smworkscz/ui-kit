@@ -1043,6 +1043,57 @@ Advanced table with row selection, sticky header, and custom cell rendering.
 
 ---
 
+# MobileDataCard
+
+Mobile-friendly card-based data display. Each row becomes a card with label:value pairs. Combines Table sorting and DataGrid selection.
+
+**Import:** `import { MobileDataCard } from '@smworks-cz/ui-kit'`
+
+## Props
+
+| Prop | Type | Default | Required | Description |
+|------|------|---------|----------|-------------|
+| `columns` | `MobileDataCardColumn[]` | — | Yes | Column defs: { key, header, render?, hidden?, primary?, sortable? }. |
+| `data` | `any[]` | — | Yes | Row data. |
+| `primaryKey` | `string` | — |  | Key for card title. Alternative to primary on column. |
+| `rowKey` | `string` | 'id' |  | Row identifier key. |
+| `selectable` | `boolean` | false |  | Enable card checkboxes. |
+| `selectedIds` | `string[]` | — |  | Controlled selected IDs. |
+| `onSelectionChange` | `(ids: string[]) => void` | — |  | Selection change callback. |
+| `onCardClick` | `(row: any) => void` | — |  | Card click callback. |
+| `onSort` | `(key, dir) => void` | — |  | Sort callback. |
+| `sortKey` | `string` | — |  | Active sort column. |
+| `sortDirection` | `'asc' | 'desc'` | — |  | Sort direction. |
+| `loading` | `boolean` | false |  | Show skeleton cards. |
+| `cardActions` | `(row, index) => ReactNode` | — |  | Render action buttons in card footer. |
+| `emptyText` | `string` | 'Žádná data' |  | Empty state text. |
+| `gap` | `number` | 12 |  | Gap between cards in px. |
+
+## Usage
+
+```tsx
+<MobileDataCard
+  columns={[
+    { key: 'name', header: 'Name', primary: true, sortable: true },
+    { key: 'email', header: 'Email' },
+    { key: 'role', header: 'Role' },
+  ]}
+  data={users}
+  selectable
+  onCardClick={(row) => openDetail(row)}
+  cardActions={(row) => <Button size="sm" onClick={() => edit(row)}>Edit</Button>}
+/>
+```
+
+## Notes
+
+- Mark one column as primary to show it as the card title
+- Same render(value, row, index) signature as Table/DataGrid columns
+- Sort chips appear above cards for sortable columns
+- cardActions renders a footer with action buttons per card
+
+---
+
 # StatusBadge
 
 Status dot indicator with optional label and pulse animation. Supports custom statuses.

@@ -41,6 +41,7 @@ For complete documentation in one file: [all.md](all.md)
 - [DataList](datalist.md)
 - [Tree](tree.md)
 - [DataGrid](datagrid.md)
+- [MobileDataCard](mobiledatacard.md)
 - [StatusBadge](statusbadge.md)
 
 ### Navigation

@@ -26,6 +26,7 @@ export { OTPInputPage } from './OTPInputPage';
 // ── Zobrazení dat ───────────────────────────────────────────────────────────
 export { TablePage } from './TablePage';
 export { DataGridPage } from './DataGridPage';
+export { MobileDataCardPage } from './MobileDataCardPage';
 export { CardPage } from './CardPage';
 export { AccordionPage } from './AccordionPage';
 export { TabsPage } from './TabsPage';

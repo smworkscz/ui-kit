@@ -461,6 +461,14 @@ export const spotlightItems: SpotlightItem[] = [
     onSelect: () => {},
   },
   {
+    id: 'mobiledatacard',
+    label: 'MobileDataCard',
+    description: 'Mobilní zobrazení dat ve formě karet',
+    category: 'Zobrazení dat',
+    icon: <GridFour size={ICON_SIZE} />,
+    onSelect: () => {},
+  },
+  {
     id: 'statusbadge',
     label: 'StatusBadge',
     description: 'Stavový indikátor s tečkou',

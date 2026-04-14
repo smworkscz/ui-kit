@@ -36,8 +36,8 @@ const ANIM_DURATION = 180; // ms
 // ─── Types ──────────────────────────────────────────────────────────────────
 
 export interface DropdownMenuItem {
-  /** Zobrazovaný popisek položky. */
-  label: string;
+  /** Zobrazovaný popisek položky. Může být text nebo ReactNode pro vlastní obsah. */
+  label: React.ReactNode;
   /** Volitelná ikona vykreslená před textem. */
   icon?: React.ReactNode;
   /** Voláno při kliknutí na položku. */
@@ -48,6 +48,8 @@ export interface DropdownMenuItem {
   danger?: boolean;
   /** Při `true` se místo položky vykreslí oddělovací čára. @default false */
   divider?: boolean;
+  /** Text kategorie — zobrazí se jako malý nadpis sekce (uppercase label). */
+  category?: string;
 }
 
 export interface DropdownMenuProps {
@@ -277,6 +279,26 @@ export const DropdownMenu: React.FC<DropdownMenuProps> = ({
           }}
         >
           {items.map((item, idx) => {
+            if (item.category) {
+              return (
+                <div
+                  key={idx}
+                  style={{
+                    fontFamily: "'Zalando Sans Expanded', sans-serif",
+                    fontSize: '10px',
+                    fontWeight: 500,
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.03em',
+                    color: t.textDisabled,
+                    padding: `${idx > 0 ? '10px' : '6px'} 10px 4px`,
+                    userSelect: 'none',
+                  }}
+                >
+                  {item.category}
+                </div>
+              );
+            }
+
             if (item.divider) {
               return (
                 <div
@@ -294,12 +316,37 @@ export const DropdownMenu: React.FC<DropdownMenuProps> = ({
             const isDanger = item.danger;
             const isDisabled = item.disabled;
             const isHighlighted = idx === highlightIndex;
+            const isCustomNode = typeof item.label !== 'string';
+            const isPassive = isCustomNode && !item.onClick;
             const textColor = isDisabled
               ? t.textDisabled
               : isDanger
                 ? t.dangerText
                 : t.text;
             const hoverBg = isDanger ? t.dangerHover : t.hoverBg;
+
+            // Custom ReactNode without onClick — no padding, no hover, no close
+            if (isPassive) {
+              return (
+                <div
+                  key={idx}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '10px',
+                    borderRadius: '6px',
+                    fontFamily: "'Zalando Sans', sans-serif",
+                    fontSize: '14px',
+                    fontWeight: 400,
+                    lineHeight: 'normal',
+                    color: t.text,
+                    userSelect: 'none',
+                  }}
+                >
+                  {item.label}
+                </div>
+              );
+            }
 
             return (
               <div
@@ -310,7 +357,7 @@ export const DropdownMenu: React.FC<DropdownMenuProps> = ({
                   display: 'flex',
                   alignItems: 'center',
                   gap: '10px',
-                  padding: '9px 10px',
+                  padding: isCustomNode ? '0' : '9px 10px',
                   borderRadius: '6px',
                   fontFamily: "'Zalando Sans', sans-serif",
                   fontSize: '14px',
@@ -338,9 +385,13 @@ export const DropdownMenu: React.FC<DropdownMenuProps> = ({
                     {item.icon}
                   </span>
                 )}
-                <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                  {item.label}
-                </span>
+                {typeof item.label === 'string' ? (
+                  <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {item.label}
+                  </span>
+                ) : (
+                  item.label
+                )}
               </div>
             );
           })}

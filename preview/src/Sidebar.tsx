@@ -51,6 +51,8 @@ const menu: MenuCategory[] = [
           { id: 'input', label: 'Input' },
           { id: 'numberinput', label: 'NumberInput' },
           { id: 'otpinput', label: 'OTPInput' },
+          { id: 'phoneinput', label: 'PhoneInput' },
+          { id: 'imagecropper', label: 'ImageCropper' },
           { id: 'radio', label: 'Radio' },
           { id: 'rating', label: 'Rating' },
           { id: 'segmentedcontrol', label: 'SegmentedControl' },
@@ -99,12 +101,14 @@ const menu: MenuCategory[] = [
           { id: 'sheet', label: 'Sheet' },
           { id: 'spotlight', label: 'Spotlight' },
           { id: 'stepper', label: 'Stepper' },
+          { id: 'formwizard', label: 'FormWizard' },
         ],
       },
       {
         title: 'Feedback',
         items: [
           { id: 'alert', label: 'Alert' },
+          { id: 'banner', label: 'Banner' },
           { id: 'confirmdialog', label: 'ConfirmDialog' },
           { id: 'copybutton', label: 'CopyButton' },
           { id: 'notification', label: 'Notification' },

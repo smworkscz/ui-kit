@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { createPortal } from 'react-dom';
-import { MagnifyingGlassIcon } from '@phosphor-icons/react';
+import { MagnifyingGlass as MagnifyingGlassIcon } from '@phosphor-icons/react';
 import { useTheme } from '../../hooks/useTheme';
+import { Skeleton } from '../Skeleton/Skeleton';
 
 // ─── Design tokens ──────────────────────────────────────────────────────────
 
@@ -80,6 +81,8 @@ export interface SpotlightProps {
   onChange: (value: string) => void;
   /** Již filtrované výsledky k zobrazení, seskupené dle `category`. */
   results: SpotlightItem[];
+  /** Zobrazí stav načítání místo výsledků. @default false */
+  loading?: boolean;
   /** Placeholder text pro vyhledávací vstup. @default 'Hledat...' */
   placeholder?: string;
   /** Dodatečná CSS třída pro kartu spotlightu. */
@@ -117,6 +120,7 @@ export const Spotlight: React.FC<SpotlightProps> = ({
   value,
   onChange,
   results,
+  loading = false,
   placeholder = 'Hledat...',
   className,
   style,
@@ -387,7 +391,19 @@ export const Spotlight: React.FC<SpotlightProps> = ({
             msOverflowStyle: 'none' as any,    /* IE/Edge */
           }}
         >
-          {grouped.length === 0 ? (
+          {loading ? (
+            <div style={{ padding: '8px 2px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+              {[1, 2, 3, 4, 5].map((i) => (
+                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '10px 10px', borderRadius: '8px' }}>
+                  <Skeleton variant="rect" width={28} height={28} />
+                  <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                    <Skeleton variant="text" width={`${50 + (i % 3) * 15}%`} height={14} />
+                    <Skeleton variant="text" width={`${30 + (i % 2) * 20}%`} height={11} />
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : grouped.length === 0 ? (
             <div
               style={{
                 padding: '24px 10px',

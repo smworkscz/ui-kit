@@ -22,6 +22,8 @@ export { SegmentedControlPage } from './SegmentedControlPage';
 export { ColorPickerPage } from './ColorPickerPage';
 export { RatingPage } from './RatingPage';
 export { OTPInputPage } from './OTPInputPage';
+export { PhoneInputPage } from './PhoneInputPage';
+export { ImageCropperPage } from './ImageCropperPage';
 
 // ── Zobrazení dat ───────────────────────────────────────────────────────────
 export { TablePage } from './TablePage';
@@ -50,6 +52,7 @@ export { SheetPage } from './SheetPage';
 export { BreadcrumbPage } from './BreadcrumbPage';
 export { PaginationPage } from './PaginationPage';
 export { StepperPage } from './StepperPage';
+export { FormWizardPage } from './FormWizardPage';
 export { DropdownMenuPage } from './DropdownMenuPage';
 export { LinkPage } from './LinkPage';
 export { SpotlightPage } from './SpotlightPage';
@@ -61,6 +64,7 @@ export { NavbarPage } from './NavbarPage';
 // ── Feedback ────────────────────────────────────────────────────────────────
 export { ToastPage } from './ToastPage';
 export { AlertPage } from './AlertPage';
+export { BannerPage } from './BannerPage';
 export { NotificationPage } from './NotificationPage';
 export { ProgressPage } from './ProgressPage';
 export { SpinnerPage } from './SpinnerPage';

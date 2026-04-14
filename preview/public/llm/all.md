@@ -404,6 +404,71 @@ Segmented toggle for choosing between a few options. Animated sliding indicator.
 
 ---
 
+# PhoneInput
+
+Phone number input with country code selector, flag emojis, and search.
+
+**Import:** `import { PhoneInput } from '@smworks-cz/ui-kit'`
+
+## Props
+
+| Prop | Type | Default | Required | Description |
+|------|------|---------|----------|-------------|
+| `value` | `string` | — |  | Full international number e.g. "+420123456789". |
+| `onChange` | `(value: string) => void` | — |  | Change callback with full number. |
+| `defaultCountry` | `string` | 'CZ' |  | Default country ISO code. |
+| `countries` | `Country[]` | — |  | Custom country list ({ code, name, dialCode, flag }). |
+| `label` | `string` | — |  | Label text. |
+| `error` | `boolean | string` | — |  | Error state. |
+| `size` | `'sm' | 'md' | 'lg'` | 'md' |  | Size preset. |
+| `disabled` | `boolean` | false |  | Disable input. |
+
+## Usage
+
+```tsx
+<PhoneInput value={phone} onChange={setPhone} defaultCountry="CZ" label="Phone" />
+```
+
+---
+
+# ImageCropper
+
+Canvas-based image crop tool with drag, resize, aspect ratio lock, and circle mode.
+
+**Import:** `import { ImageCropper } from '@smworks-cz/ui-kit'`
+
+## Props
+
+| Prop | Type | Default | Required | Description |
+|------|------|---------|----------|-------------|
+| `src` | `string | File` | — | Yes | Image source URL or File object. |
+| `onCrop` | `(result: Blob) => void` | — | Yes | Callback with cropped Blob. |
+| `onCancel` | `() => void` | — |  | Cancel callback. |
+| `aspectRatio` | `number` | — |  | Width/height ratio. Undefined = freeform. |
+| `minWidth` | `number` | 50 |  | Minimum crop width px. |
+| `minHeight` | `number` | 50 |  | Minimum crop height px. |
+| `shape` | `'rect' | 'circle'` | 'rect' |  | Crop shape. Circle forces 1:1. |
+
+## Usage
+
+```tsx
+<ImageCropper
+  src={file}
+  aspectRatio={1}
+  shape="circle"
+  onCrop={(blob) => uploadAvatar(blob)}
+  onCancel={() => setShowCropper(false)}
+/>
+```
+
+## Notes
+
+- File src auto-creates/revokes object URL
+- Circle shape forces aspectRatio=1
+- Supports touch drag on mobile
+
+---
+
 # NumberInput
 
 Numeric input with +/- buttons, min/max clamping, step, prefix/suffix. Compact variant with stacked chevrons.
@@ -1281,7 +1346,7 @@ Dropdown action menu with keyboard navigation.
 | Prop | Type | Default | Required | Description |
 |------|------|---------|----------|-------------|
 | `trigger` | `ReactNode` | — | Yes | Trigger element. |
-| `items` | `DropdownMenuItem[]` | — | Yes | Menu items: { label, icon?, onClick?, disabled?, danger?, divider? }. |
+| `items` | `DropdownMenuItem[]` | — | Yes | Menu items: { label (string | ReactNode), icon?, onClick?, disabled?, danger?, divider?, category? }. |
 | `position` | `'bottom-left' | 'bottom-right'` | 'bottom-left' |  | Menu position. |
 
 ## Usage
@@ -1290,13 +1355,24 @@ Dropdown action menu with keyboard navigation.
 <DropdownMenu
   trigger={<Button variant="outline">Actions</Button>}
   items={[
+    { category: 'Actions', label: '' },
     { label: 'Edit', icon: <PencilSimpleIcon size={16} />, onClick: handleEdit },
     { label: 'Copy', onClick: handleCopy },
-    { divider: true, label: '' },
+    { category: 'Danger zone', label: '' },
     { label: 'Delete', danger: true, onClick: handleDelete },
   ]}
 />
+
+// ReactNode label without onClick — passive custom content (no padding, no hover, no close)
+// ReactNode label with onClick — clickable custom item (no padding, has hover, closes)
 ```
+
+## Notes
+
+- label accepts ReactNode for custom content
+- ReactNode label without onClick: no padding, no hover, no close on click
+- ReactNode label with onClick: no padding, has hover, closes on click
+- category: string renders an uppercase section header to group items
 
 ---
 
@@ -1339,6 +1415,7 @@ Command palette / search overlay. Controlled component — filtering is done by 
 | `value` | `string` | — | Yes | Search input value (controlled). |
 | `onChange` | `(value: string) => void` | — | Yes | Input change callback. |
 | `results` | `SpotlightItem[]` | — | Yes | Pre-filtered results: { id, label, description?, category, icon?, onSelect }. |
+| `loading` | `boolean` | false |  | Show skeleton loading state instead of results. |
 | `placeholder` | `string` | 'Hledat...' |  | Input placeholder. |
 
 ## Usage
@@ -1354,6 +1431,7 @@ const filtered = items.filter(i => i.label.toLowerCase().includes(query.toLowerC
   value={query}
   onChange={setQuery}
   results={filtered}
+  loading={isSearching}
 />
 ```
 
@@ -1362,6 +1440,46 @@ const filtered = items.filter(i => i.label.toLowerCase().includes(query.toLowerC
 - Consumer handles all filtering logic
 - Results grouped by category automatically
 - Keyboard: arrows navigate, enter selects, escape closes
+- loading=true shows skeleton rows while fetching results
+
+---
+
+# FormWizard
+
+Multi-step form wizard wrapping Stepper with content areas and navigation buttons. Supports sync/async validation.
+
+**Import:** `import { FormWizard } from '@smworks-cz/ui-kit'`
+
+## Props
+
+| Prop | Type | Default | Required | Description |
+|------|------|---------|----------|-------------|
+| `steps` | `FormWizardStep[]` | — | Yes | Steps: { label, description?, content, validate? }. |
+| `activeStep` | `number` | — | Yes | Current step index (0-based). |
+| `onStepChange` | `(step: number) => void` | — | Yes | Step change callback. |
+| `orientation` | `'horizontal' | 'vertical'` | 'horizontal' |  | Stepper orientation. |
+| `showNavigation` | `boolean` | true |  | Show prev/next buttons. |
+| `finishLabel` | `string` | 'Dokončit' |  | Last step button text. |
+
+## Usage
+
+```tsx
+<FormWizard
+  steps={[
+    { label: 'Contact', content: <ContactForm />, validate: () => isValid },
+    { label: 'Address', content: <AddressForm /> },
+    { label: 'Summary', content: <Summary /> },
+  ]}
+  activeStep={step}
+  onStepChange={setStep}
+/>
+```
+
+## Notes
+
+- validate() supports async (Promise<boolean>)
+- Backward navigation skips validation
+- On last step, onStepChange called with steps.length
 
 ---
 
@@ -1593,6 +1711,33 @@ Informational banner with variant colors and optional close button.
 ```tsx
 <Alert variant="success" title="Saved">Changes were saved successfully.</Alert>
 <Alert variant="error" title="Error" closable onClose={handleClose}>Something went wrong.</Alert>
+```
+
+---
+
+# Banner
+
+Full-width announcement banner with variants. Supports sticky positioning and glass effect.
+
+**Import:** `import { Banner } from '@smworks-cz/ui-kit'`
+
+## Props
+
+| Prop | Type | Default | Required | Description |
+|------|------|---------|----------|-------------|
+| `variant` | `'info' | 'success' | 'warning' | 'error'` | 'info' |  | Visual variant. |
+| `title` | `string` | — |  | Bold heading. |
+| `children` | `ReactNode` | — |  | Banner content. |
+| `closable` | `boolean` | false |  | Show close button. |
+| `onClose` | `() => void` | — |  | Close callback. |
+| `icon` | `ReactNode` | — |  | Custom icon. |
+| `position` | `'top' | 'bottom'` | 'top' |  | Accent bar position. |
+| `sticky` | `boolean` | false |  | Stick to top/bottom edge. |
+
+## Usage
+
+```tsx
+<Banner variant="warning" title="Maintenance" sticky>System will be unavailable tonight.</Banner>
 ```
 
 ---

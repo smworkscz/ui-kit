@@ -565,18 +565,28 @@ const components = [
     description: 'Dropdown action menu with keyboard navigation.',
     props: [
       { name: 'trigger', type: 'ReactNode', required: true, desc: 'Trigger element.' },
-      { name: 'items', type: 'DropdownMenuItem[]', required: true, desc: 'Menu items: { label, icon?, onClick?, disabled?, danger?, divider? }.' },
+      { name: 'items', type: 'DropdownMenuItem[]', required: true, desc: 'Menu items: { label (string | ReactNode), icon?, onClick?, disabled?, danger?, divider?, category? }.' },
       { name: 'position', type: "'bottom-left' | 'bottom-right'", default: "'bottom-left'", desc: 'Menu position.' },
     ],
     usage: `<DropdownMenu
   trigger={<Button variant="outline">Actions</Button>}
   items={[
+    { category: 'Actions', label: '' },
     { label: 'Edit', icon: <PencilSimpleIcon size={16} />, onClick: handleEdit },
     { label: 'Copy', onClick: handleCopy },
-    { divider: true, label: '' },
+    { category: 'Danger zone', label: '' },
     { label: 'Delete', danger: true, onClick: handleDelete },
   ]}
-/>`,
+/>
+
+// ReactNode label without onClick — passive custom content (no padding, no hover, no close)
+// ReactNode label with onClick — clickable custom item (no padding, has hover, closes)`,
+    notes: [
+      'label accepts ReactNode for custom content',
+      'ReactNode label without onClick: no padding, no hover, no close on click',
+      'ReactNode label with onClick: no padding, has hover, closes on click',
+      'category: string renders an uppercase section header to group items',
+    ],
   },
   {
     id: 'link',
@@ -603,6 +613,7 @@ const components = [
       { name: 'value', type: 'string', required: true, desc: 'Search input value (controlled).' },
       { name: 'onChange', type: '(value: string) => void', required: true, desc: 'Input change callback.' },
       { name: 'results', type: 'SpotlightItem[]', required: true, desc: 'Pre-filtered results: { id, label, description?, category, icon?, onSelect }.' },
+      { name: 'loading', type: 'boolean', default: 'false', desc: 'Show skeleton loading state instead of results.' },
       { name: 'placeholder', type: 'string', default: "'Hledat...'", desc: 'Input placeholder.' },
     ],
     usage: `const [open, setOpen] = useState(false);
@@ -615,8 +626,9 @@ const filtered = items.filter(i => i.label.toLowerCase().includes(query.toLowerC
   value={query}
   onChange={setQuery}
   results={filtered}
+  loading={isSearching}
 />`,
-    notes: ['Consumer handles all filtering logic', 'Results grouped by category automatically', 'Keyboard: arrows navigate, enter selects, escape closes'],
+    notes: ['Consumer handles all filtering logic', 'Results grouped by category automatically', 'Keyboard: arrows navigate, enter selects, escape closes', 'loading=true shows skeleton rows while fetching results'],
   },
   // ── Feedback ──────────────────────────────────────────────────────────
   {
@@ -660,6 +672,87 @@ dismiss(id);`,
     ],
     usage: `<Alert variant="success" title="Saved">Changes were saved successfully.</Alert>
 <Alert variant="error" title="Error" closable onClose={handleClose}>Something went wrong.</Alert>`,
+  },
+  {
+    id: 'banner',
+    name: 'Banner',
+    category: 'Feedback',
+    description: 'Full-width announcement banner with variants. Supports sticky positioning and glass effect.',
+    props: [
+      { name: 'variant', type: "'info' | 'success' | 'warning' | 'error'", default: "'info'", desc: 'Visual variant.' },
+      { name: 'title', type: 'string', desc: 'Bold heading.' },
+      { name: 'children', type: 'ReactNode', desc: 'Banner content.' },
+      { name: 'closable', type: 'boolean', default: 'false', desc: 'Show close button.' },
+      { name: 'onClose', type: '() => void', desc: 'Close callback.' },
+      { name: 'icon', type: 'ReactNode', desc: 'Custom icon.' },
+      { name: 'position', type: "'top' | 'bottom'", default: "'top'", desc: 'Accent bar position.' },
+      { name: 'sticky', type: 'boolean', default: 'false', desc: 'Stick to top/bottom edge.' },
+    ],
+    usage: `<Banner variant="warning" title="Maintenance" sticky>System will be unavailable tonight.</Banner>`,
+  },
+  {
+    id: 'phoneinput',
+    name: 'PhoneInput',
+    category: 'Forms',
+    description: 'Phone number input with country code selector, flag emojis, and search.',
+    props: [
+      { name: 'value', type: 'string', desc: 'Full international number e.g. "+420123456789".' },
+      { name: 'onChange', type: '(value: string) => void', desc: 'Change callback with full number.' },
+      { name: 'defaultCountry', type: 'string', default: "'CZ'", desc: 'Default country ISO code.' },
+      { name: 'countries', type: 'Country[]', desc: 'Custom country list ({ code, name, dialCode, flag }).' },
+      { name: 'label', type: 'string', desc: 'Label text.' },
+      { name: 'error', type: 'boolean | string', desc: 'Error state.' },
+      { name: 'size', type: "'sm' | 'md' | 'lg'", default: "'md'", desc: 'Size preset.' },
+      { name: 'disabled', type: 'boolean', default: 'false', desc: 'Disable input.' },
+    ],
+    usage: `<PhoneInput value={phone} onChange={setPhone} defaultCountry="CZ" label="Phone" />`,
+  },
+  {
+    id: 'formwizard',
+    name: 'FormWizard',
+    category: 'Navigation',
+    description: 'Multi-step form wizard wrapping Stepper with content areas and navigation buttons. Supports sync/async validation.',
+    props: [
+      { name: 'steps', type: 'FormWizardStep[]', required: true, desc: 'Steps: { label, description?, content, validate? }.' },
+      { name: 'activeStep', type: 'number', required: true, desc: 'Current step index (0-based).' },
+      { name: 'onStepChange', type: '(step: number) => void', required: true, desc: 'Step change callback.' },
+      { name: 'orientation', type: "'horizontal' | 'vertical'", default: "'horizontal'", desc: 'Stepper orientation.' },
+      { name: 'showNavigation', type: 'boolean', default: 'true', desc: 'Show prev/next buttons.' },
+      { name: 'finishLabel', type: 'string', default: "'Dokončit'", desc: 'Last step button text.' },
+    ],
+    usage: `<FormWizard
+  steps={[
+    { label: 'Contact', content: <ContactForm />, validate: () => isValid },
+    { label: 'Address', content: <AddressForm /> },
+    { label: 'Summary', content: <Summary /> },
+  ]}
+  activeStep={step}
+  onStepChange={setStep}
+/>`,
+    notes: ['validate() supports async (Promise<boolean>)', 'Backward navigation skips validation', 'On last step, onStepChange called with steps.length'],
+  },
+  {
+    id: 'imagecropper',
+    name: 'ImageCropper',
+    category: 'Forms',
+    description: 'Canvas-based image crop tool with drag, resize, aspect ratio lock, and circle mode.',
+    props: [
+      { name: 'src', type: 'string | File', required: true, desc: 'Image source URL or File object.' },
+      { name: 'onCrop', type: '(result: Blob) => void', required: true, desc: 'Callback with cropped Blob.' },
+      { name: 'onCancel', type: '() => void', desc: 'Cancel callback.' },
+      { name: 'aspectRatio', type: 'number', desc: 'Width/height ratio. Undefined = freeform.' },
+      { name: 'minWidth', type: 'number', default: '50', desc: 'Minimum crop width px.' },
+      { name: 'minHeight', type: 'number', default: '50', desc: 'Minimum crop height px.' },
+      { name: 'shape', type: "'rect' | 'circle'", default: "'rect'", desc: 'Crop shape. Circle forces 1:1.' },
+    ],
+    usage: `<ImageCropper
+  src={file}
+  aspectRatio={1}
+  shape="circle"
+  onCrop={(blob) => uploadAvatar(blob)}
+  onCancel={() => setShowCropper(false)}
+/>`,
+    notes: ['File src auto-creates/revokes object URL', 'Circle shape forces aspectRatio=1', 'Supports touch drag on mobile'],
   },
   {
     id: 'progress',

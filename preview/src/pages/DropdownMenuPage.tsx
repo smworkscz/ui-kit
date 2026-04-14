@@ -1,7 +1,7 @@
 import React from 'react';
-import { DropdownMenu, Button } from '../../../src';
-import { PencilSimple, Copy, Trash } from '@phosphor-icons/react';
-import { PageLayout, H1, H2, Paragraph, Playground, PropsTable } from './shared';
+import { DropdownMenu, Button, Input } from '../../../src';
+import { PencilSimple, Copy, Trash, UserCircle, Gear, SignOut } from '@phosphor-icons/react';
+import { PageLayout, H1, H2, Paragraph, Playground, PropsTable, VariantShowcase } from './shared';
 import type { PlaygroundControl, PropDef } from './shared';
 
 const controls: PlaygroundControl[] = [
@@ -15,12 +15,13 @@ const propDefs: PropDef[] = [
 ];
 
 const itemPropDefs: PropDef[] = [
-  { name: 'label', type: 'string', required: true, description: 'Popisek položky.' },
+  { name: 'label', type: 'ReactNode', required: true, description: 'Popisek položky. String nebo ReactNode pro vlastní obsah.' },
   { name: 'icon', type: 'ReactNode', description: 'Ikona před textem.' },
-  { name: 'onClick', type: '() => void', description: 'Callback kliknutí.' },
+  { name: 'onClick', type: '() => void', description: 'Callback kliknutí. Bez onClick u ReactNode labelu: žádný hover ani zavření.' },
   { name: 'disabled', type: 'boolean', defaultValue: 'false', description: 'Zakáže výběr.' },
   { name: 'danger', type: 'boolean', defaultValue: 'false', description: 'Červený styl (destruktivní).' },
   { name: 'divider', type: 'boolean', defaultValue: 'false', description: 'Oddělovací čára.' },
+  { name: 'category', type: 'string', description: 'Text kategorie — uppercase nadpis sekce pro seskupení položek.' },
 ];
 
 const demoItems = [
@@ -28,6 +29,30 @@ const demoItems = [
   { label: 'Duplikovat', icon: <Copy size={16} />, onClick: () => {} },
   { divider: true, label: '' },
   { label: 'Smazat', icon: <Trash size={16} />, danger: true, onClick: () => {} },
+];
+
+const categoryItems = [
+  { category: 'Účet', label: '' },
+  { label: 'Profil', icon: <UserCircle size={16} />, onClick: () => {} },
+  { label: 'Nastavení', icon: <Gear size={16} />, onClick: () => {} },
+  { category: 'Nebezpečné', label: '' },
+  { label: 'Odhlásit se', icon: <SignOut size={16} />, danger: true, onClick: () => {} },
+];
+
+const customNodeItems = [
+  {
+    label: (
+      <div style={{ padding: '8px 10px' }}>
+        <div style={{ fontWeight: 600, fontSize: '14px' }}>Jan Novák</div>
+        <div style={{ fontSize: '12px', opacity: 0.6 }}>jan@example.com</div>
+      </div>
+    ),
+  },
+  { divider: true, label: '' },
+  { label: 'Profil', icon: <UserCircle size={16} />, onClick: () => {} },
+  { label: 'Nastavení', icon: <Gear size={16} />, onClick: () => {} },
+  { divider: true, label: '' },
+  { label: 'Odhlásit se', icon: <SignOut size={16} />, danger: true, onClick: () => {} },
 ];
 
 export const DropdownMenuPage: React.FC = () => (
@@ -41,6 +66,16 @@ export const DropdownMenuPage: React.FC = () => (
         <DropdownMenu trigger={<Button variant="outline">Akce</Button>} items={demoItems} position={props.position} />
       )}
     />
+
+    <H2>S kategoriemi</H2>
+    <VariantShowcase label="Sekce seskupené pomocí category">
+      <DropdownMenu trigger={<Button variant="outline">Účet</Button>} items={categoryItems} />
+    </VariantShowcase>
+
+    <H2>Vlastní ReactNode label</H2>
+    <VariantShowcase label="Header karty uživatele bez onClick — žádný hover, žádné zavření">
+      <DropdownMenu trigger={<Button variant="outline">Uživatel</Button>} items={customNodeItems} />
+    </VariantShowcase>
 
     <H2>DropdownMenu Props</H2>
     <PropsTable props={propDefs} />

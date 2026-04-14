@@ -18,6 +18,7 @@ const propDefs: PropDef[] = [
   { name: 'value', type: 'string', required: true, description: 'Aktuální hodnota vstupu (řízená).' },
   { name: 'onChange', type: '(value: string) => void', required: true, description: 'Callback změny vstupu.' },
   { name: 'results', type: 'SpotlightItem[]', required: true, description: 'Předfiltrované výsledky.' },
+  { name: 'loading', type: 'boolean', defaultValue: 'false', description: 'Zobrazí skeleton načítání místo výsledků.' },
   { name: 'placeholder', type: 'string', defaultValue: "'Hledat...'", description: 'Placeholder textu.' },
 ];
 

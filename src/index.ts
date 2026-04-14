@@ -15,6 +15,8 @@ export * from './components/SegmentedControl';
 export * from './components/ColorPicker';
 export * from './components/Rating';
 export * from './components/OTPInput';
+export * from './components/PhoneInput';
+export * from './components/ImageCropper';
 
 // ── Zobrazení dat ────────────────────────────────────────────────────────────
 export * from './components/Table';
@@ -43,6 +45,7 @@ export * from './components/Sheet';
 export * from './components/Breadcrumb';
 export * from './components/Pagination';
 export * from './components/Stepper';
+export * from './components/FormWizard';
 export * from './components/DropdownMenu';
 export * from './components/Link';
 export * from './components/Spotlight';
@@ -54,6 +57,7 @@ export * from './components/Navbar';
 // ── Feedback ─────────────────────────────────────────────────────────────────
 export * from './components/Toast';
 export * from './components/Alert';
+export * from './components/Banner';
 export * from './components/Notification';
 export * from './components/Progress';
 export * from './components/Spinner';

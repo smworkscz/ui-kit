@@ -97,6 +97,57 @@ const sizeConfig = {
   lg: { padding: '10px 14px', fontSize: '18px', iconSize: 18, gap: '12px' },
 } as const;
 
+/**
+ * Popover sizing — independent of the trigger's width.
+ *
+ * Historically the popover stretched to `Math.max(triggerWidth, 300)`,
+ * which made the calendar look fine for narrow triggers but bloated to
+ * 600+ px for full-width inputs (e.g. inside a modal), with proportionally
+ * giant cells and broken visual hierarchy. The popover now uses these
+ * fixed widths per size, anchored under the trigger but not stretched.
+ *
+ * Cells use `width: 100%` + `aspectRatio: 1` inside a 7-column grid, so
+ * popover width directly drives cell size. Approximate cell sizes:
+ *   sm 280 px → 7 cols → ~35 px cell
+ *   md 320 px → 7 cols → ~42 px cell
+ *   lg 380 px → 7 cols → ~50 px cell
+ */
+const popoverConfig = {
+  sm: {
+    width: 280,
+    headerPadding: '8px 10px',
+    gridPadding: '0 10px 6px',
+    monthYearGridPadding: '6px 10px',
+    headerFontSize: '13px',
+    weekdayFontSize: '10px',
+    dayFontSize: '12px',
+    timePadding: '8px 10px',
+    timeLabelFontSize: '11px',
+  },
+  md: {
+    width: 320,
+    headerPadding: '10px 12px',
+    gridPadding: '0 12px 8px',
+    monthYearGridPadding: '8px 12px',
+    headerFontSize: '14px',
+    weekdayFontSize: '11px',
+    dayFontSize: '13px',
+    timePadding: '10px 12px',
+    timeLabelFontSize: '12px',
+  },
+  lg: {
+    width: 380,
+    headerPadding: '12px 14px',
+    gridPadding: '0 14px 10px',
+    monthYearGridPadding: '10px 14px',
+    headerFontSize: '16px',
+    weekdayFontSize: '12px',
+    dayFontSize: '14px',
+    timePadding: '12px 14px',
+    timeLabelFontSize: '13px',
+  },
+} as const;
+
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
 const DAY_NAMES = ['Po', 'Út', 'St', 'Čt', 'Pá', 'So', 'Ne'];
@@ -309,6 +360,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
   const t = tokens[theme];
   const autoId = useId();
   const sc = sizeConfig[size];
+  const pc = popoverConfig[size];
 
   const triggerRef = useRef<HTMLDivElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -397,13 +449,22 @@ export const DatePicker: React.FC<DatePickerProps> = ({
     const spaceBelow = window.innerHeight - rect.bottom - 6;
     const spaceAbove = rect.top - 6;
     const openAbove = spaceBelow < dropdownHeight && spaceAbove > spaceBelow;
+
+    // Popover has its own fixed width per `size` — it does NOT stretch to the
+    // trigger. Account for the optional presets sidebar (140 px wide). Also
+    // clamp the right edge inside the viewport so the popover doesn't get cut
+    // off when the trigger sits near the right margin.
+    const popoverWidth = pc.width + ((presets && presets.length > 0) ? 140 : 0);
+    const maxLeft = Math.max(8, window.innerWidth - popoverWidth - 8);
+    const left = Math.min(rect.left, maxLeft);
+
     setDropdownPos({
       top: openAbove ? rect.top - 6 : rect.bottom + 6,
-      left: rect.left,
-      width: Math.max(rect.width, 300),
+      left,
+      width: popoverWidth,
       openAbove,
     });
-  }, []);
+  }, [pc.width, presets]);
 
   useEffect(() => {
     if (!visible) return;
@@ -614,7 +675,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
   // ── Render month selection ────────────────────────────────────────────
 
   const renderMonthView = () => (
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px', padding: '8px 12px' }}>
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px', padding: pc.monthYearGridPadding }}>
       {MONTH_NAMES.map((name, idx) => {
         const isCurrentMonth = idx === viewMonth;
         return (
@@ -629,7 +690,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
               borderRadius: '6px',
               padding: '8px 4px',
               fontFamily: "'Zalando Sans', sans-serif",
-              fontSize: '13px',
+              fontSize: pc.dayFontSize,
               cursor: 'pointer',
               transition: 'background-color 0.12s ease',
             }}
@@ -655,7 +716,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
 
     return (
       <>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 12px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: pc.monthYearGridPadding }}>
           <button
             type="button"
             onClick={() => setViewYear((y) => y - 12)}
@@ -666,7 +727,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
           >
             <CaretLeftIcon size={16} color={t.text} />
           </button>
-          <span style={{ fontFamily: "'Zalando Sans', sans-serif", fontSize: '13px', color: t.text }}>
+          <span style={{ fontFamily: "'Zalando Sans', sans-serif", fontSize: pc.headerFontSize, color: t.text }}>
             {startYear} – {startYear + 11}
           </span>
           <button
@@ -680,7 +741,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
             <CaretRightIcon size={16} color={t.text} />
           </button>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px', padding: '8px 12px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px', padding: pc.monthYearGridPadding }}>
           {years.map((y) => {
             const isCurrent = y === viewYear;
             return (
@@ -695,7 +756,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
                   borderRadius: '6px',
                   padding: '8px 4px',
                   fontFamily: "'Zalando Sans', sans-serif",
-                  fontSize: '13px',
+                  fontSize: pc.dayFontSize,
                   cursor: 'pointer',
                   transition: 'background-color 0.12s ease',
                 }}
@@ -815,13 +876,13 @@ export const DatePicker: React.FC<DatePickerProps> = ({
           {viewMode === 'years' ? renderYearView() : viewMode === 'months' ? (
             <>
               {/* Hlavička — zpět na rok */}
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '10px 12px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: pc.headerPadding }}>
                 <button
                   type="button"
                   onClick={() => setViewMode('years')}
                   style={{
                     background: 'none', border: 'none', cursor: 'pointer',
-                    fontFamily: "'Zalando Sans Expanded', sans-serif", fontSize: '14px',
+                    fontFamily: "'Zalando Sans Expanded', sans-serif", fontSize: pc.headerFontSize,
                     fontWeight: 500, color: t.text, padding: '4px 8px', borderRadius: '4px',
                   }}
                 >
@@ -837,7 +898,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
-                padding: '10px 12px',
+                padding: pc.headerPadding,
               }}>
                 <button
                   type="button"
@@ -856,7 +917,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
                     onClick={() => setViewMode('months')}
                     style={{
                       background: 'none', border: 'none', cursor: 'pointer',
-                      fontFamily: "'Zalando Sans Expanded', sans-serif", fontSize: '14px',
+                      fontFamily: "'Zalando Sans Expanded', sans-serif", fontSize: pc.headerFontSize,
                       fontWeight: 500, color: t.text, padding: '4px 8px', borderRadius: '4px',
                     }}
                   >
@@ -867,7 +928,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
                     onClick={() => setViewMode('years')}
                     style={{
                       background: 'none', border: 'none', cursor: 'pointer',
-                      fontFamily: "'Zalando Sans Expanded', sans-serif", fontSize: '14px',
+                      fontFamily: "'Zalando Sans Expanded', sans-serif", fontSize: pc.headerFontSize,
                       fontWeight: 500, color: t.text, padding: '4px 8px', borderRadius: '4px',
                     }}
                   >
@@ -891,7 +952,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
               <div style={{
                 display: 'grid',
                 gridTemplateColumns: 'repeat(7, 1fr)',
-                padding: '0 12px 4px',
+                padding: pc.gridPadding.replace(/(\d+px)$/, '4px'),
                 gap: '0',
               }}>
                 {DAY_NAMES.map((name) => (
@@ -900,7 +961,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
                     style={{
                       textAlign: 'center',
                       fontFamily: "'Zalando Sans Expanded', sans-serif",
-                      fontSize: '11px',
+                      fontSize: pc.weekdayFontSize,
                       fontWeight: 400,
                       color: t.placeholder,
                       padding: '4px 0',
@@ -916,7 +977,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
               <div style={{
                 display: 'grid',
                 gridTemplateColumns: 'repeat(7, 1fr)',
-                padding: '0 12px 8px',
+                padding: pc.gridPadding,
                 gap: '2px',
               }}>
                 {calendarDays.map((day, idx) => {
@@ -990,7 +1051,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
                           : isRangeMiddle ? '0'
                           : '6px',
                         fontFamily: "'Zalando Sans', sans-serif",
-                        fontSize: '13px',
+                        fontSize: pc.dayFontSize,
                         fontWeight: isSelected ? 600 : 400,
                         cursor: isDis ? 'not-allowed' : 'pointer',
                         opacity: isDis ? 0.4 : 1,
@@ -1011,7 +1072,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
               {showTime && (
                 <div style={{
                   borderTop: `1px solid ${t.divider}`,
-                  padding: '10px 12px',
+                  padding: pc.timePadding,
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: mode === 'range' ? 'space-between' : 'center',
@@ -1019,17 +1080,17 @@ export const DatePicker: React.FC<DatePickerProps> = ({
                 }}>
                   {mode === 'single' ? (
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <span style={{ fontFamily: "'Zalando Sans', sans-serif", fontSize: '12px', color: t.placeholder }}>Čas:</span>
+                      <span style={{ fontFamily: "'Zalando Sans', sans-serif", fontSize: pc.timeLabelFontSize, color: t.placeholder }}>Čas:</span>
                       {renderTimeInputs(singleValue)}
                     </div>
                   ) : (
                     <>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                        <span style={{ fontFamily: "'Zalando Sans', sans-serif", fontSize: '12px', color: t.placeholder }}>Od:</span>
+                        <span style={{ fontFamily: "'Zalando Sans', sans-serif", fontSize: pc.timeLabelFontSize, color: t.placeholder }}>Od:</span>
                         {renderTimeInputs(rangeValue[0], 0)}
                       </div>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                        <span style={{ fontFamily: "'Zalando Sans', sans-serif", fontSize: '12px', color: t.placeholder }}>Do:</span>
+                        <span style={{ fontFamily: "'Zalando Sans', sans-serif", fontSize: pc.timeLabelFontSize, color: t.placeholder }}>Do:</span>
                         {renderTimeInputs(rangeValue[1], 1)}
                       </div>
                     </>

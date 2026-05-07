@@ -27,12 +27,52 @@ const components = [
       { name: 'onClick', type: '() => void', desc: 'Click callback. Inherited from native HTML attributes.' },
       { name: 'href', type: 'string', desc: 'If provided, renders as <a> instead of <button>.' },
       { name: 'children', type: 'ReactNode', desc: 'Button text content.' },
+      { name: 'loadingPosition', type: "'replace' | 'after-text'", default: "'replace'", desc: 'Spinner position during loading.' },
     ],
     usage: `<Button variant="primary" onClick={handleClick}>Save</Button>
 <Button variant="outline" icon={<PlusIcon size={16} />}>Add</Button>
 <Button loading>Processing...</Button>
 <Button href="/about">Link button</Button>`,
     notes: ['Renders as `<a>` when `href` is provided, otherwise `<button>`', 'Icon-only mode (square) when no children provided', 'Uses `@phosphor-icons/react` for icons'],
+  },
+  {
+    id: 'iconbutton',
+    name: 'IconButton',
+    category: 'Forms',
+    description: 'Icon-only button with required accessible label. Compact alternative to Button for toolbar actions.',
+    props: [
+      { name: 'icon', type: 'ReactNode', required: true, desc: 'Icon element.' },
+      { name: 'label', type: 'string', required: true, desc: 'Accessible aria-label.' },
+      { name: 'variant', type: "'default' | 'ghost' | 'outline' | 'danger'", default: "'default'", desc: 'Visual style.' },
+      { name: 'size', type: "'xs' | 'sm' | 'md' | 'lg'", default: "'md'", desc: 'Size preset.' },
+      { name: 'disabled', type: 'boolean', default: 'false', desc: 'Disables interaction.' },
+      { name: 'loading', type: 'boolean', default: 'false', desc: 'Shows spinner and disables interaction.' },
+      { name: 'tooltip', type: 'string', desc: 'Tooltip text on hover.' },
+    ],
+    usage: `<IconButton icon={<TrashIcon size={16} />} label="Delete" variant="danger" onClick={handleDelete} />
+<IconButton icon={<PencilSimpleIcon size={16} />} label="Edit" variant="ghost" />
+<IconButton icon={<PlusIcon size={16} />} label="Add" loading />`,
+  },
+  {
+    id: 'formfield',
+    name: 'FormField',
+    category: 'Forms',
+    description: 'Wrapper for form controls providing label, helper text, error message, and optional inline layout.',
+    props: [
+      { name: 'label', type: 'string | ReactNode', desc: 'Field label.' },
+      { name: 'required', type: 'boolean', default: 'false', desc: 'Show required indicator.' },
+      { name: 'helperText', type: 'string | ReactNode', desc: 'Helper text below the control.' },
+      { name: 'error', type: 'string | ReactNode', desc: 'Error message below the control.' },
+      { name: 'inline', type: 'boolean', default: 'false', desc: 'Inline layout (label beside control).' },
+      { name: 'labelWidth', type: 'number | string', default: "'120px'", desc: 'Label width in inline mode.' },
+    ],
+    usage: `<FormField label="Email" required error="This field is required">
+  <Input placeholder="you@example.com" />
+</FormField>
+
+<FormField label="Name" inline labelWidth="150px" helperText="Your full name.">
+  <Input />
+</FormField>`,
   },
   {
     id: 'input',
@@ -76,6 +116,12 @@ const components = [
       { name: 'loading', type: 'boolean', default: 'false', desc: 'Show spinner instead of chevron.' },
       { name: 'error', type: 'boolean | string', desc: 'Error state or message.' },
       { name: 'placeholder', type: 'string', default: "'Vyberte…'", desc: 'Placeholder text.' },
+      { name: 'onSearch', type: '(query: string) => Promise<SelectOption[]>', desc: 'Async server-side search.' },
+      { name: 'creatable', type: 'boolean', default: 'false', desc: 'Allow creating new values.' },
+      { name: 'onCreateOption', type: '(label: string) => void', desc: 'Called when creating new value.' },
+      { name: 'chipDisplay', type: "'inline' | 'count'", default: "'inline'", desc: 'How to display selected items in multiple mode.' },
+      { name: 'renderOption', type: '(option, selected) => ReactNode', desc: 'Custom option rendering.' },
+      { name: 'renderValue', type: '(option) => ReactNode', desc: 'Custom selected value rendering.' },
     ],
     usage: `<Select
   label="Framework"
@@ -95,7 +141,7 @@ const components = [
     id: 'datepicker',
     name: 'DatePicker',
     category: 'Forms',
-    description: 'Date picker with calendar popup. Supports single and range mode with optional time selection.',
+    description: 'Date picker with calendar popup. Supports single and range mode with optional time selection, presets, and disabled dates.',
     props: [
       { name: 'mode', type: "'single' | 'range'", default: "'single'", desc: 'Selection mode.' },
       { name: 'showTime', type: 'boolean', default: 'false', desc: 'Add time selection.' },
@@ -108,6 +154,9 @@ const components = [
       { name: 'size', type: "'sm' | 'md' | 'lg'", default: "'md'", desc: 'Size preset.' },
       { name: 'minDate', type: 'Date', desc: 'Minimum allowed date.' },
       { name: 'maxDate', type: 'Date', desc: 'Maximum allowed date.' },
+      { name: 'presets', type: 'Array<{ label, value }>', desc: 'Quick-select date presets shown in the calendar.' },
+      { name: 'presetsLabel', type: 'string', default: "'Rychlý výběr'", desc: 'Header text for presets section.' },
+      { name: 'disabledDates', type: '(date: Date) => boolean', desc: 'Function to disable specific dates in the calendar.' },
     ],
     usage: `<DatePicker label="Date" value={date} onChange={setDate} />
 <DatePicker mode="range" value={[start, end]} onChange={setRange} />
@@ -283,7 +332,7 @@ const components = [
     id: 'table',
     name: 'Table',
     category: 'Data Display',
-    description: 'Data table with sorting, loading state, and custom cell rendering.',
+    description: 'Data table with sorting, loading state, custom cell rendering, clickable rows, and row actions.',
     props: [
       { name: 'columns', type: 'TableColumn[]', required: true, desc: 'Column definitions: { key, header, sortable?, width?, render? }.' },
       { name: 'data', type: 'any[]', required: true, desc: 'Data rows.' },
@@ -292,6 +341,8 @@ const components = [
       { name: 'onSort', type: '(key, direction) => void', desc: 'Sort callback.' },
       { name: 'striped', type: 'boolean', default: 'false', desc: 'Alternating row colors.' },
       { name: 'hoverable', type: 'boolean', default: 'true', desc: 'Row hover highlight.' },
+      { name: 'onRowClick', type: '(row, index) => void', desc: 'Row click callback.' },
+      { name: 'rowActions', type: '(row) => ReactNode', desc: 'Render action buttons for each row.' },
     ],
     usage: `<Table
   columns={[
@@ -367,7 +418,12 @@ const components = [
       { name: 'content', type: 'string | ReactNode', required: true, desc: 'Tooltip content.' },
       { name: 'children', type: 'ReactElement', required: true, desc: 'Trigger element.' },
       { name: 'position', type: "'top' | 'bottom' | 'left' | 'right'", default: "'top'", desc: 'Position.' },
-      { name: 'delay', type: 'number', default: '200', desc: 'Show delay in ms.' },
+      { name: 'delay', type: 'number', default: '0', desc: 'Show delay in ms.' },
+      { name: 'mode', type: "'anchor' | 'cursor'", default: "'anchor'", desc: 'Positioning mode. cursor follows mouse.' },
+      { name: 'autoFlip', type: 'boolean', default: 'true', desc: 'Auto-flip when tooltip exits viewport.' },
+      { name: 'offset', type: '[number, number]', default: '[0, 0]', desc: 'Offset from trigger/cursor in px.' },
+      { name: 'openDelay', type: 'number', desc: 'Open delay in ms. Overrides delay.' },
+      { name: 'closeDelay', type: 'number', default: '0', desc: 'Close delay in ms for hover-out grace.' },
     ],
     usage: `<Tooltip content="Delete this item" position="top">
   <Button variant="outline">Delete</Button>
@@ -410,10 +466,12 @@ const components = [
     category: 'Data Display',
     description: 'Empty state with icon, title, description, and optional action.',
     props: [
-      { name: 'title', type: 'string', required: true, desc: 'Main heading.' },
+      { name: 'title', type: 'string', desc: 'Main heading.' },
       { name: 'description', type: 'string', desc: 'Description text.' },
       { name: 'icon', type: 'ReactNode', desc: 'Illustration icon.' },
       { name: 'action', type: 'ReactNode', desc: 'Action button.' },
+      { name: 'preset', type: "'no-data' | 'no-results' | 'no-permission' | 'error' | 'coming-soon'", desc: 'Preset with default icon, title, description.' },
+      { name: 'size', type: "'sm' | 'md' | 'lg'", default: "'md'", desc: 'Size preset.' },
     ],
     usage: `<EmptyState
   icon={<TrayIcon size={48} />}
@@ -426,7 +484,7 @@ const components = [
     id: 'stat',
     name: 'Stat',
     category: 'Data Display',
-    description: 'Statistical value display with trend indicator.',
+    description: 'Statistical value display with trend indicator. Supports loading, clickable, and helper text.',
     props: [
       { name: 'label', type: 'string', required: true, desc: 'Stat label.' },
       { name: 'value', type: 'string | number', required: true, desc: 'Main value.' },
@@ -434,8 +492,13 @@ const components = [
       { name: 'changeLabel', type: 'string', desc: 'Change description text.' },
       { name: 'trend', type: "'up' | 'down' | 'neutral'", default: "'neutral'", desc: 'Trend direction.' },
       { name: 'icon', type: 'ReactNode', desc: 'Icon.' },
+      { name: 'loading', type: 'boolean', default: 'false', desc: 'Show skeleton placeholder.' },
+      { name: 'onClick', type: '() => void', desc: 'Click callback — stat behaves as a button.' },
+      { name: 'helper', type: 'string | ReactNode', desc: 'Helper text below the value.' },
     ],
-    usage: `<Stat label="Revenue" value="€52,400" change={8.2} trend="up" />`,
+    usage: `<Stat label="Revenue" value="€52,400" change={8.2} trend="up" />
+<Stat label="Users" value="1,234" loading />
+<Stat label="Orders" value="89" onClick={() => navigate('/orders')} />`,
   },
   {
     id: 'avatar',
@@ -444,11 +507,32 @@ const components = [
     description: 'User avatar displaying initials.',
     props: [
       { name: 'initials', type: 'string', required: true, desc: '1-2 letters (auto-uppercase).' },
-      { name: 'size', type: "'sm' | 'md' | 'lg' | number", default: "'md'", desc: 'Size (sm: 40px, md: 70px, lg: 96px).' },
+      { name: 'size', type: "'2xs' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | number", default: "'md'", desc: 'Size (2xs: 16px, xs: 20px, sm: 32px, md: 40px, lg: 64px, xl: 96px).' },
       { name: 'borderRadius', type: 'string | number', default: "'8px'", desc: 'Corner rounding.' },
     ],
     usage: `<Avatar initials="JD" size="md" />
 <Avatar initials="A" size={32} borderRadius="50%" />`,
+  },
+  {
+    id: 'avatarstack',
+    name: 'AvatarStack',
+    category: 'Data Display',
+    description: 'Grouped avatars with overlap and automatic +N overflow indicator.',
+    props: [
+      { name: 'children', type: 'ReactNode', required: true, desc: 'Avatar components as children.' },
+      { name: 'max', type: 'number', default: '3', desc: 'Maximum visible avatars. Rest shown as +N.' },
+      { name: 'size', type: "'2xs' | 'xs' | 'sm' | 'md' | 'lg'", default: "'sm'", desc: 'Size of all avatars in the stack.' },
+      { name: 'spacing', type: "'tight' | 'normal' | 'loose'", default: "'normal'", desc: 'Overlap spacing between avatars.' },
+      { name: 'direction', type: "'ltr' | 'rtl'", default: "'ltr'", desc: 'Overlap direction.' },
+      { name: 'overflowTooltip', type: 'string | ((count) => string)', desc: 'Tooltip for +N indicator.' },
+    ],
+    usage: `<AvatarStack max={3} size="sm">
+  <Avatar initials="JN" />
+  <Avatar initials="PD" />
+  <Avatar initials="KS" />
+  <Avatar initials="MC" />
+  <Avatar initials="TH" />
+</AvatarStack>`,
   },
   {
     id: 'tag',
@@ -472,10 +556,14 @@ const components = [
     props: [
       { name: 'open', type: 'boolean', required: true, desc: 'Controls visibility.' },
       { name: 'onClose', type: '() => void', required: true, desc: 'Close callback.' },
-      { name: 'title', type: 'string', desc: 'Header title.' },
+      { name: 'title', type: 'string | ReactNode', desc: 'Header title.' },
+      { name: 'titleSlot', type: 'ReactNode', desc: 'Alternative slot for custom header.' },
       { name: 'children', type: 'ReactNode', required: true, desc: 'Body content.' },
       { name: 'footer', type: 'ReactNode', desc: 'Footer content (buttons).' },
       { name: 'size', type: "'sm' | 'md' | 'lg' | 'fullscreen'", default: "'md'", desc: 'Size preset.' },
+      { name: 'width', type: 'number | string', desc: 'Explicit width. Overrides size.' },
+      { name: 'dismissable', type: 'boolean', default: 'true', desc: 'Allow closing via overlay/ESC/close button.' },
+      { name: 'showHeaderDivider', type: 'boolean', default: 'true', desc: 'Show divider line under header.' },
       { name: 'closeOnOverlay', type: 'boolean', default: 'true', desc: 'Close on overlay click.' },
       { name: 'closeOnEscape', type: 'boolean', default: 'true', desc: 'Close on Escape key.' },
       { name: 'showClose', type: 'boolean', default: 'true', desc: 'Show close button (×).' },
@@ -565,8 +653,9 @@ const components = [
     description: 'Dropdown action menu with keyboard navigation.',
     props: [
       { name: 'trigger', type: 'ReactNode', required: true, desc: 'Trigger element.' },
-      { name: 'items', type: 'DropdownMenuItem[]', required: true, desc: 'Menu items: { label (string | ReactNode), icon?, onClick?, disabled?, danger?, divider?, category? }.' },
+      { name: 'items', type: 'DropdownMenuItem[]', required: true, desc: 'Menu items: { label (string | ReactNode), icon?, onClick?, disabled?, danger?, divider?, category?, shortcut?, keepOpenOnClick?, subItems? }.' },
       { name: 'position', type: "'bottom-left' | 'bottom-right'", default: "'bottom-left'", desc: 'Menu position.' },
+      { name: 'triggerOnRightClick', type: 'boolean', default: 'false', desc: 'Open on right-click instead of left.' },
     ],
     usage: `<DropdownMenu
   trigger={<Button variant="outline">Actions</Button>}
@@ -687,6 +776,8 @@ dismiss(id);`,
       { name: 'icon', type: 'ReactNode', desc: 'Custom icon.' },
       { name: 'position', type: "'top' | 'bottom'", default: "'top'", desc: 'Accent bar position.' },
       { name: 'sticky', type: 'boolean', default: 'false', desc: 'Stick to top/bottom edge.' },
+      { name: 'actions', type: 'ReactNode', desc: 'Action buttons on the right side.' },
+      { name: 'dismissKey', type: 'string', desc: 'localStorage key for persistent dismiss.' },
     ],
     usage: `<Banner variant="warning" title="Maintenance" sticky>System will be unavailable tonight.</Banner>`,
   },
@@ -758,17 +849,25 @@ dismiss(id);`,
     id: 'progress',
     name: 'ProgressBar / ProgressCircle',
     category: 'Feedback',
-    description: 'Progress indicator as bar or circle.',
+    description: 'Progress indicator as bar or circle. Supports variants, thresholds, and indeterminate mode.',
     props: [
-      { name: 'value', type: 'number', required: true, desc: 'Value 0-100.' },
-      { name: 'size', type: "'sm' | 'md' | 'lg'", default: "'md'", desc: 'Size (ProgressBar).' },
-      { name: 'color', type: 'string', default: "'#E8612D'", desc: 'Bar/circle color.' },
+      { name: 'value', type: 'number', required: true, desc: 'Value 0-max.' },
+      { name: 'max', type: 'number', default: '100', desc: 'Maximum value.' },
+      { name: 'size', type: "'xs' | 'sm' | 'md'", default: "'md'", desc: 'Size (ProgressBar).' },
+      { name: 'variant', type: "'default' | 'success' | 'warning' | 'danger'", default: "'default'", desc: 'Color variant.' },
+      { name: 'color', type: 'string', default: "'#E8612D'", desc: 'Bar/circle color (overrides variant).' },
       { name: 'showValue', type: 'boolean', default: 'false', desc: 'Show percentage.' },
       { name: 'label', type: 'string', desc: 'Label text.' },
       { name: 'striped', type: 'boolean', default: 'false', desc: 'Striped effect (ProgressBar).' },
       { name: 'animated', type: 'boolean', default: 'false', desc: 'Animate stripes (ProgressBar).' },
+      { name: 'thresholds', type: 'Array<{ value, variant }>', desc: 'Auto-switch variant based on value thresholds.' },
+      { name: 'indeterminate', type: 'boolean', default: 'false', desc: 'Infinite animation without specific value (ProgressBar).' },
+      { name: 'valueLabel', type: 'string | ((value) => string)', desc: 'Custom center label (ProgressCircle).' },
+      { name: 'thickness', type: 'number', desc: 'Circle stroke thickness (ProgressCircle).' },
     ],
     usage: `<ProgressBar value={65} showValue label="Upload" />
+<ProgressBar indeterminate label="Loading..." />
+<ProgressBar value={80} thresholds={[{value:30,variant:'danger'},{value:60,variant:'warning'},{value:100,variant:'success'}]} />
 <ProgressCircle value={75} showValue />`,
   },
   {
@@ -855,6 +954,55 @@ dismiss(id);`,
   )}
 />`,
     notes: ['renderItem receives handleProps for custom drag handle placement', 'allowNesting enables tree mode — drag to center of card to nest', 'Collapsed nodes auto-expand on hover during drag'],
+  },
+  {
+    id: 'sortablelist',
+    name: 'SortableList',
+    category: 'Utility',
+    description: 'Generic sortable list with drag & drop. Supports vertical/horizontal direction and explicit drag handle.',
+    props: [
+      { name: 'items', type: 'T[]', required: true, desc: 'Array of items to sort.' },
+      { name: 'keyExtractor', type: '(item: T) => string | number', required: true, desc: 'Function to extract unique key from item.' },
+      { name: 'renderItem', type: '(item: T, dragHandle: ReactNode) => ReactNode', required: true, desc: 'Render function for each item. dragHandle is the drag element.' },
+      { name: 'onReorder', type: '(newOrder: T[]) => void', required: true, desc: 'Callback when order changes.' },
+      { name: 'direction', type: "'vertical' | 'horizontal'", default: "'vertical'", desc: 'Sort direction.' },
+      { name: 'handle', type: "'whole' | 'explicit'", default: "'whole'", desc: 'Whole item draggable or handle-only.' },
+      { name: 'disabled', type: 'boolean', default: 'false', desc: 'Disable drag.' },
+      { name: 'gap', type: 'number | string', desc: 'Gap between items.' },
+    ],
+    usage: `<SortableList
+  items={priorities}
+  keyExtractor={(item) => item.id}
+  handle="explicit"
+  onReorder={setPriorities}
+  renderItem={(item, dragHandle) => (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+      {dragHandle}
+      <span>{item.label}</span>
+    </div>
+  )}
+/>`,
+  },
+  {
+    id: 'splitter',
+    name: 'Splitter',
+    category: 'Utility',
+    description: 'Resizable panel splitter with draggable divider. Supports horizontal/vertical orientation and size persistence.',
+    props: [
+      { name: 'orientation', type: "'horizontal' | 'vertical'", default: "'horizontal'", desc: 'Split direction.' },
+      { name: 'children', type: 'ReactNode', required: true, desc: 'Two or more panels to split.' },
+      { name: 'defaultSizes', type: 'number[]', desc: 'Default panel sizes in percent (e.g. [30, 70]).' },
+      { name: 'minSizes', type: 'number[]', desc: 'Minimum panel sizes in percent.' },
+      { name: 'maxSizes', type: 'number[]', desc: 'Maximum panel sizes in percent.' },
+      { name: 'onResize', type: '(sizes: number[]) => void', desc: 'Callback when panel sizes change.' },
+      { name: 'persistKey', type: 'string', desc: 'localStorage key for size persistence.' },
+      { name: 'dividerSize', type: 'number', default: '4', desc: 'Divider width in px.' },
+      { name: 'disabled', type: 'boolean', default: 'false', desc: 'Disable resizing.' },
+    ],
+    usage: `<Splitter orientation="horizontal">
+  <div>Sidebar</div>
+  <div>Content</div>
+</Splitter>`,
   },
   // ── New components ────────────────────────────────────────────────────
   {

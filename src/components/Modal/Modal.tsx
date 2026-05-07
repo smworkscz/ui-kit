@@ -50,20 +50,35 @@ export interface ModalProps {
   open: boolean;
   /** Voláno při zavření modálu. */
   onClose: () => void;
-  /** Titulek zobrazený v záhlaví modálu. */
-  title?: string;
+  /** Titulek zobrazený v záhlaví modálu. String nebo ReactNode pro vlastní hlavičku. */
+  title?: string | React.ReactNode;
+  /** Alternativní slot pro celou hlavičku (nahrazuje title + close button). */
+  titleSlot?: React.ReactNode;
   /** Obsah těla modálu. */
   children: React.ReactNode;
   /** Obsah patičky modálu (tlačítka apod.). */
   footer?: React.ReactNode;
   /** Velikostní preset modálu. @default 'md' */
   size?: 'sm' | 'md' | 'lg' | 'fullscreen';
+  /**
+   * Explicitní šířka modálu. Přepíše `size`.
+   * Přijímá číslo (px) nebo CSS string (např. '90vw').
+   */
+  width?: number | string;
   /** Zavře modál kliknutím na překryvnou vrstvu. @default true */
   closeOnOverlay?: boolean;
   /** Zavře modál stisknutím klávesy Escape. @default true */
   closeOnEscape?: boolean;
+  /**
+   * Umožní zavření modálu (overlay click + ESC + close button).
+   * Když false, modál lze zavřít jen programově.
+   * @default true
+   */
+  dismissable?: boolean;
   /** Zobrazí zavírací tlačítko (×) v záhlaví. @default true */
   showClose?: boolean;
+  /** Zobrazí oddělovací čáru pod hlavičkou. @default true */
+  showHeaderDivider?: boolean;
   /** Dodatečná CSS třída pro kartu modálu. */
   className?: string;
   /** Další inline styly pro kartu modálu. */
@@ -90,18 +105,23 @@ export const Modal: React.FC<ModalProps> = ({
   open,
   onClose,
   title,
+  titleSlot,
   children,
   footer,
   size = 'md',
+  width,
   closeOnOverlay = true,
   closeOnEscape = true,
+  dismissable = true,
   showClose = true,
+  showHeaderDivider = true,
   className,
   style,
 }) => {
   const theme = useTheme();
   const t = tokens[theme];
   const sc = sizeConfig[size];
+  const resolvedWidth = width ? (typeof width === 'number' ? `${width}px` : width) : sc.width;
 
   const [visible, setVisible] = useState(false);
   const [animState, setAnimState] = useState<'idle' | 'opening' | 'open' | 'closing'>('idle');
@@ -148,7 +168,7 @@ export const Modal: React.FC<ModalProps> = ({
   // ── Escape key ──────────────────────────────────────────────────────────
 
   useEffect(() => {
-    if (!visible || !closeOnEscape) return;
+    if (!visible || !closeOnEscape || !dismissable) return;
     const handler = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
     };
@@ -242,7 +262,7 @@ export const Modal: React.FC<ModalProps> = ({
           WebkitBackdropFilter: 'blur(8px)',
           ...getBackdropStyle(),
         }}
-        onClick={closeOnOverlay ? onClose : undefined}
+        onClick={closeOnOverlay && dismissable ? onClose : undefined}
         aria-hidden="true"
       />
 
@@ -251,14 +271,14 @@ export const Modal: React.FC<ModalProps> = ({
         ref={cardRef}
         role="dialog"
         aria-modal="true"
-        aria-label={title}
+        aria-label={typeof title === 'string' ? title : undefined}
         tabIndex={-1}
         className={className}
         style={{
           position: 'relative',
           display: 'flex',
           flexDirection: 'column',
-          width: sc.width,
+          width: resolvedWidth,
           maxWidth: isFullscreen ? undefined : 'calc(100vw - 32px)',
           maxHeight: isFullscreen ? '100vh' : sc.maxHeight,
           backgroundColor: t.cardBg,
@@ -275,7 +295,11 @@ export const Modal: React.FC<ModalProps> = ({
         }}
       >
         {/* Záhlaví */}
-        {(title || showClose) && (
+        {titleSlot ? (
+          <div style={{ flexShrink: 0, borderBottom: showHeaderDivider ? `1px solid ${t.divider}` : 'none' }}>
+            {titleSlot}
+          </div>
+        ) : (title || (showClose && dismissable)) ? (
           <div
             style={{
               display: 'flex',
@@ -283,24 +307,28 @@ export const Modal: React.FC<ModalProps> = ({
               justifyContent: 'space-between',
               padding: '20px 24px 16px',
               flexShrink: 0,
-              borderBottom: `1px solid ${t.divider}`,
+              borderBottom: showHeaderDivider ? `1px solid ${t.divider}` : 'none',
             }}
           >
             {title && (
-              <h2
-                style={{
-                  margin: 0,
-                  fontFamily: "'Zalando Sans', sans-serif",
-                  fontSize: '18px',
-                  fontWeight: 600,
-                  lineHeight: 'normal',
-                  color: t.titleText,
-                }}
-              >
-                {title}
-              </h2>
+              typeof title === 'string' ? (
+                <h2
+                  style={{
+                    margin: 0,
+                    fontFamily: "'Zalando Sans', sans-serif",
+                    fontSize: '18px',
+                    fontWeight: 600,
+                    lineHeight: 'normal',
+                    color: t.titleText,
+                  }}
+                >
+                  {title}
+                </h2>
+              ) : (
+                <div style={{ flex: 1, minWidth: 0 }}>{title}</div>
+              )
             )}
-            {showClose && (
+            {showClose && dismissable && (
               <button
                 type="button"
                 aria-label="Zavřít"
@@ -331,7 +359,7 @@ export const Modal: React.FC<ModalProps> = ({
               </button>
             )}
           </div>
-        )}
+        ) : null}
 
         {/* Tělo */}
         <div

@@ -12,6 +12,7 @@ const controls: PlaygroundControl[] = [
   { type: 'boolean', prop: 'disabled', label: 'Disabled', defaultValue: false },
   { type: 'boolean', prop: 'fullWidth', label: 'Full width', defaultValue: false },
   { type: 'boolean', prop: 'icon', label: 'S ikonou', defaultValue: false },
+  { type: 'select', prop: 'loadingPosition', label: 'Loading pozice', options: ['replace', 'after-text'], defaultValue: 'replace' },
 ];
 
 const propDefs: PropDef[] = [
@@ -28,6 +29,7 @@ const propDefs: PropDef[] = [
   { name: 'children', type: 'ReactNode', description: 'Textový obsah tlačítka.' },
   { name: 'style', type: 'CSSProperties', description: 'Inline styly.' },
   { name: 'className', type: 'string', description: 'CSS třída.' },
+  { name: 'loadingPosition', type: "'replace' | 'after-text'", defaultValue: "'replace'", description: 'Pozice spinneru při loading. after-text zobrazí spinner za textem.' },
 ];
 
 export const ButtonPage: React.FC = () => (
@@ -44,10 +46,11 @@ export const ButtonPage: React.FC = () => (
         <Button
           variant={props.variant}
           size={props.size}
-          loading={props.loading}
-          disabled={props.disabled}
-          fullWidth={props.fullWidth}
+          loading={props.loading as boolean}
+          disabled={props.disabled as boolean}
+          fullWidth={props.fullWidth as boolean}
           icon={props.icon ? <Plus size={16} weight="bold" /> : undefined}
+          loadingPosition={props.loadingPosition as 'replace' | 'after-text'}
         >
           {props.children}
         </Button>
@@ -78,6 +81,12 @@ export const ButtonPage: React.FC = () => (
       <Button loading>Načítání</Button>
       <Button disabled>Zakázáno</Button>
       <Button icon={<Plus size={16} weight="bold" />} />
+    </VariantShowcase>
+
+    <VariantShowcase label="Loading za textem">
+      <Button loading loadingPosition="after-text">Ukládání</Button>
+      <Button loading loadingPosition="after-text" variant="secondary">Odesílání</Button>
+      <Button loading loadingPosition="after-text" variant="outline">Načítání</Button>
     </VariantShowcase>
 
     <H2>Props</H2>

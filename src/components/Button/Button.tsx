@@ -99,6 +99,13 @@ interface ButtonBaseProps {
    */
   loading?: boolean;
   /**
+   * Pozice spinneru při loading.
+   * - `'replace'` — spinner nahradí ikonu (výchozí)
+   * - `'after-text'` — spinner se zobrazí za textem vedle ikony
+   * @default 'replace'
+   */
+  loadingPosition?: 'replace' | 'after-text';
+  /**
    * Roztáhne tlačítko na celou šířku kontejneru.
    */
   fullWidth?: boolean;
@@ -148,6 +155,7 @@ export const Button = React.forwardRef<
       icon,
       iconPosition = 'left',
       loading = false,
+      loadingPosition = 'replace',
       fullWidth = false,
       children,
       style,
@@ -236,24 +244,33 @@ export const Button = React.forwardRef<
     })();
 
     // ── Icon / spinner slot ───────────────────────────────────────────────────
+    const isAfterText = loadingPosition === 'after-text';
+    const spinnerEl = <Spinner size={parseInt(fontSize) - 1} />;
     const iconSlot = (
       <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-        {loading ? <Spinner size={parseInt(fontSize) - 1} /> : icon}
+        {loading && !isAfterText ? spinnerEl : icon}
       </span>
     );
-    const showIconSlot = loading || hasIcon;
+    const afterTextSpinner = loading && isAfterText ? (
+      <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+        {spinnerEl}
+      </span>
+    ) : null;
+    const showIconSlot = (loading && !isAfterText) || hasIcon;
 
     // ── Content layout ────────────────────────────────────────────────────────
     const content =
       iconPosition === 'right' ? (
         <>
           {hasText && <span>{children}</span>}
+          {afterTextSpinner}
           {showIconSlot && iconSlot}
         </>
       ) : (
         <>
           {showIconSlot && iconSlot}
           {hasText && <span>{children}</span>}
+          {afterTextSpinner}
         </>
       );
 

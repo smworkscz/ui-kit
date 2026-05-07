@@ -1,6 +1,6 @@
 # Table
 
-Data table with sorting, loading state, and custom cell rendering.
+Data table with sorting, loading state, custom cell rendering, clickable rows, and row actions.
 
 **Import:** `import { Table } from '@smworks-cz/ui-kit'`
 
@@ -15,6 +15,8 @@ Data table with sorting, loading state, and custom cell rendering.
 | `onSort` | `(key, direction) => void` | — |  | Sort callback. |
 | `striped` | `boolean` | false |  | Alternating row colors. |
 | `hoverable` | `boolean` | true |  | Row hover highlight. |
+| `onRowClick` | `(row, index) => void` | — |  | Row click callback. |
+| `rowActions` | `(row) => ReactNode` | — |  | Render action buttons for each row. |
 
 ## Usage
 

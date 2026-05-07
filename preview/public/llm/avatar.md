@@ -9,7 +9,7 @@ User avatar displaying initials.
 | Prop | Type | Default | Required | Description |
 |------|------|---------|----------|-------------|
 | `initials` | `string` | — | Yes | 1-2 letters (auto-uppercase). |
-| `size` | `'sm' | 'md' | 'lg' | number` | 'md' |  | Size (sm: 40px, md: 70px, lg: 96px). |
+| `size` | `'2xs' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | number` | 'md' |  | Size (2xs: 16px, xs: 20px, sm: 32px, md: 40px, lg: 64px, xl: 96px). |
 | `borderRadius` | `string | number` | '8px' |  | Corner rounding. |
 
 ## Usage

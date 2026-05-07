@@ -9,8 +9,9 @@ Dropdown action menu with keyboard navigation.
 | Prop | Type | Default | Required | Description |
 |------|------|---------|----------|-------------|
 | `trigger` | `ReactNode` | — | Yes | Trigger element. |
-| `items` | `DropdownMenuItem[]` | — | Yes | Menu items: { label (string | ReactNode), icon?, onClick?, disabled?, danger?, divider?, category? }. |
+| `items` | `DropdownMenuItem[]` | — | Yes | Menu items: { label (string | ReactNode), icon?, onClick?, disabled?, danger?, divider?, category?, shortcut?, keepOpenOnClick?, subItems? }. |
 | `position` | `'bottom-left' | 'bottom-right'` | 'bottom-left' |  | Menu position. |
+| `triggerOnRightClick` | `boolean` | false |  | Open on right-click instead of left. |
 
 ## Usage
 

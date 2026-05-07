@@ -10,10 +10,14 @@ Modal dialog with overlay, focus trap, and glass effect.
 |------|------|---------|----------|-------------|
 | `open` | `boolean` | — | Yes | Controls visibility. |
 | `onClose` | `() => void` | — | Yes | Close callback. |
-| `title` | `string` | — |  | Header title. |
+| `title` | `string | ReactNode` | — |  | Header title. |
+| `titleSlot` | `ReactNode` | — |  | Alternative slot for custom header. |
 | `children` | `ReactNode` | — | Yes | Body content. |
 | `footer` | `ReactNode` | — |  | Footer content (buttons). |
 | `size` | `'sm' | 'md' | 'lg' | 'fullscreen'` | 'md' |  | Size preset. |
+| `width` | `number | string` | — |  | Explicit width. Overrides size. |
+| `dismissable` | `boolean` | true |  | Allow closing via overlay/ESC/close button. |
+| `showHeaderDivider` | `boolean` | true |  | Show divider line under header. |
 | `closeOnOverlay` | `boolean` | true |  | Close on overlay click. |
 | `closeOnEscape` | `boolean` | true |  | Close on Escape key. |
 | `showClose` | `boolean` | true |  | Show close button (×). |

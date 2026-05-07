@@ -450,6 +450,31 @@ export const spotlightItems: SpotlightItem[] = [
     icon: <CursorClick size={ICON_SIZE} />,
     onSelect: () => {},
   },
+  {
+    id: 'iconbutton',
+    label: 'IconButton',
+    description: 'Tlačítko pouze s ikonou pro kompaktní akce',
+    category: 'Formuláře',
+    icon: <CursorClick size={ICON_SIZE} />,
+    onSelect: () => {},
+  },
+  {
+    id: 'formfield',
+    label: 'FormField',
+    description: 'Obalová komponenta s labelem a validací',
+    category: 'Formuláře',
+    icon: <CursorClick size={ICON_SIZE} />,
+    onSelect: () => {},
+  },
+
+  {
+    id: 'avatarstack',
+    label: 'AvatarStack',
+    description: 'Seskupeni avataru s +N indikatorem',
+    category: 'Zobrazeni dat',
+    icon: <UserCircle size={ICON_SIZE} />,
+    onSelect: () => {},
+  },
 
   // ── Nové zobrazení dat ─────────────────────────────────────────────────
   {
@@ -574,6 +599,23 @@ export const spotlightItems: SpotlightItem[] = [
     description: 'Tlačítko pro kopírování do schránky',
     category: 'Feedback',
     icon: <Copy size={ICON_SIZE} />,
+    onSelect: () => {},
+  },
+
+  {
+    id: 'sortablelist',
+    label: 'SortableList',
+    description: 'Genericky seraditelny seznam drag & drop',
+    category: 'Utility',
+    icon: <DotsSixVertical size={ICON_SIZE} />,
+    onSelect: () => {},
+  },
+  {
+    id: 'splitter',
+    label: 'Splitter',
+    description: 'Rozdelovac panelu s pretahovatelnym dividerem',
+    category: 'Utility',
+    icon: <LineSegment size={ICON_SIZE} />,
     onSelect: () => {},
   },
 

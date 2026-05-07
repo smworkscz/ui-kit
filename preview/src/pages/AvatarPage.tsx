@@ -11,7 +11,7 @@ const controls: PlaygroundControl[] = [
 
 const propDefs: PropDef[] = [
   { name: 'initials', type: 'string', required: true, description: '1–2 písmena zobrazená v avataru (auto-uppercase).' },
-  { name: 'size', type: "'sm' | 'md' | 'lg' | number", defaultValue: "'md'", description: 'Velikost avataru (sm: 40px, md: 70px, lg: 96px, nebo číslo v px).' },
+  { name: 'size', type: "'2xs' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | number", defaultValue: "'md'", description: 'Velikost: 2xs(16) xs(20) sm(32) md(40) lg(64) xl(96) nebo číslo v px.' },
   { name: 'borderRadius', type: 'string | number', defaultValue: "'8px'", description: 'Zaoblení rohů.' },
   { name: 'aria-label', type: 'string', description: 'Přístupný popisek (výchozí: "Avatar {initials}").' },
   { name: 'style', type: 'CSSProperties', description: 'Inline styly.' },
@@ -38,10 +38,13 @@ export const AvatarPage: React.FC = () => (
     />
 
     <H2>Varianty</H2>
-    <VariantShowcase label="Velikosti">
+    <VariantShowcase label="Všechny velikosti">
+      <Avatar initials="SM" size="2xs" />
+      <Avatar initials="SM" size="xs" />
       <Avatar initials="SM" size="sm" />
       <Avatar initials="SM" size="md" />
       <Avatar initials="SM" size="lg" />
+      <Avatar initials="SM" size="xl" />
     </VariantShowcase>
 
     <VariantShowcase label="Zaoblení">

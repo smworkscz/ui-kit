@@ -19,6 +19,12 @@ Dropdown select with search, multi-select, clear, and keyboard navigation.
 | `loading` | `boolean` | false |  | Show spinner instead of chevron. |
 | `error` | `boolean | string` | — |  | Error state or message. |
 | `placeholder` | `string` | 'Vyberte…' |  | Placeholder text. |
+| `onSearch` | `(query: string) => Promise<SelectOption[]>` | — |  | Async server-side search. |
+| `creatable` | `boolean` | false |  | Allow creating new values. |
+| `onCreateOption` | `(label: string) => void` | — |  | Called when creating new value. |
+| `chipDisplay` | `'inline' | 'count'` | 'inline' |  | How to display selected items in multiple mode. |
+| `renderOption` | `(option, selected) => ReactNode` | — |  | Custom option rendering. |
+| `renderValue` | `(option) => ReactNode` | — |  | Custom selected value rendering. |
 
 ## Usage
 

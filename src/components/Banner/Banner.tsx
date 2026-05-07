@@ -87,6 +87,10 @@ export interface BannerProps {
   onClose?: () => void;
   /** Vlastní ikona. Pokud není zadána, použije se výchozí dle varianty. */
   icon?: React.ReactNode;
+  /** Akční tlačítka na pravé straně. */
+  actions?: React.ReactNode;
+  /** Persistentní dismiss přes localStorage key. */
+  dismissKey?: string;
   /** Pozice akcentního proužku. @default 'top' */
   position?: BannerPosition;
   /** Přilepí banner na pozici. @default false */
@@ -119,6 +123,8 @@ export const Banner: React.FC<BannerProps> = ({
   closable = false,
   onClose,
   icon,
+  actions,
+  dismissKey,
   position = 'top',
   sticky = false,
   style,
@@ -127,7 +133,12 @@ export const Banner: React.FC<BannerProps> = ({
   const theme = useTheme();
   const t = tokens[theme];
   const v = variantTokens[variant];
-  const [visible, setVisible] = useState(true);
+  const [visible, setVisible] = useState(() => {
+    if (dismissKey && typeof window !== 'undefined') {
+      return localStorage.getItem(`banner-dismiss-${dismissKey}`) !== '1';
+    }
+    return true;
+  });
 
   if (!visible) return null;
   if (!title && !children) return null;
@@ -140,6 +151,9 @@ export const Banner: React.FC<BannerProps> = ({
 
   const handleClose = () => {
     setVisible(false);
+    if (dismissKey && typeof window !== 'undefined') {
+      localStorage.setItem(`banner-dismiss-${dismissKey}`, '1');
+    }
     onClose?.();
   };
 
@@ -188,6 +202,13 @@ export const Banner: React.FC<BannerProps> = ({
           </div>
         )}
       </div>
+
+      {/* Actions */}
+      {actions && (
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
+          {actions}
+        </div>
+      )}
 
       {/* Close */}
       {closable && (

@@ -2,7 +2,7 @@ import React from 'react';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
-export type AvatarSize = 'sm' | 'md' | 'lg' | number;
+export type AvatarSize = '2xs' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | number;
 
 export interface AvatarProps {
   /**
@@ -12,9 +12,12 @@ export interface AvatarProps {
   initials: string;
   /**
    * Velikost avataru.
-   * - `'sm'` — 40 px
-   * - `'md'` — 70 px  *(výchozí)*
-   * - `'lg'` — 96 px
+   * - `'2xs'` — 16 px
+   * - `'xs'` — 20 px
+   * - `'sm'` — 32 px
+   * - `'md'` — 40 px  *(výchozí)*
+   * - `'lg'` — 64 px
+   * - `'xl'` — 96 px
    * - `number` — přesná hodnota v pixelech
    * @default 'md'
    */
@@ -39,7 +42,7 @@ export interface AvatarProps {
 
 const resolveSize = (size: AvatarSize): number => {
   if (typeof size === 'number') return size;
-  return { sm: 40, md: 70, lg: 96 }[size];
+  return { '2xs': 16, xs: 20, sm: 32, md: 40, lg: 64, xl: 96 }[size];
 };
 
 // ─── Component ───────────────────────────────────────────────────────────────

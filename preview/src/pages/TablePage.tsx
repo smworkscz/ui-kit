@@ -1,6 +1,6 @@
 import React from 'react';
 import { Table } from '../../../src';
-import { PageLayout, H1, H2, Paragraph, Playground, PropsTable } from './shared';
+import { PageLayout, H1, H2, Paragraph, Playground, PropsTable, VariantShowcase } from './shared';
 import type { PlaygroundControl, PropDef } from './shared';
 
 const demoCols = [
@@ -29,6 +29,8 @@ const propDefs: PropDef[] = [
   { name: 'onSort', type: '(key, direction) => void', description: 'Callback řazení.' },
   { name: 'striped', type: 'boolean', defaultValue: 'false', description: 'Střídající barvy řádků.' },
   { name: 'hoverable', type: 'boolean', defaultValue: 'true', description: 'Zvýraznění řádku při hoveru.' },
+  { name: 'onRowClick', type: '(row: any, index: number) => void', description: 'Callback kliknutí na řádek.' },
+  { name: 'rowActions', type: '(row: any) => ReactNode', description: 'Render akčních tlačítek pro řádek.' },
 ];
 
 export const TablePage: React.FC = () => (
@@ -44,6 +46,13 @@ export const TablePage: React.FC = () => (
         </div>
       )}
     />
+
+    <H2>Klikatelné řádky</H2>
+    <VariantShowcase label="Řádky s onRowClick callbackem">
+      <div style={{ width: '100%' }}>
+        <Table columns={demoCols} data={demoData} onRowClick={() => {}} />
+      </div>
+    </VariantShowcase>
 
     <H2>Props</H2>
     <PropsTable props={propDefs} />

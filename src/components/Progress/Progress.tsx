@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React from 'react';
 import { useTheme } from '../../hooks/useTheme';
 
 // ─── Design tokens ───────────────────────────────────────────────────────────
@@ -16,140 +16,152 @@ const tokens = {
   },
 } as const;
 
+const variantColors = {
+  default: '#E8612D',
+  success: '#00A205',
+  warning: '#F5A623',
+  danger: '#EF3838',
+} as const;
+
 // ─── Size config ─────────────────────────────────────────────────────────────
 
 const barSizeConfig = {
+  xs: { height: 4, fontSize: '10px' },
   sm: { height: 6, fontSize: '11px' },
   md: { height: 10, fontSize: '12px' },
-  lg: { height: 16, fontSize: '14px' },
 } as const;
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
-export type ProgressBarSize = 'sm' | 'md' | 'lg';
+export type ProgressBarSize = 'xs' | 'sm' | 'md';
+export type ProgressVariant = 'default' | 'success' | 'warning' | 'danger';
+
+export interface ProgressThreshold {
+  /** Hodnota (0-max) od které se aktivuje varianta. */
+  value: number;
+  /** Varianta použitá od této hodnoty. */
+  variant: ProgressVariant;
+}
 
 export interface ProgressBarProps {
-  /**
-   * Aktuální hodnota průběhu v rozsahu 0–100.
-   */
+  /** Aktuální hodnota. */
   value: number;
-  /**
-   * Velikostní preset určující výšku lišty.
-   * - `'sm'` — 6 px
-   * - `'md'` — 10 px
-   * - `'lg'` — 16 px
-   * @default 'md'
-   */
+  /** Maximální hodnota. @default 100 */
+  max?: number;
+  /** Label: true = "X%", string = custom. @default false */
+  label?: string | boolean;
+  /** Barevný preset. @default 'default' */
+  variant?: ProgressVariant;
+  /** Auto-switch variant podle thresholds. */
+  thresholds?: ProgressThreshold[];
+  /** Velikost (výška). @default 'sm' */
   size?: ProgressBarSize;
-  /**
-   * Barva vyplněné části lišty.
-   * @default '#E8612D'
-   */
-  color?: string;
-  /**
-   * Zobrazí procentuální hodnotu vedle lišty.
-   * @default false
-   */
-  showValue?: boolean;
-  /**
-   * Volitelný popisek zobrazený nad lištou.
-   */
-  label?: string;
-  /**
-   * Zobrazí pruhovaný vzor na vyplněné části.
-   * @default false
-   */
+  /** Pruhovaný vzor. @default false */
   striped?: boolean;
-  /**
-   * Animuje pruhovaný vzor (vyžaduje `striped`).
-   * @default false
-   */
+  /** Animované pruhy. @default false */
   animated?: boolean;
-  /** Dodatečná CSS třída pro kořenový element. */
+  /** Neznámý progress — animovaný shimmer. @default false */
+  indeterminate?: boolean;
+  /** Dodatečná CSS třída. */
   className?: string;
-  /** Další inline styly pro kořenový element. */
+  /** Další inline styly. */
   style?: React.CSSProperties;
 }
 
 export interface ProgressCircleProps {
-  /**
-   * Aktuální hodnota průběhu v rozsahu 0–100.
-   */
+  /** Aktuální hodnota. */
   value: number;
-  /**
-   * Velikost SVG v pixelech (šířka i výška).
-   * @default 64
-   */
+  /** Maximální hodnota. @default 100 */
+  max?: number;
+  /** Barevný preset. @default 'default' */
+  variant?: ProgressVariant;
+  /** Auto-switch variant podle thresholds. */
+  thresholds?: ProgressThreshold[];
+  /** Diameter v px. @default 48 */
   size?: number;
-  /**
-   * Šířka tahu (stroke) kruhu.
-   * @default 4
-   */
-  strokeWidth?: number;
-  /**
-   * Barva vyplněné části kruhu.
-   * @default '#E8612D'
-   */
-  color?: string;
-  /**
-   * Zobrazí procentuální hodnotu uprostřed kruhu.
-   * @default false
-   */
+  /** Tloušťka stroke. @default 4 */
+  thickness?: number;
+  /** Zobrazí "X%" uprostřed. @default false */
   showValue?: boolean;
-  /**
-   * Volitelný popisek zobrazený pod kruhem.
-   */
+  /** Custom render obsahu uprostřed (override showValue). */
+  valueLabel?: (value: number, max: number) => React.ReactNode;
+  /** Volitelný popisek pod kruhem. */
   label?: string;
-  /** Dodatečná CSS třída pro kořenový element. */
+  /** Dodatečná CSS třída. */
   className?: string;
-  /** Další inline styly pro kořenový element. */
+  /** Další inline styly. */
   style?: React.CSSProperties;
 }
 
-// ─── Stripe animation ────────────────────────────────────────────────────────
+// ─── Helpers ─────────────────────────────────────────────────────────────────
 
 const stripeKeyframesId = 'sm-ui-progress-stripes';
+const indeterminateKeyframesId = 'sm-ui-progress-indeterminate';
 
 const ensureStripeKeyframes = () => {
   if (typeof document === 'undefined') return;
   if (document.getElementById(stripeKeyframesId)) return;
-  const styleEl = document.createElement('style');
-  styleEl.id = stripeKeyframesId;
-  styleEl.textContent = `@keyframes sm-ui-progress-stripes { 0% { background-position: 1rem 0; } 100% { background-position: 0 0; } }`;
-  document.head.appendChild(styleEl);
+  const s = document.createElement('style');
+  s.id = stripeKeyframesId;
+  s.textContent = `@keyframes sm-ui-progress-stripes { 0% { background-position: 1rem 0; } 100% { background-position: 0 0; } }`;
+  document.head.appendChild(s);
 };
+
+const ensureIndeterminateKeyframes = () => {
+  if (typeof document === 'undefined') return;
+  if (document.getElementById(indeterminateKeyframesId)) return;
+  const s = document.createElement('style');
+  s.id = indeterminateKeyframesId;
+  s.textContent = `@keyframes sm-ui-progress-indeterminate { 0% { left: -40%; width: 40%; } 50% { left: 20%; width: 60%; } 100% { left: 100%; width: 40%; } }`;
+  document.head.appendChild(s);
+};
+
+function resolveVariant(variant: ProgressVariant, value: number, thresholds?: ProgressThreshold[]): ProgressVariant {
+  if (!thresholds || thresholds.length === 0) return variant;
+  const sorted = [...thresholds].sort((a, b) => a.value - b.value);
+  let resolved = variant;
+  for (const th of sorted) {
+    if (value >= th.value) resolved = th.variant;
+  }
+  return resolved;
+}
 
 // ─── ProgressBar ─────────────────────────────────────────────────────────────
 
 /**
- * Horizontální lišta zobrazující průběh operace.
+ * Horizontální progress indikátor.
  *
- * Podporuje tři velikosti, volitelné pruhy (s animací),
- * zobrazení procentuální hodnoty a popisek.
+ * Podporuje varianty, thresholds, pruhy, indeterminate stav a a11y.
  *
  * @example
  * ```tsx
- * <ProgressBar value={45} showValue />
- * <ProgressBar value={70} size="lg" striped animated label="Nahrávání" />
+ * <ProgressBar value={45} label />
+ * <ProgressBar value={80} variant="success" size="md" striped animated />
+ * <ProgressBar indeterminate />
  * ```
  */
 export const ProgressBar: React.FC<ProgressBarProps> = ({
   value,
-  size = 'md',
-  color = '#E8612D',
-  showValue = false,
-  label,
+  max = 100,
+  label = false,
+  variant = 'default',
+  thresholds,
+  size = 'sm',
   striped = false,
   animated = false,
+  indeterminate = false,
   className,
   style,
 }) => {
   const theme = useTheme();
   const t = tokens[theme];
   const sc = barSizeConfig[size];
-  const clampedValue = Math.max(0, Math.min(100, value));
+  const percent = max > 0 ? Math.max(0, Math.min(100, (value / max) * 100)) : 0;
+  const resolvedVariant = resolveVariant(variant, value, thresholds);
+  const color = variantColors[resolvedVariant];
 
   if (striped && animated) ensureStripeKeyframes();
+  if (indeterminate) ensureIndeterminateKeyframes();
 
   const stripeStyle: React.CSSProperties = striped
     ? {
@@ -159,49 +171,28 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
       }
     : {};
 
+  const labelText = typeof label === 'string' ? label : label ? `${Math.round(percent)}%` : null;
+
   return (
     <div
       role="progressbar"
-      aria-valuenow={clampedValue}
+      aria-valuenow={indeterminate ? undefined : Math.round(value)}
       aria-valuemin={0}
-      aria-valuemax={100}
-      aria-label={label}
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '6px',
-        width: '100%',
-        ...style,
-      }}
+      aria-valuemax={max}
+      style={{ display: 'flex', flexDirection: 'column', gap: '4px', width: '100%', ...style }}
       className={className}
     >
-      {(label || showValue) && (
+      {labelText && (
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          {label && (
-            <span style={{
-              fontFamily: "'Zalando Sans Expanded', sans-serif",
-              fontWeight: 400,
-              fontSize: '10px',
-              lineHeight: 'normal',
-              textTransform: 'uppercase',
-              color: t.label,
-              userSelect: 'none',
-            }}>
-              {label}
-            </span>
-          )}
-          {showValue && (
-            <span style={{
-              fontFamily: "'Zalando Sans', sans-serif",
-              fontWeight: 400,
-              fontSize: sc.fontSize,
-              color: t.text,
-              userSelect: 'none',
-              marginLeft: 'auto',
-            }}>
-              {Math.round(clampedValue)}%
-            </span>
-          )}
+          <span style={{
+            fontFamily: "'Zalando Sans', sans-serif",
+            fontWeight: 400,
+            fontSize: sc.fontSize,
+            color: t.text,
+            userSelect: 'none',
+          }}>
+            {labelText}
+          </span>
         </div>
       )}
       <div style={{
@@ -210,15 +201,27 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
         backgroundColor: t.trackBg,
         borderRadius: sc.height / 2,
         overflow: 'hidden',
+        position: 'relative',
       }}>
-        <div style={{
-          width: `${clampedValue}%`,
-          height: '100%',
-          backgroundColor: color,
-          borderRadius: sc.height / 2,
-          transition: 'width 0.3s ease',
-          ...stripeStyle,
-        }} />
+        {indeterminate ? (
+          <div style={{
+            position: 'absolute',
+            height: '100%',
+            backgroundColor: color,
+            borderRadius: sc.height / 2,
+            animation: 'sm-ui-progress-indeterminate 1.5s ease-in-out infinite',
+            ...stripeStyle,
+          }} />
+        ) : (
+          <div style={{
+            width: `${percent}%`,
+            height: '100%',
+            backgroundColor: color,
+            borderRadius: sc.height / 2,
+            transition: 'width 0.3s ease, background-color 0.3s ease',
+            ...stripeStyle,
+          }} />
+        )}
       </div>
     </div>
   );
@@ -227,94 +230,82 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
 // ─── ProgressCircle ──────────────────────────────────────────────────────────
 
 /**
- * Kruhový indikátor průběhu pomocí SVG.
+ * Kruhový progress indikátor (SVG).
  *
- * Hodnota 0–100 se vykresluje jako oblouk kolem kruhu pomocí
- * `stroke-dasharray` / `stroke-dashoffset`. Volitelně zobrazí
- * procentuální hodnotu uprostřed a popisek pod kruhem.
+ * Podporuje varianty, thresholds, custom obsah uprostřed a a11y.
  *
  * @example
  * ```tsx
  * <ProgressCircle value={75} showValue />
- * <ProgressCircle value={50} size={80} strokeWidth={6} color="#00A205" label="Stahování" />
+ * <ProgressCircle value={45} max={60} variant="warning" valueLabel={(v, m) => `${v}/${m}`} />
  * ```
  */
 export const ProgressCircle: React.FC<ProgressCircleProps> = ({
   value,
-  size = 64,
-  strokeWidth = 4,
-  color = '#E8612D',
+  max = 100,
+  variant = 'default',
+  thresholds,
+  size = 48,
+  thickness = 4,
   showValue = false,
+  valueLabel,
   label,
   className,
   style,
 }) => {
   const theme = useTheme();
   const t = tokens[theme];
-  const clampedValue = Math.max(0, Math.min(100, value));
+  const percent = max > 0 ? Math.max(0, Math.min(100, (value / max) * 100)) : 0;
+  const resolvedVariant = resolveVariant(variant, value, thresholds);
+  const color = variantColors[resolvedVariant];
 
-  const radius = (size - strokeWidth) / 2;
+  const radius = (size - thickness) / 2;
   const circumference = 2 * Math.PI * radius;
-  const offset = circumference - (clampedValue / 100) * circumference;
+  const offset = circumference - (percent / 100) * circumference;
+
+  const centerContent = valueLabel
+    ? valueLabel(value, max)
+    : showValue
+      ? `${Math.round(percent)}%`
+      : null;
 
   return (
     <div
       role="progressbar"
-      aria-valuenow={clampedValue}
+      aria-valuenow={Math.round(value)}
       aria-valuemin={0}
-      aria-valuemax={100}
+      aria-valuemax={max}
       aria-label={label}
-      style={{
-        display: 'inline-flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        gap: '6px',
-        ...style,
-      }}
+      style={{ display: 'inline-flex', flexDirection: 'column', alignItems: 'center', gap: '6px', ...style }}
       className={className}
     >
-      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} style={{ transform: 'rotate(-90deg)' }}>
-        {/* Pozadí kruhu */}
-        <circle
-          cx={size / 2}
-          cy={size / 2}
-          r={radius}
-          fill="none"
-          stroke={t.trackBg}
-          strokeWidth={strokeWidth}
-        />
-        {/* Vyplněný oblouk */}
-        <circle
-          cx={size / 2}
-          cy={size / 2}
-          r={radius}
-          fill="none"
-          stroke={color}
-          strokeWidth={strokeWidth}
-          strokeLinecap="round"
-          strokeDasharray={circumference}
-          strokeDashoffset={offset}
-          style={{ transition: 'stroke-dashoffset 0.3s ease' }}
-        />
-      </svg>
-      {showValue && (
-        <span style={{
-          position: 'relative',
-          marginTop: -size / 2 - 6,
-          marginBottom: size / 2 - 6,
-          fontFamily: "'Zalando Sans', sans-serif",
-          fontWeight: 700,
-          fontSize: `${Math.max(11, size * 0.22)}px`,
-          color: t.text,
-          userSelect: 'none',
-          transform: 'translateY(-50%)',
-          top: '50%',
-          display: 'block',
-          textAlign: 'center',
-        }}>
-          {Math.round(clampedValue)}%
-        </span>
-      )}
+      <div style={{ position: 'relative', width: size, height: size }}>
+        <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} style={{ transform: 'rotate(-90deg)' }}>
+          <circle cx={size / 2} cy={size / 2} r={radius} fill="none" stroke={t.trackBg} strokeWidth={thickness} />
+          <circle
+            cx={size / 2} cy={size / 2} r={radius} fill="none"
+            stroke={color} strokeWidth={thickness} strokeLinecap="round"
+            strokeDasharray={circumference} strokeDashoffset={offset}
+            style={{ transition: 'stroke-dashoffset 0.3s ease, stroke 0.3s ease' }}
+          />
+        </svg>
+        {centerContent != null && (
+          <div style={{
+            position: 'absolute',
+            inset: 0,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontFamily: "'Zalando Sans', sans-serif",
+            fontWeight: 700,
+            fontSize: `${Math.max(10, size * 0.22)}px`,
+            color: t.text,
+            userSelect: 'none',
+          }}>
+            {centerContent}
+          </div>
+        )}
+      </div>
       {label && (
         <span style={{
           fontFamily: "'Zalando Sans Expanded', sans-serif",

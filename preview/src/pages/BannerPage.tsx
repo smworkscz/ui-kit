@@ -1,5 +1,5 @@
 import React from 'react';
-import { Banner } from '../../../src';
+import { Banner, Button } from '../../../src';
 import { PageLayout, H1, H2, Paragraph, Playground, PropsTable, VariantShowcase } from './shared';
 import type { PlaygroundControl, PropDef } from './shared';
 
@@ -19,6 +19,8 @@ const propDefs: PropDef[] = [
   { name: 'icon', type: 'ReactNode', description: 'Vlastní ikona.' },
   { name: 'position', type: "'top' | 'bottom'", defaultValue: "'top'", description: 'Pozice akcentního proužku.' },
   { name: 'sticky', type: 'boolean', defaultValue: 'false', description: 'Přilepí banner na pozici.' },
+  { name: 'actions', type: 'ReactNode', description: 'Akční tlačítka na pravé straně.' },
+  { name: 'dismissKey', type: 'string', description: 'localStorage klíč pro persistentní dismiss.' },
 ];
 
 export const BannerPage: React.FC = () => (
@@ -56,6 +58,25 @@ export const BannerPage: React.FC = () => (
     </VariantShowcase>
     <VariantShowcase label="Error">
       <Banner variant="error" title="Chyba">Nepodařilo se načíst data.</Banner>
+    </VariantShowcase>
+
+    <H2>S akcemi</H2>
+    <VariantShowcase label="Banner s akčním tlačítkem v actions slotu">
+      <Banner variant="warning" title="Nová verze">
+        Je dostupná nová verze aplikace.
+      </Banner>
+    </VariantShowcase>
+    <VariantShowcase label="Banner s actions">
+      <Banner variant="info" title="Aktualizace" actions={<Button size="sm" variant="outline">Aktualizovat</Button>}>
+        Nová verze je připravena k instalaci.
+      </Banner>
+    </VariantShowcase>
+
+    <H2>Persistent dismiss</H2>
+    <VariantShowcase label="Banner s dismissKey — zavření se uloží do localStorage">
+      <Banner variant="success" title="Tip" closable dismissKey="demo-banner">
+        Toto oznámení se po zavření znovu nezobrazí (localStorage).
+      </Banner>
     </VariantShowcase>
 
     <H2>Props</H2>

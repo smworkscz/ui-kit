@@ -220,6 +220,12 @@ export interface DatePickerProps {
   minDate?: Date;
   /** Maximální datum, které lze vybrat. */
   maxDate?: Date;
+  /** Předvolby zobrazené v levém sloupci popoveru. */
+  presets?: Array<{ label: string; value: Date | [Date, Date] }>;
+  /** Hlavička sekce předvoleb. @default 'Rychlý výběr' */
+  presetsLabel?: string;
+  /** Disable specific dates. Vrací true = den je grayed-out. */
+  disabledDates?: (date: Date) => boolean;
   /**
    * První den v týdnu (ISO: 1=pondělí).
    * @default 1
@@ -292,6 +298,9 @@ export const DatePicker: React.FC<DatePickerProps> = ({
   required,
   minDate,
   maxDate,
+  presets,
+  presetsLabel = 'Rychlý výběr',
+  disabledDates,
   firstDayOfWeek = 1,
   style,
   className,
@@ -448,8 +457,9 @@ export const DatePicker: React.FC<DatePickerProps> = ({
       const max = new Date(maxDate.getFullYear(), maxDate.getMonth(), maxDate.getDate());
       if (d > max) return true;
     }
+    if (disabledDates && disabledDates(d)) return true;
     return false;
-  }, [minDate, maxDate]);
+  }, [minDate, maxDate, disabledDates]);
 
   const handleDayClick = useCallback((d: Date) => {
     if (isDayDisabled(d)) return;
@@ -732,6 +742,76 @@ export const DatePicker: React.FC<DatePickerProps> = ({
             ...getDropdownAnimStyle(),
           }}
         >
+          <div style={{ display: 'flex' }}>
+          {/* Presets sidebar */}
+          {presets && presets.length > 0 && (
+            <div style={{
+              width: '140px',
+              flexShrink: 0,
+              borderRight: `1px solid ${t.dropdownBorder}`,
+              padding: '8px',
+              overflowY: 'auto',
+              maxHeight: '320px',
+            }}>
+              <div style={{
+                fontFamily: "'Zalando Sans Expanded', sans-serif",
+                fontSize: '9px',
+                fontWeight: 500,
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em',
+                color: t.dayOutside,
+                padding: '4px 6px 8px',
+                userSelect: 'none',
+              }}>
+                {presetsLabel}
+              </div>
+              {presets.map((preset, pIdx) => {
+                const isActive = (() => {
+                  if (mode === 'range' && Array.isArray(preset.value)) {
+                    const [rs, re] = rangeValue;
+                    const [ps, pe] = preset.value;
+                    return rs && re && ps && pe
+                      && rs.getFullYear() === ps.getFullYear() && rs.getMonth() === ps.getMonth() && rs.getDate() === ps.getDate()
+                      && re.getFullYear() === pe.getFullYear() && re.getMonth() === pe.getMonth() && re.getDate() === pe.getDate();
+                  }
+                  if (!Array.isArray(preset.value) && singleValue) {
+                    return singleValue.getFullYear() === preset.value.getFullYear()
+                      && singleValue.getMonth() === preset.value.getMonth()
+                      && singleValue.getDate() === preset.value.getDate();
+                  }
+                  return false;
+                })();
+
+                return (
+                  <div
+                    key={pIdx}
+                    style={{
+                      padding: '7px 8px',
+                      borderRadius: '6px',
+                      fontSize: '13px',
+                      fontFamily: "'Zalando Sans', sans-serif",
+                      color: isActive ? t.daySelected : t.text,
+                      fontWeight: isActive ? 600 : 400,
+                      backgroundColor: isActive ? `${t.daySelected}18` : 'transparent',
+                      cursor: 'pointer',
+                      userSelect: 'none',
+                      transition: 'background-color 0.12s ease',
+                      marginBottom: '1px',
+                    }}
+                    onClick={() => {
+                      onChange?.(preset.value);
+                      doClose();
+                    }}
+                    onMouseEnter={(e) => { if (!isActive) (e.currentTarget as HTMLElement).style.backgroundColor = t.dayHover; }}
+                    onMouseLeave={(e) => { if (!isActive) (e.currentTarget as HTMLElement).style.backgroundColor = 'transparent'; }}
+                  >
+                    {preset.label}
+                  </div>
+                );
+              })}
+            </div>
+          )}
+          <div style={{ flex: 1, minWidth: 0 }}>
           {viewMode === 'years' ? renderYearView() : viewMode === 'months' ? (
             <>
               {/* Hlavička — zpět na rok */}
@@ -958,6 +1038,8 @@ export const DatePicker: React.FC<DatePickerProps> = ({
               )}
             </>
           )}
+          </div>{/* end flex-1 content */}
+          </div>{/* end flex row */}
         </div>,
         document.body
       )

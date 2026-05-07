@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { DatePicker } from '../../../src';
-import { PageLayout, H1, H2, Paragraph, Playground, PropsTable } from './shared';
+import { PageLayout, H1, H2, Paragraph, Playground, PropsTable, VariantShowcase } from './shared';
 import type { PlaygroundControl, PropDef } from './shared';
 
 const controls: PlaygroundControl[] = [
@@ -24,6 +24,9 @@ const propDefs: PropDef[] = [
   { name: 'size', type: "'sm' | 'md' | 'lg'", defaultValue: "'md'", description: 'Velikostní preset.' },
   { name: 'minDate', type: 'Date', description: 'Minimální povolené datum.' },
   { name: 'maxDate', type: 'Date', description: 'Maximální povolené datum.' },
+  { name: 'presets', type: "Array<{ label: string; value: Date | [Date, Date] }>", description: 'Předdefinované rychlé výběry data.' },
+  { name: 'presetsLabel', type: 'string', defaultValue: "'Rychlý výběr'", description: 'Nadpis sekce presetů.' },
+  { name: 'disabledDates', type: '(date: Date) => boolean', description: 'Funkce pro zakázání konkrétních dat v kalendáři.' },
 ];
 
 const DatePickerDemo: React.FC<{ mode: string; size: string; showTime: boolean; clearable: boolean; disabled: boolean; error: boolean }> = (props) => {
@@ -51,6 +54,22 @@ export const DatePickerPage: React.FC = () => (
     <Paragraph large>Výběr data s kalendářem. Podporuje single i range režim a volitelný výběr času.</Paragraph>
 
     <Playground controls={controls} render={(props) => <DatePickerDemo {...props as any} />} />
+
+    <H2>Date presets</H2>
+    <VariantShowcase label="Rychlý výběr s předdefinovanými hodnotami">
+      <div style={{ width: 280 }}>
+        <DatePicker
+          label="Období"
+          mode="single"
+          presets={[
+            { label: 'Dnes', value: new Date() },
+            { label: 'Včera', value: new Date(Date.now() - 86400000) },
+            { label: 'Před týdnem', value: new Date(Date.now() - 7 * 86400000) },
+          ]}
+          presetsLabel="Rychlý výběr"
+        />
+      </div>
+    </VariantShowcase>
 
     <H2>Props</H2>
     <PropsTable props={propDefs} />

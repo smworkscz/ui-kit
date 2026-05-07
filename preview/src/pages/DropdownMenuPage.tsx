@@ -12,6 +12,7 @@ const propDefs: PropDef[] = [
   { name: 'trigger', type: 'ReactNode', required: true, description: 'Spouštěcí element.' },
   { name: 'items', type: 'DropdownMenuItem[]', required: true, description: 'Seznam položek nabídky.' },
   { name: 'position', type: "'bottom-left' | 'bottom-right'", defaultValue: "'bottom-left'", description: 'Pozice nabídky.' },
+  { name: 'triggerOnRightClick', type: 'boolean', defaultValue: 'false', description: 'Otevře nabídku pravým kliknutím.' },
 ];
 
 const itemPropDefs: PropDef[] = [
@@ -22,13 +23,16 @@ const itemPropDefs: PropDef[] = [
   { name: 'danger', type: 'boolean', defaultValue: 'false', description: 'Červený styl (destruktivní).' },
   { name: 'divider', type: 'boolean', defaultValue: 'false', description: 'Oddělovací čára.' },
   { name: 'category', type: 'string', description: 'Text kategorie — uppercase nadpis sekce pro seskupení položek.' },
+  { name: 'shortcut', type: 'string', description: 'Klávesová zkratka zobrazená vpravo (např. "⌘S").' },
+  { name: 'keepOpenOnClick', type: 'boolean', defaultValue: 'false', description: 'Nezavře dropdown po kliknutí. Pro toggle položky.' },
+  { name: 'subItems', type: 'DropdownMenuItem[]', description: 'Vnořené položky pro kaskádové podmenu.' },
 ];
 
 const demoItems = [
-  { label: 'Upravit', icon: <PencilSimple size={16} />, onClick: () => {} },
+  { label: 'Upravit', icon: <PencilSimple size={16} />, onClick: () => {}, shortcut: '⌘E' },
   { label: 'Duplikovat', icon: <Copy size={16} />, onClick: () => {} },
   { divider: true, label: '' },
-  { label: 'Smazat', icon: <Trash size={16} />, danger: true, onClick: () => {} },
+  { label: 'Smazat', icon: <Trash size={16} />, danger: true, onClick: () => {}, shortcut: '⌘⌫' },
 ];
 
 const categoryItems = [
@@ -75,6 +79,46 @@ export const DropdownMenuPage: React.FC = () => (
     <H2>Vlastní ReactNode label</H2>
     <VariantShowcase label="Header karty uživatele bez onClick — žádný hover, žádné zavření">
       <DropdownMenu trigger={<Button variant="outline">Uživatel</Button>} items={customNodeItems} />
+    </VariantShowcase>
+
+    <H2>Right-click context menu</H2>
+    <VariantShowcase label="Otevře se pravým kliknutím — triggerOnRightClick">
+      <DropdownMenu
+        trigger={<div style={{ padding: '16px 24px', background: 'rgba(252,79,0,0.1)', borderRadius: 8, fontFamily: "'Zalando Sans', sans-serif", fontSize: 14, cursor: 'context-menu' }}>Klikněte pravým tlačítkem</div>}
+        items={demoItems}
+        triggerOnRightClick
+      />
+    </VariantShowcase>
+
+    <H2>Keep open on click</H2>
+    <VariantShowcase label="Položka s keepOpenOnClick — dropdown se nezavře po kliknutí">
+      <DropdownMenu
+        trigger={<Button variant="outline">Nastavení</Button>}
+        items={[
+          { label: 'Tmavý režim', icon: <Gear size={16} />, onClick: () => {}, keepOpenOnClick: true },
+          { label: 'Zvuk', icon: <Gear size={16} />, onClick: () => {}, keepOpenOnClick: true },
+          { divider: true, label: '' },
+          { label: 'Uložit', onClick: () => {} },
+        ]}
+      />
+    </VariantShowcase>
+
+    <H2>Kaskádové podmenu</H2>
+    <VariantShowcase label="Položky s vnořenými subItems">
+      <DropdownMenu
+        trigger={<Button variant="outline">S podmenu</Button>}
+        items={[
+          {
+            label: 'Exportovat', icon: <Copy size={16} />, subItems: [
+              { label: 'CSV', onClick: () => {} },
+              { label: 'Excel', onClick: () => {} },
+              { label: 'PDF', onClick: () => {} },
+            ],
+          },
+          { divider: true, label: '' },
+          { label: 'Smazat', icon: <Trash size={16} />, danger: true, onClick: () => {} },
+        ]}
+      />
     </VariantShowcase>
 
     <H2>DropdownMenu Props</H2>

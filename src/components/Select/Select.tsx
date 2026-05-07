@@ -132,6 +132,27 @@ export interface SelectProps {
   /** Označí select jako nevalidní — přijímá `true` nebo textovou chybovou zprávu. */
   error?: boolean | string;
 
+  /**
+   * Async vyhledávání — když zadáno, filtrace nejede client-side.
+   * Voláno s textem hledání, vrací Promise s novými options.
+   */
+  onSearch?: (query: string) => Promise<SelectOption[]>;
+  /** Povolí uživateli vytvořit novou hodnotu. @default false */
+  creatable?: boolean;
+  /** Callback při vytvoření nové hodnoty. */
+  onCreateOption?: (label: string) => void;
+  /**
+   * Způsob zobrazení vybraných hodnot v multiple režimu.
+   * - `'inline'` — tagy (výchozí)
+   * - `'count'` — "N vybraných"
+   * @default 'inline'
+   */
+  chipDisplay?: 'inline' | 'count';
+  /** Vlastní renderování položky v seznamu. */
+  renderOption?: (option: SelectOption, selected: boolean) => React.ReactNode;
+  /** Vlastní renderování vybrané hodnoty v triggeru. */
+  renderValue?: (option: SelectOption) => React.ReactNode;
+
   // ── Zobrazení ──────────────────────────────────────────────────────────
 
   /**
@@ -205,6 +226,12 @@ export const Select: React.FC<SelectProps> = ({
   disabled = false,
   loading = false,
   error,
+  onSearch,
+  creatable = false,
+  onCreateOption,
+  chipDisplay = 'inline',
+  renderOption,
+  renderValue,
   label,
   placeholder = 'Vyberte…',
   maxDropdownHeight = 240,
@@ -261,13 +288,40 @@ export const Select: React.FC<SelectProps> = ({
 
   const isSelected = (v: string) => selectedValues.includes(v);
 
+  // ── Async search ────────────────────────────────────────────────────────
+
+  const [asyncOptions, setAsyncOptions] = useState<SelectOption[] | null>(null);
+  const [asyncLoading, setAsyncLoading] = useState(false);
+  const searchTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+
+  useEffect(() => {
+    if (!onSearch || !search) {
+      setAsyncOptions(null);
+      return;
+    }
+    setAsyncLoading(true);
+    if (searchTimerRef.current) clearTimeout(searchTimerRef.current);
+    searchTimerRef.current = setTimeout(() => {
+      onSearch(search).then((results) => {
+        setAsyncOptions(results);
+        setAsyncLoading(false);
+      }).catch(() => {
+        setAsyncOptions([]);
+        setAsyncLoading(false);
+      });
+    }, 300);
+    return () => { if (searchTimerRef.current) clearTimeout(searchTimerRef.current); };
+  }, [search, onSearch]);
+
   // ── Filtered options ───────────────────────────────────────────────────
 
-  const filteredOptions = search
-    ? options.filter((o) =>
-        (o.label ?? o.value).toLowerCase().includes(search.toLowerCase())
-      )
-    : options;
+  const filteredOptions = onSearch
+    ? (asyncOptions ?? options)
+    : search
+      ? options.filter((o) =>
+          (o.label ?? o.value).toLowerCase().includes(search.toLowerCase())
+        )
+      : options;
 
   // ── Position the portal dropdown ───────────────────────────────────────
 
@@ -534,7 +588,13 @@ export const Select: React.FC<SelectProps> = ({
               }
             `}</style>
 
-            {filteredOptions.length === 0 && (
+            {(asyncLoading) && (
+              <div style={{ padding: '16px', textAlign: 'center' }}>
+                <Spinner size={16} color={t.placeholder} />
+              </div>
+            )}
+
+            {!asyncLoading && filteredOptions.length === 0 && !creatable && (
               <div style={{
                 padding: '16px',
                 fontFamily: "'Zalando Sans', sans-serif",
@@ -546,7 +606,37 @@ export const Select: React.FC<SelectProps> = ({
               </div>
             )}
 
-            {filteredOptions.map((opt, idx) => {
+            {!asyncLoading && filteredOptions.length === 0 && creatable && search && (
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                  padding: '9px 10px',
+                  borderRadius: '6px',
+                  fontFamily: "'Zalando Sans', sans-serif",
+                  fontSize: '14px',
+                  color: t.optionSelectedText,
+                  cursor: 'pointer',
+                  transition: 'background-color 0.12s ease',
+                  userSelect: 'none',
+                }}
+                onClick={() => {
+                  onCreateOption?.(search);
+                  if (!multiple) {
+                    onChange?.(search);
+                    doClose();
+                  }
+                  setSearch('');
+                }}
+                onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.backgroundColor = t.optionHover; }}
+                onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.backgroundColor = 'transparent'; }}
+              >
+                Vytvořit &quot;{search}&quot;
+              </div>
+            )}
+
+            {!asyncLoading && filteredOptions.map((opt, idx) => {
               const selected = isSelected(opt.value);
               const highlighted = idx === highlightIndex;
 
@@ -585,10 +675,14 @@ export const Select: React.FC<SelectProps> = ({
                   onMouseEnter={() => setHighlightIndex(idx)}
                   onMouseLeave={() => setHighlightIndex(-1)}
                 >
-                  <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                    {opt.label ?? opt.value}
-                  </span>
-                  {selected && <CheckIcon size={16} color={t.optionSelectedText} />}
+                  {renderOption ? renderOption(opt, selected) : (
+                    <>
+                      <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        {opt.label ?? opt.value}
+                      </span>
+                      {selected && <CheckIcon size={16} color={t.optionSelectedText} />}
+                    </>
+                  )}
                 </div>
               );
             })}
@@ -647,55 +741,72 @@ export const Select: React.FC<SelectProps> = ({
           )}
 
           {multiple
-            ? selectedValues.map((v) => (
-                <span
-                  key={v}
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '4px',
-                    backgroundColor: t.tagBg,
-                    color: t.tagText,
-                    borderRadius: '4px',
-                    padding: '2px 8px',
-                    fontFamily: "'Zalando Sans', sans-serif",
-                    fontSize: '13px',
-                    lineHeight: 'normal',
-                    flexShrink: 0,
-                    whiteSpace: 'nowrap',
-                  }}
-                >
-                  <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                    {getLabel(v)}
-                  </span>
-                  {!isDisabled && (
-                    <span
-                      role="button"
-                      tabIndex={-1}
-                      style={{ cursor: 'pointer', display: 'flex', opacity: 0.7 }}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        toggleOption(v);
-                      }}
-                    >
-                      <XIcon size={14} color={t.tagText} />
-                    </span>
-                  )}
-                </span>
-              ))
-            : selectedValues.length > 0 && (
+            ? chipDisplay === 'count' && selectedValues.length > 0
+              ? (
                 <span style={{
                   fontFamily: "'Zalando Sans', sans-serif",
-                  fontSize: '16px',
+                  fontSize: '14px',
                   color: t.text,
                   lineHeight: 'normal',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  whiteSpace: 'nowrap',
                 }}>
-                  {getLabel(selectedValues[0])}
+                  {selectedValues.length} vybráno
                 </span>
-              )}
+              )
+              : selectedValues.map((v) => {
+                  const opt = options.find((o) => o.value === v);
+                  return (
+                    <span
+                      key={v}
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '4px',
+                        backgroundColor: t.tagBg,
+                        color: t.tagText,
+                        borderRadius: '4px',
+                        padding: '2px 8px',
+                        fontFamily: "'Zalando Sans', sans-serif",
+                        fontSize: '13px',
+                        lineHeight: 'normal',
+                        flexShrink: 0,
+                        whiteSpace: 'nowrap',
+                      }}
+                    >
+                      <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        {renderValue && opt ? renderValue(opt) : getLabel(v)}
+                      </span>
+                      {!isDisabled && (
+                        <span
+                          role="button"
+                          tabIndex={-1}
+                          style={{ cursor: 'pointer', display: 'flex', opacity: 0.7 }}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            toggleOption(v);
+                          }}
+                        >
+                          <XIcon size={14} color={t.tagText} />
+                        </span>
+                      )}
+                    </span>
+                  );
+                })
+            : selectedValues.length > 0 && (() => {
+                const opt = options.find((o) => o.value === selectedValues[0]);
+                return (
+                  <span style={{
+                    fontFamily: "'Zalando Sans', sans-serif",
+                    fontSize: '16px',
+                    color: t.text,
+                    lineHeight: 'normal',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                  }}>
+                    {renderValue && opt ? renderValue(opt) : getLabel(selectedValues[0])}
+                  </span>
+                );
+              })()}
         </div>
 
         {/* Actions */}

@@ -1,5 +1,7 @@
 // ── Formuláře ────────────────────────────────────────────────────────────────
 export * from './components/Button';
+export * from './components/IconButton';
+export * from './components/FormField';
 export * from './components/Input';
 export * from './components/NumberInput';
 export * from './components/Select';
@@ -31,6 +33,7 @@ export * from './components/Skeleton';
 export * from './components/EmptyState';
 export * from './components/Stat';
 export * from './components/Avatar';
+export * from './components/AvatarStack';
 export * from './components/Tag';
 export * from './components/Calendar';
 export * from './components/Timeline';
@@ -69,6 +72,8 @@ export * from './components/Divider';
 export * from './components/Stack';
 export * from './components/Container';
 export * from './components/DragList';
+export * from './components/SortableList';
+export * from './components/Splitter';
 
 // ── Hooks ───────────────────────────────────────────────────────────────────
 export * from './hooks';

@@ -1,6 +1,6 @@
 # DatePicker
 
-Date picker with calendar popup. Supports single and range mode with optional time selection.
+Date picker with calendar popup. Supports single and range mode with optional time selection, presets, and disabled dates.
 
 **Import:** `import { DatePicker } from '@smworks-cz/ui-kit'`
 
@@ -19,6 +19,9 @@ Date picker with calendar popup. Supports single and range mode with optional ti
 | `size` | `'sm' | 'md' | 'lg'` | 'md' |  | Size preset. |
 | `minDate` | `Date` | — |  | Minimum allowed date. |
 | `maxDate` | `Date` | — |  | Maximum allowed date. |
+| `presets` | `Array<{ label, value }>` | — |  | Quick-select date presets shown in the calendar. |
+| `presetsLabel` | `string` | 'Rychlý výběr' |  | Header text for presets section. |
+| `disabledDates` | `(date: Date) => boolean` | — |  | Function to disable specific dates in the calendar. |
 
 ## Usage
 

@@ -18,6 +18,7 @@ Button for primary actions, secondary operations, and outline variants. Supports
 | `onClick` | `() => void` | — |  | Click callback. Inherited from native HTML attributes. |
 | `href` | `string` | — |  | If provided, renders as <a> instead of <button>. |
 | `children` | `ReactNode` | — |  | Button text content. |
+| `loadingPosition` | `'replace' | 'after-text'` | 'replace' |  | Spinner position during loading. |
 
 ## Usage
 

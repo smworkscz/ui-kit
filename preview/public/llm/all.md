@@ -32,6 +32,7 @@ Button for primary actions, secondary operations, and outline variants. Supports
 | `onClick` | `() => void` | — |  | Click callback. Inherited from native HTML attributes. |
 | `href` | `string` | — |  | If provided, renders as <a> instead of <button>. |
 | `children` | `ReactNode` | — |  | Button text content. |
+| `loadingPosition` | `'replace' | 'after-text'` | 'replace' |  | Spinner position during loading. |
 
 ## Usage
 
@@ -47,6 +48,65 @@ Button for primary actions, secondary operations, and outline variants. Supports
 - Renders as `<a>` when `href` is provided, otherwise `<button>`
 - Icon-only mode (square) when no children provided
 - Uses `@phosphor-icons/react` for icons
+
+---
+
+# IconButton
+
+Icon-only button with required accessible label. Compact alternative to Button for toolbar actions.
+
+**Import:** `import { IconButton } from '@smworks-cz/ui-kit'`
+
+## Props
+
+| Prop | Type | Default | Required | Description |
+|------|------|---------|----------|-------------|
+| `icon` | `ReactNode` | — | Yes | Icon element. |
+| `label` | `string` | — | Yes | Accessible aria-label. |
+| `variant` | `'default' | 'ghost' | 'outline' | 'danger'` | 'default' |  | Visual style. |
+| `size` | `'xs' | 'sm' | 'md' | 'lg'` | 'md' |  | Size preset. |
+| `disabled` | `boolean` | false |  | Disables interaction. |
+| `loading` | `boolean` | false |  | Shows spinner and disables interaction. |
+| `tooltip` | `string` | — |  | Tooltip text on hover. |
+
+## Usage
+
+```tsx
+<IconButton icon={<TrashIcon size={16} />} label="Delete" variant="danger" onClick={handleDelete} />
+<IconButton icon={<PencilSimpleIcon size={16} />} label="Edit" variant="ghost" />
+<IconButton icon={<PlusIcon size={16} />} label="Add" loading />
+```
+
+---
+
+# FormField
+
+Wrapper for form controls providing label, helper text, error message, and optional inline layout.
+
+**Import:** `import { FormField } from '@smworks-cz/ui-kit'`
+
+## Props
+
+| Prop | Type | Default | Required | Description |
+|------|------|---------|----------|-------------|
+| `label` | `string | ReactNode` | — |  | Field label. |
+| `required` | `boolean` | false |  | Show required indicator. |
+| `helperText` | `string | ReactNode` | — |  | Helper text below the control. |
+| `error` | `string | ReactNode` | — |  | Error message below the control. |
+| `inline` | `boolean` | false |  | Inline layout (label beside control). |
+| `labelWidth` | `number | string` | '120px' |  | Label width in inline mode. |
+
+## Usage
+
+```tsx
+<FormField label="Email" required error="This field is required">
+  <Input placeholder="you@example.com" />
+</FormField>
+
+<FormField label="Name" inline labelWidth="150px" helperText="Your full name.">
+  <Input />
+</FormField>
+```
 
 ---
 
@@ -111,6 +171,12 @@ Dropdown select with search, multi-select, clear, and keyboard navigation.
 | `loading` | `boolean` | false |  | Show spinner instead of chevron. |
 | `error` | `boolean | string` | — |  | Error state or message. |
 | `placeholder` | `string` | 'Vyberte…' |  | Placeholder text. |
+| `onSearch` | `(query: string) => Promise<SelectOption[]>` | — |  | Async server-side search. |
+| `creatable` | `boolean` | false |  | Allow creating new values. |
+| `onCreateOption` | `(label: string) => void` | — |  | Called when creating new value. |
+| `chipDisplay` | `'inline' | 'count'` | 'inline' |  | How to display selected items in multiple mode. |
+| `renderOption` | `(option, selected) => ReactNode` | — |  | Custom option rendering. |
+| `renderValue` | `(option) => ReactNode` | — |  | Custom selected value rendering. |
 
 ## Usage
 
@@ -139,7 +205,7 @@ Dropdown select with search, multi-select, clear, and keyboard navigation.
 
 # DatePicker
 
-Date picker with calendar popup. Supports single and range mode with optional time selection.
+Date picker with calendar popup. Supports single and range mode with optional time selection, presets, and disabled dates.
 
 **Import:** `import { DatePicker } from '@smworks-cz/ui-kit'`
 
@@ -158,6 +224,9 @@ Date picker with calendar popup. Supports single and range mode with optional ti
 | `size` | `'sm' | 'md' | 'lg'` | 'md' |  | Size preset. |
 | `minDate` | `Date` | — |  | Minimum allowed date. |
 | `maxDate` | `Date` | — |  | Maximum allowed date. |
+| `presets` | `Array<{ label, value }>` | — |  | Quick-select date presets shown in the calendar. |
+| `presetsLabel` | `string` | 'Rychlý výběr' |  | Header text for presets section. |
+| `disabledDates` | `(date: Date) => boolean` | — |  | Function to disable specific dates in the calendar. |
 
 ## Usage
 
@@ -652,7 +721,7 @@ One-time password input with individual digit boxes. Supports paste, auto-advanc
 
 # Table
 
-Data table with sorting, loading state, and custom cell rendering.
+Data table with sorting, loading state, custom cell rendering, clickable rows, and row actions.
 
 **Import:** `import { Table } from '@smworks-cz/ui-kit'`
 
@@ -667,6 +736,8 @@ Data table with sorting, loading state, and custom cell rendering.
 | `onSort` | `(key, direction) => void` | — |  | Sort callback. |
 | `striped` | `boolean` | false |  | Alternating row colors. |
 | `hoverable` | `boolean` | true |  | Row hover highlight. |
+| `onRowClick` | `(row, index) => void` | — |  | Row click callback. |
+| `rowActions` | `(row) => ReactNode` | — |  | Render action buttons for each row. |
 
 ## Usage
 
@@ -782,7 +853,12 @@ Hover tooltip bubble.
 | `content` | `string | ReactNode` | — | Yes | Tooltip content. |
 | `children` | `ReactElement` | — | Yes | Trigger element. |
 | `position` | `'top' | 'bottom' | 'left' | 'right'` | 'top' |  | Position. |
-| `delay` | `number` | 200 |  | Show delay in ms. |
+| `delay` | `number` | 0 |  | Show delay in ms. |
+| `mode` | `'anchor' | 'cursor'` | 'anchor' |  | Positioning mode. cursor follows mouse. |
+| `autoFlip` | `boolean` | true |  | Auto-flip when tooltip exits viewport. |
+| `offset` | `[number, number]` | [0, 0] |  | Offset from trigger/cursor in px. |
+| `openDelay` | `number` | — |  | Open delay in ms. Overrides delay. |
+| `closeDelay` | `number` | 0 |  | Close delay in ms for hover-out grace. |
 
 ## Usage
 
@@ -855,10 +931,12 @@ Empty state with icon, title, description, and optional action.
 
 | Prop | Type | Default | Required | Description |
 |------|------|---------|----------|-------------|
-| `title` | `string` | — | Yes | Main heading. |
+| `title` | `string` | — |  | Main heading. |
 | `description` | `string` | — |  | Description text. |
 | `icon` | `ReactNode` | — |  | Illustration icon. |
 | `action` | `ReactNode` | — |  | Action button. |
+| `preset` | `'no-data' | 'no-results' | 'no-permission' | 'error' | 'coming-soon'` | — |  | Preset with default icon, title, description. |
+| `size` | `'sm' | 'md' | 'lg'` | 'md' |  | Size preset. |
 
 ## Usage
 
@@ -875,7 +953,7 @@ Empty state with icon, title, description, and optional action.
 
 # Stat
 
-Statistical value display with trend indicator.
+Statistical value display with trend indicator. Supports loading, clickable, and helper text.
 
 **Import:** `import { Stat } from '@smworks-cz/ui-kit'`
 
@@ -889,11 +967,16 @@ Statistical value display with trend indicator.
 | `changeLabel` | `string` | — |  | Change description text. |
 | `trend` | `'up' | 'down' | 'neutral'` | 'neutral' |  | Trend direction. |
 | `icon` | `ReactNode` | — |  | Icon. |
+| `loading` | `boolean` | false |  | Show skeleton placeholder. |
+| `onClick` | `() => void` | — |  | Click callback — stat behaves as a button. |
+| `helper` | `string | ReactNode` | — |  | Helper text below the value. |
 
 ## Usage
 
 ```tsx
 <Stat label="Revenue" value="€52,400" change={8.2} trend="up" />
+<Stat label="Users" value="1,234" loading />
+<Stat label="Orders" value="89" onClick={() => navigate('/orders')} />
 ```
 
 ---
@@ -909,7 +992,7 @@ User avatar displaying initials.
 | Prop | Type | Default | Required | Description |
 |------|------|---------|----------|-------------|
 | `initials` | `string` | — | Yes | 1-2 letters (auto-uppercase). |
-| `size` | `'sm' | 'md' | 'lg' | number` | 'md' |  | Size (sm: 40px, md: 70px, lg: 96px). |
+| `size` | `'2xs' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | number` | 'md' |  | Size (2xs: 16px, xs: 20px, sm: 32px, md: 40px, lg: 64px, xl: 96px). |
 | `borderRadius` | `string | number` | '8px' |  | Corner rounding. |
 
 ## Usage
@@ -917,6 +1000,37 @@ User avatar displaying initials.
 ```tsx
 <Avatar initials="JD" size="md" />
 <Avatar initials="A" size={32} borderRadius="50%" />
+```
+
+---
+
+# AvatarStack
+
+Grouped avatars with overlap and automatic +N overflow indicator.
+
+**Import:** `import { AvatarStack } from '@smworks-cz/ui-kit'`
+
+## Props
+
+| Prop | Type | Default | Required | Description |
+|------|------|---------|----------|-------------|
+| `children` | `ReactNode` | — | Yes | Avatar components as children. |
+| `max` | `number` | 3 |  | Maximum visible avatars. Rest shown as +N. |
+| `size` | `'2xs' | 'xs' | 'sm' | 'md' | 'lg'` | 'sm' |  | Size of all avatars in the stack. |
+| `spacing` | `'tight' | 'normal' | 'loose'` | 'normal' |  | Overlap spacing between avatars. |
+| `direction` | `'ltr' | 'rtl'` | 'ltr' |  | Overlap direction. |
+| `overflowTooltip` | `string | ((count) => string)` | — |  | Tooltip for +N indicator. |
+
+## Usage
+
+```tsx
+<AvatarStack max={3} size="sm">
+  <Avatar initials="JN" />
+  <Avatar initials="PD" />
+  <Avatar initials="KS" />
+  <Avatar initials="MC" />
+  <Avatar initials="TH" />
+</AvatarStack>
 ```
 
 ---
@@ -1198,10 +1312,14 @@ Modal dialog with overlay, focus trap, and glass effect.
 |------|------|---------|----------|-------------|
 | `open` | `boolean` | — | Yes | Controls visibility. |
 | `onClose` | `() => void` | — | Yes | Close callback. |
-| `title` | `string` | — |  | Header title. |
+| `title` | `string | ReactNode` | — |  | Header title. |
+| `titleSlot` | `ReactNode` | — |  | Alternative slot for custom header. |
 | `children` | `ReactNode` | — | Yes | Body content. |
 | `footer` | `ReactNode` | — |  | Footer content (buttons). |
 | `size` | `'sm' | 'md' | 'lg' | 'fullscreen'` | 'md' |  | Size preset. |
+| `width` | `number | string` | — |  | Explicit width. Overrides size. |
+| `dismissable` | `boolean` | true |  | Allow closing via overlay/ESC/close button. |
+| `showHeaderDivider` | `boolean` | true |  | Show divider line under header. |
 | `closeOnOverlay` | `boolean` | true |  | Close on overlay click. |
 | `closeOnEscape` | `boolean` | true |  | Close on Escape key. |
 | `showClose` | `boolean` | true |  | Show close button (×). |
@@ -1346,8 +1464,9 @@ Dropdown action menu with keyboard navigation.
 | Prop | Type | Default | Required | Description |
 |------|------|---------|----------|-------------|
 | `trigger` | `ReactNode` | — | Yes | Trigger element. |
-| `items` | `DropdownMenuItem[]` | — | Yes | Menu items: { label (string | ReactNode), icon?, onClick?, disabled?, danger?, divider?, category? }. |
+| `items` | `DropdownMenuItem[]` | — | Yes | Menu items: { label (string | ReactNode), icon?, onClick?, disabled?, danger?, divider?, category?, shortcut?, keepOpenOnClick?, subItems? }. |
 | `position` | `'bottom-left' | 'bottom-right'` | 'bottom-left' |  | Menu position. |
+| `triggerOnRightClick` | `boolean` | false |  | Open on right-click instead of left. |
 
 ## Usage
 
@@ -1733,6 +1852,8 @@ Full-width announcement banner with variants. Supports sticky positioning and gl
 | `icon` | `ReactNode` | — |  | Custom icon. |
 | `position` | `'top' | 'bottom'` | 'top' |  | Accent bar position. |
 | `sticky` | `boolean` | false |  | Stick to top/bottom edge. |
+| `actions` | `ReactNode` | — |  | Action buttons on the right side. |
+| `dismissKey` | `string` | — |  | localStorage key for persistent dismiss. |
 
 ## Usage
 
@@ -1744,7 +1865,7 @@ Full-width announcement banner with variants. Supports sticky positioning and gl
 
 # ProgressBar / ProgressCircle
 
-Progress indicator as bar or circle.
+Progress indicator as bar or circle. Supports variants, thresholds, and indeterminate mode.
 
 **Import:** `import { ProgressBar } from '@smworks-cz/ui-kit'`
 
@@ -1752,18 +1873,26 @@ Progress indicator as bar or circle.
 
 | Prop | Type | Default | Required | Description |
 |------|------|---------|----------|-------------|
-| `value` | `number` | — | Yes | Value 0-100. |
-| `size` | `'sm' | 'md' | 'lg'` | 'md' |  | Size (ProgressBar). |
-| `color` | `string` | '#E8612D' |  | Bar/circle color. |
+| `value` | `number` | — | Yes | Value 0-max. |
+| `max` | `number` | 100 |  | Maximum value. |
+| `size` | `'xs' | 'sm' | 'md'` | 'md' |  | Size (ProgressBar). |
+| `variant` | `'default' | 'success' | 'warning' | 'danger'` | 'default' |  | Color variant. |
+| `color` | `string` | '#E8612D' |  | Bar/circle color (overrides variant). |
 | `showValue` | `boolean` | false |  | Show percentage. |
 | `label` | `string` | — |  | Label text. |
 | `striped` | `boolean` | false |  | Striped effect (ProgressBar). |
 | `animated` | `boolean` | false |  | Animate stripes (ProgressBar). |
+| `thresholds` | `Array<{ value, variant }>` | — |  | Auto-switch variant based on value thresholds. |
+| `indeterminate` | `boolean` | false |  | Infinite animation without specific value (ProgressBar). |
+| `valueLabel` | `string | ((value) => string)` | — |  | Custom center label (ProgressCircle). |
+| `thickness` | `number` | — |  | Circle stroke thickness (ProgressCircle). |
 
 ## Usage
 
 ```tsx
 <ProgressBar value={65} showValue label="Upload" />
+<ProgressBar indeterminate label="Loading..." />
+<ProgressBar value={80} thresholds={[{value:30,variant:'danger'},{value:60,variant:'warning'},{value:100,variant:'success'}]} />
 <ProgressCircle value={75} showValue />
 ```
 
@@ -2005,6 +2134,75 @@ Drag & drop sortable list. Supports flat and tree mode with custom rendering.
 - renderItem receives handleProps for custom drag handle placement
 - allowNesting enables tree mode — drag to center of card to nest
 - Collapsed nodes auto-expand on hover during drag
+
+---
+
+# SortableList
+
+Generic sortable list with drag & drop. Supports vertical/horizontal direction and explicit drag handle.
+
+**Import:** `import { SortableList } from '@smworks-cz/ui-kit'`
+
+## Props
+
+| Prop | Type | Default | Required | Description |
+|------|------|---------|----------|-------------|
+| `items` | `T[]` | — | Yes | Array of items to sort. |
+| `keyExtractor` | `(item: T) => string | number` | — | Yes | Function to extract unique key from item. |
+| `renderItem` | `(item: T, dragHandle: ReactNode) => ReactNode` | — | Yes | Render function for each item. dragHandle is the drag element. |
+| `onReorder` | `(newOrder: T[]) => void` | — | Yes | Callback when order changes. |
+| `direction` | `'vertical' | 'horizontal'` | 'vertical' |  | Sort direction. |
+| `handle` | `'whole' | 'explicit'` | 'whole' |  | Whole item draggable or handle-only. |
+| `disabled` | `boolean` | false |  | Disable drag. |
+| `gap` | `number | string` | — |  | Gap between items. |
+
+## Usage
+
+```tsx
+<SortableList
+  items={priorities}
+  keyExtractor={(item) => item.id}
+  handle="explicit"
+  onReorder={setPriorities}
+  renderItem={(item, dragHandle) => (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+      {dragHandle}
+      <span>{item.label}</span>
+    </div>
+  )}
+/>
+```
+
+---
+
+# Splitter
+
+Resizable panel splitter with draggable divider. Supports horizontal/vertical orientation and size persistence.
+
+**Import:** `import { Splitter } from '@smworks-cz/ui-kit'`
+
+## Props
+
+| Prop | Type | Default | Required | Description |
+|------|------|---------|----------|-------------|
+| `orientation` | `'horizontal' | 'vertical'` | 'horizontal' |  | Split direction. |
+| `children` | `ReactNode` | — | Yes | Two or more panels to split. |
+| `defaultSizes` | `number[]` | — |  | Default panel sizes in percent (e.g. [30, 70]). |
+| `minSizes` | `number[]` | — |  | Minimum panel sizes in percent. |
+| `maxSizes` | `number[]` | — |  | Maximum panel sizes in percent. |
+| `onResize` | `(sizes: number[]) => void` | — |  | Callback when panel sizes change. |
+| `persistKey` | `string` | — |  | localStorage key for size persistence. |
+| `dividerSize` | `number` | 4 |  | Divider width in px. |
+| `disabled` | `boolean` | false |  | Disable resizing. |
+
+## Usage
+
+```tsx
+<Splitter orientation="horizontal">
+  <div>Sidebar</div>
+  <div>Content</div>
+</Splitter>
+```
 
 ---
 

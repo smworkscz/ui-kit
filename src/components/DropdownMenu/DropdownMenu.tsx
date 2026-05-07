@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
+import { CaretRight as CaretRightIcon } from '@phosphor-icons/react';
 import { useTheme } from '../../hooks/useTheme';
 
 // ─── Design tokens ──────────────────────────────────────────────────────────
@@ -50,6 +51,12 @@ export interface DropdownMenuItem {
   divider?: boolean;
   /** Text kategorie — zobrazí se jako malý nadpis sekce (uppercase label). */
   category?: string;
+  /** Klávesová zkratka zobrazená vpravo (např. '⌘S', '⌘⌫'). */
+  shortcut?: string;
+  /** Při `true` se dropdown po kliknutí nezavře. Pro toggle položky. @default false */
+  keepOpenOnClick?: boolean;
+  /** Kaskádové submenu. Když nastaveno, klik/hover otevře submenu místo zavření. */
+  subItems?: DropdownMenuItem[];
 }
 
 export interface DropdownMenuProps {
@@ -59,11 +66,102 @@ export interface DropdownMenuProps {
   items: DropdownMenuItem[];
   /** Pozice rozbalovací nabídky vůči triggeru. @default 'bottom-left' */
   position?: 'bottom-left' | 'bottom-right';
+  /** Otevřít nabídku pravým kliknutím místo levým. @default false */
+  triggerOnRightClick?: boolean;
   /** Dodatečná CSS třída pro obalový element. */
   className?: string;
   /** Další inline styly pro obalový element. */
   style?: React.CSSProperties;
 }
+
+// ─── SubMenu (internal) ─────────────────────────────────────────────────────
+
+const SubMenu: React.FC<{
+  items: DropdownMenuItem[];
+  parentRef: React.RefObject<HTMLDivElement | null>;
+  itemIndex: number;
+  theme: 'dark' | 'light';
+  onClose: () => void;
+}> = ({ items, parentRef, itemIndex, theme, onClose }) => {
+  const t = tokens[theme];
+  const ref = useRef<HTMLDivElement>(null);
+  const [pos, setPos] = useState({ top: 0, left: 0 });
+  const [hlIdx, setHlIdx] = useState(-1);
+
+  useEffect(() => {
+    if (!parentRef.current) return;
+    // Find the item element by index
+    const parent = parentRef.current;
+    const itemEl = parent.querySelectorAll('[role="menuitem"]')[itemIndex] as HTMLElement | undefined;
+    if (!itemEl) return;
+
+    const itemRect = itemEl.getBoundingClientRect();
+    const subWidth = ref.current?.offsetWidth ?? 180;
+    const spaceRight = window.innerWidth - itemRect.right - 4;
+
+    setPos({
+      top: itemRect.top,
+      left: spaceRight >= subWidth ? itemRect.right + 4 : itemRect.left - subWidth - 4,
+    });
+  }, [parentRef, itemIndex]);
+
+  return createPortal(
+    <div
+      ref={ref}
+      role="menu"
+      style={{
+        position: 'fixed',
+        top: pos.top,
+        left: pos.left,
+        minWidth: '160px',
+        backgroundColor: t.dropdownBg,
+        border: `1px solid ${t.dropdownBorder}`,
+        borderRadius: '12px',
+        boxShadow: t.shadow,
+        backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)',
+        zIndex: 100000,
+        overflow: 'hidden',
+        boxSizing: 'border-box',
+        padding: '6px',
+      }}
+      onMouseLeave={() => setHlIdx(-1)}
+    >
+      {items.map((item, idx) => {
+        if (item.divider) return <div key={idx} role="separator" style={{ height: '1px', backgroundColor: t.divider, margin: '4px 6px' }} />;
+        if (item.category) return <div key={idx} style={{ fontFamily: "'Zalando Sans Expanded', sans-serif", fontSize: '10px', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.03em', color: t.textDisabled, padding: `${idx > 0 ? '10px' : '6px'} 10px 4px`, userSelect: 'none' }}>{item.category}</div>;
+
+        const isDanger = item.danger;
+        const isDisabled = item.disabled;
+        const isHighlighted = idx === hlIdx;
+        const textColor = isDisabled ? t.textDisabled : isDanger ? t.dangerText : t.text;
+        const hoverBg = isDanger ? t.dangerHover : t.hoverBg;
+
+        return (
+          <div
+            key={idx}
+            role="menuitem"
+            style={{
+              display: 'flex', alignItems: 'center', gap: '10px', padding: '9px 10px',
+              borderRadius: '6px', fontFamily: "'Zalando Sans', sans-serif", fontSize: '14px',
+              fontWeight: 400, lineHeight: 'normal', color: textColor,
+              backgroundColor: isHighlighted ? hoverBg : 'transparent',
+              cursor: isDisabled ? 'not-allowed' : 'pointer', opacity: isDisabled ? 0.5 : 1,
+              transition: 'background-color 0.12s ease', userSelect: 'none',
+            }}
+            onClick={() => { if (!isDisabled) { item.onClick?.(); onClose(); } }}
+            onMouseEnter={() => { if (!isDisabled) setHlIdx(idx); }}
+          >
+            {item.icon && <span style={{ display: 'flex', alignItems: 'center', flexShrink: 0 }}>{item.icon}</span>}
+            <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', flex: 1 }}>{item.label}</span>
+            {item.shortcut && <span style={{ fontFamily: "'Zalando Sans', sans-serif", fontSize: '11px', color: t.textDisabled, flexShrink: 0, marginLeft: 'auto', paddingLeft: '16px' }}>{item.shortcut}</span>}
+          </div>
+        );
+      })}
+    </div>,
+    document.body,
+  );
+};
 
 // ─── DropdownMenu ───────────────────────────────────────────────────────────
 
@@ -91,6 +189,7 @@ export const DropdownMenu: React.FC<DropdownMenuProps> = ({
   trigger,
   items,
   position = 'bottom-left',
+  triggerOnRightClick = false,
   className,
   style,
 }) => {
@@ -109,6 +208,8 @@ export const DropdownMenu: React.FC<DropdownMenuProps> = ({
     openAbove: boolean;
   }>({ top: 0, left: 0, openAbove: false });
   const [highlightIndex, setHighlightIndex] = useState(-1);
+  const [openSubmenu, setOpenSubmenu] = useState<number | null>(null);
+  const submenuTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   // ── Open / close with animation ─────────────────────────────────────────
 
@@ -372,13 +473,29 @@ export const DropdownMenu: React.FC<DropdownMenuProps> = ({
                 }}
                 onClick={() => {
                   if (isDisabled) return;
+                  if (item.subItems) {
+                    setOpenSubmenu(openSubmenu === idx ? null : idx);
+                    return;
+                  }
                   item.onClick?.();
-                  doClose();
+                  if (!item.keepOpenOnClick) doClose();
                 }}
                 onMouseEnter={() => {
                   if (!isDisabled) setHighlightIndex(idx);
+                  if (item.subItems) {
+                    if (submenuTimerRef.current) clearTimeout(submenuTimerRef.current);
+                    submenuTimerRef.current = setTimeout(() => setOpenSubmenu(idx), 300);
+                  } else {
+                    if (submenuTimerRef.current) clearTimeout(submenuTimerRef.current);
+                    setOpenSubmenu(null);
+                  }
                 }}
-                onMouseLeave={() => setHighlightIndex(-1)}
+                onMouseLeave={() => {
+                  setHighlightIndex(-1);
+                  if (item.subItems && submenuTimerRef.current) {
+                    clearTimeout(submenuTimerRef.current);
+                  }
+                }}
               >
                 {item.icon && (
                   <span style={{ display: 'flex', alignItems: 'center', flexShrink: 0 }}>
@@ -386,11 +503,30 @@ export const DropdownMenu: React.FC<DropdownMenuProps> = ({
                   </span>
                 )}
                 {typeof item.label === 'string' ? (
-                  <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', flex: 1 }}>
                     {item.label}
                   </span>
                 ) : (
                   item.label
+                )}
+                {item.shortcut && !item.subItems && (
+                  <span style={{
+                    fontFamily: "'Zalando Sans', sans-serif",
+                    fontSize: '11px',
+                    color: t.textDisabled,
+                    flexShrink: 0,
+                    marginLeft: 'auto',
+                    paddingLeft: '16px',
+                  }}>
+                    {item.shortcut}
+                  </span>
+                )}
+                {item.subItems && (
+                  <CaretRightIcon size={12} color={t.textDisabled} style={{ flexShrink: 0, marginLeft: 'auto' }} />
+                )}
+                {/* Submenu portal */}
+                {item.subItems && openSubmenu === idx && (
+                  <SubMenu items={item.subItems} parentRef={dropdownRef} itemIndex={idx} theme={theme} onClose={doClose} />
                 )}
               </div>
             );
@@ -407,10 +543,15 @@ export const DropdownMenu: React.FC<DropdownMenuProps> = ({
     >
       <div
         ref={triggerRef}
-        onClick={() => {
+        onClick={triggerOnRightClick ? undefined : () => {
           if (open) doClose();
           else doOpen();
         }}
+        onContextMenu={triggerOnRightClick ? (e) => {
+          e.preventDefault();
+          if (open) doClose();
+          else doOpen();
+        } : undefined}
         style={{ display: 'inline-flex', cursor: 'pointer' }}
       >
         {trigger}

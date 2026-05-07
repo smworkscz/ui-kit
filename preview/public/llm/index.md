@@ -7,6 +7,8 @@ For complete documentation in one file: [all.md](all.md)
 ### Forms
 
 - [Button](button.md)
+- [IconButton](iconbutton.md)
+- [FormField](formfield.md)
 - [Input](input.md)
 - [Select](select.md)
 - [DatePicker](datepicker.md)
@@ -37,6 +39,7 @@ For complete documentation in one file: [all.md](all.md)
 - [EmptyState](emptystate.md)
 - [Stat](stat.md)
 - [Avatar](avatar.md)
+- [AvatarStack](avatarstack.md)
 - [Tag / Badge](tag.md)
 - [Calendar](calendar.md)
 - [Timeline](timeline.md)
@@ -80,6 +83,8 @@ For complete documentation in one file: [all.md](all.md)
 - [Stack](stack.md)
 - [Container](container.md)
 - [DragList](draglist.md)
+- [SortableList](sortablelist.md)
+- [Splitter](splitter.md)
 
 ## Hooks
 

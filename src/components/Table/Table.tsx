@@ -64,6 +64,10 @@ export interface TableProps {
   striped?: boolean;
   /** Zvýraznění řádku při najetí myší. @default true */
   hoverable?: boolean;
+  /** Callback při kliknutí na řádek. */
+  onRowClick?: (row: any, index: number) => void;
+  /** Render akčních tlačítek v posledním sloupci. */
+  rowActions?: (row: any) => React.ReactNode;
   /** Dodatečná CSS třída. */
   className?: string;
   /** Další inline styly. */
@@ -103,6 +107,8 @@ export const Table: React.FC<TableProps> = ({
   sortDirection,
   striped = false,
   hoverable = true,
+  onRowClick,
+  rowActions,
   className,
   style,
 }) => {
@@ -177,6 +183,7 @@ export const Table: React.FC<TableProps> = ({
               </span>
             </th>
           ))}
+          {rowActions && <th style={{ ...thStyle({ key: '', header: '', sortable: false }), width: 'auto' }} />}
         </tr>
       </thead>
       <tbody>
@@ -214,14 +221,20 @@ export const Table: React.FC<TableProps> = ({
                     backgroundColor:
                       striped && rowIdx % 2 === 1 ? t.stripedBg : 'transparent',
                     transition: 'background-color 0.12s ease',
+                    cursor: onRowClick ? 'pointer' : 'default',
+                  }}
+                  onClick={(e) => {
+                    if (onRowClick && !(e.target as HTMLElement).closest('[data-no-row-click]')) {
+                      onRowClick(row, rowIdx);
+                    }
                   }}
                   onMouseEnter={(e) => {
-                    if (hoverable) {
+                    if (hoverable || onRowClick) {
                       (e.currentTarget as HTMLElement).style.backgroundColor = t.rowHover;
                     }
                   }}
                   onMouseLeave={(e) => {
-                    if (hoverable) {
+                    if (hoverable || onRowClick) {
                       (e.currentTarget as HTMLElement).style.backgroundColor =
                         striped && rowIdx % 2 === 1 ? t.stripedBg : 'transparent';
                     }
@@ -241,6 +254,20 @@ export const Table: React.FC<TableProps> = ({
                         : row[col.key]}
                     </td>
                   ))}
+                  {rowActions && (
+                    <td
+                      data-no-row-click
+                      style={{
+                        ...tdStyle,
+                        borderBottom: rowIdx === data.length - 1 ? 'none' : tdStyle.borderBottom,
+                        textAlign: 'right',
+                        whiteSpace: 'nowrap',
+                      }}
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      {rowActions(row)}
+                    </td>
+                  )}
                 </tr>
               ))}
       </tbody>
